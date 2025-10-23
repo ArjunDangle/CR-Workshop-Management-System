@@ -1,131 +1,57 @@
-// src/modules/dashboard/DashboardPage.tsx
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/modules/auth/authStore';
-import { Button } from '@/components/ui/button';
-import { useQuery } from '@tanstack/react-query'; // Keep useQuery
-import { getCurrentUserProfile } from '@/modules/auth/authApi'; // Keep API import
-import { Skeleton } from '@/components/ui/skeleton'; // Keep Skeleton
+// src/modules/dashboard/components/MaintenanceDashboard.tsx
+import React from 'react';
+import ServiceCard from './components/ServiceCard'; // Correct path
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+// --- End Add ---
+import { Wrench, HardHat, AlertTriangle, ClipboardCheck, FolderKanban, Zap, ShieldCheck, MapPinned } from 'lucide-react';
 
-// Import role-specific components
-import MaintenanceDashboard from './components/MaintenanceDashboard';
-import OfficeDashboard from './components/OfficeDashboard';
-import SafetyDashboard from './components/SafetyDashboard';
+// Define service cards specific to this dashboard
+const maintenanceServices = [
+    { title: 'Machine & Plant', Icon: Wrench, bgColorClass: 'bg-[hsl(var(--service-card-1-bg))]', href: '/machines' }, // Example route
+    { title: 'Permit Mgmt', Icon: HardHat, bgColorClass: 'bg-[hsl(var(--service-card-2-bg))]', href: '/permits' },
+    { title: 'Incident Mgmt', Icon: AlertTriangle, bgColorClass: 'bg-[hsl(var(--service-card-3-bg))]', href: '/incidents' },
+    { title: 'Contractors', Icon: ClipboardCheck, bgColorClass: 'bg-[hsl(var(--service-card-4-bg))]', href: '/contracts' },
+    // Add more up to 8 as needed
+];
 
-const DashboardPage = () => {
-    // Keep authUser for displaying logged-in email, but don't rely on it for role logic initially
-    const { user: authUser, isAuthenticated, logout } = useAuthStore();
-    const navigate = useNavigate();
+const MaintenanceDashboard = () => {
+  return (
+    <div className="space-y-6">
+      {/* Welcome Title */}
+      <div className="text-left mb-8">
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+          Welcome, Maintenance Team!
+        </h1>
+        {/* <p className="text-muted-foreground mt-1 text-base">Overview of your tasks.</p> */}
+      </div>
 
-    // Keep redirect logic
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('/');
-        }
-    }, [isAuthenticated, navigate]);
+       {/* Section Title */}
+       <h2 className="text-xl font-medium text-foreground">Core Services</h2>
 
-    // Keep profile fetching logic
-    const { data: userProfile, isLoading, isError, error } = useQuery({
-        queryKey: ['userProfile'],
-        queryFn: getCurrentUserProfile,
-        enabled: !!isAuthenticated,
-        staleTime: 1000 * 60 * 5,
-        retry: 1,
-    });
+      {/* Service Cards Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-4 md:gap-6">
+         {maintenanceServices.map((service) => (
+            <ServiceCard
+                key={service.title}
+                title={service.title}
+                Icon={service.Icon}
+                bgColorClass={service.bgColorClass}
+                href={service.href}
+            />
+         ))}
+         {/* Add more cards or placeholders if needed */}
+      </div>
 
-
-    const handleLogout = () => {
-        logout();
-        navigate('/');
-    };
-
-    const renderRoleDashboard = () => {
-        // --- Use userProfile for role check ---
-        const roleName = userProfile?.role?.name; // Get role name from fetched profile data
-        // ---
-
-        // Display loading state while fetching profile
-        if (isLoading) {
-             return (
-                 <div className="text-center p-8 space-y-3">
-                    <Skeleton className="h-8 w-1/2 mx-auto" />
-                    <Skeleton className="h-4 w-3/4 mx-auto" />
-                    <p className="text-sm text-muted-foreground pt-2">Loading user data...</p>
-                 </div>
-             );
-        }
-
-        // Display error if fetching failed
-        if (isError) {
-             return (
-                 <div className="text-center p-8 text-destructive">
-                     <p className="font-semibold">Error loading dashboard data:</p>
-                     <p className="text-sm">{error instanceof Error ? error.message : 'Unknown error'}</p>
-                 </div>
-             );
-        }
-
-        // Only proceed if profile is loaded
-        if (userProfile) {
-            console.log("User Profile loaded:", userProfile); // Debugging
-            console.log("Role name being checked:", roleName); // Debugging
-
-            switch (roleName) {
-                case 'SSE-Maintenance - MW':
-                case 'SSE-Maintenance - Substation':
-                    return <MaintenanceDashboard />;
-                case 'SSE-Office':
-                    return <OfficeDashboard />;
-                case 'Safety Officer':
-                    return <SafetyDashboard />;
-                default:
-                    return (
-                        <div className="text-center p-8">
-                            <p className="text-lg text-muted-foreground">
-                                Welcome! Your role ('{roleName || 'Unknown'}') is not recognized by the dashboard.
-                            </p>
-                        </div>
-                    );
-            }
-        }
-
-        // Fallback message if profile hasn't loaded for some reason (should be covered by isLoading)
-        return (
-             <div className="text-center p-8">
-                 <p className="text-lg text-muted-foreground">Initializing dashboard...</p>
-             </div>
-        );
-    };
-
-    // Keep this check
-    if (!isAuthenticated && !authUser) {
-        return null;
-    }
-
-    // --- Update Header to use userProfile if available ---
-    const displayEmail = userProfile?.email || authUser?.email || 'N/A';
-    const displayRole = userProfile?.role?.name || authUser?.role?.name || 'Loading...';
-    // ---
-
-    return (
-        <div className="min-h-screen bg-gray-100 p-4">
-            <header className="bg-background shadow-sm p-4 rounded mb-4 flex justify-between items-center">
-                <h1 className="text-xl font-semibold">RWMS Dashboard</h1>
-                <div>
-                     <span className="mr-4 text-sm text-muted-foreground">
-                         Logged in as: {displayEmail} ({displayRole})
-                       </span>
-                     <Button onClick={handleLogout} variant="outline" size="sm">
-                         Logout
-                     </Button>
-                </div>
-            </header>
-
-            <main className="bg-background p-6 rounded shadow-sm min-h-[200px]"> {/* Added min-height */}
-                {renderRoleDashboard()}
-            </main>
-        </div>
-    );
+      {/* Add other sections like tables or charts below */}
+       <div className="mt-8">
+           {/* Placeholder for future tables/data */}
+           <Card>
+               <CardHeader><CardTitle>Recent Activity</CardTitle></CardHeader>
+               <CardContent><p className="text-muted-foreground">Activity log will appear here...</p></CardContent>
+           </Card>
+       </div>
+    </div>
+  );
 };
 
-export default DashboardPage;
+export default MaintenanceDashboard;
