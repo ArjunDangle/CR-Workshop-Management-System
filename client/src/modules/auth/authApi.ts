@@ -1,22 +1,24 @@
 // src/modules/auth/authApi.ts
 import api from '@/lib/api';
-import type { User } from './authStore'; // Import User type from authStore
+// --- Make sure this User type matches the one in authStore.ts ---
+import type { User } from './authStore';
+// ---
 
 interface LoginCredentials {
   email: string;
   password: string;
 }
 
+// Response from /auth/token
 interface LoginResponse {
-  user?: User; // Make user optional as /token endpoint doesn't return it
-  access_token: string; // <-- Change 'token' to 'access_token'
-  token_type: string; // Add token_type if needed elsewhere
+  // User object is NOT returned by /auth/token, so keep it optional or remove
+  user?: User | null;
+  access_token: string;
+  token_type: string;
 }
 
-// Keep the existing loginUser function
 export const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
   try {
-    // NOTE: FastAPI's OAuth2PasswordRequestForm expects 'username' and 'password'
     const formData = new URLSearchParams();
     formData.append('username', credentials.email);
     formData.append('password', credentials.password);
@@ -24,25 +26,23 @@ export const loginUser = async (credentials: LoginCredentials): Promise<LoginRes
     const response = await api.post<LoginResponse>('/auth/token', formData, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
+    // Return the response containing access_token and token_type
     return response.data;
   } catch (error: any) {
-    if (error.response?.data?.detail) { // FastAPI often uses 'detail' for errors
+    if (error.response?.data?.detail) {
       throw new Error(error.response.data.detail);
     }
-    // Fallback error message
     throw new Error('Invalid credentials or server error. Please try again.');
   }
 };
 
-
-// --- Add this new function ---
+// Response from /auth/users/me *does* return the User object
 export const getCurrentUserProfile = async (): Promise<User> => {
   try {
-    // GET request to the protected endpoint
+    // Ensure the response type matches the User interface in authStore
     const response = await api.get<User>('/auth/users/me');
-    return response.data;
+    return response.data; // This should include the nested role object
   } catch (error: any) {
-     // Handle errors, e.g., token expired, network issue
      console.error("Failed to fetch user profile:", error);
      if (error.response?.data?.detail) {
        throw new Error(error.response.data.detail);
@@ -50,4 +50,3 @@ export const getCurrentUserProfile = async (): Promise<User> => {
      throw new Error('Failed to fetch user profile. Please try logging in again.');
   }
 };
-// --- End of new function ---

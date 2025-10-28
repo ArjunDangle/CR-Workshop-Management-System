@@ -1,100 +1,86 @@
+/* src/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    /* Microsoft Design System - Core Colors */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
+    /* Base Colors (Adjusted slightly for target look) */
+    --background: 0 0% 100%; /* White */
+    --foreground: 0 0% 15%; /* Dark Gray */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 0 0% 15%; /* Dark Gray */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 0 0% 15%;
 
-    /* Microsoft Process Cyan - Primary Action Color */
-    --primary: 193 100% 47%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary Color (Example: Using a blue from Microsoft palette) */
+    --primary: 217 91% 60%; /* #3b82f6 - shadcn default blue */
+    --primary-foreground: 0 0% 100%; /* White */
 
-    /* Microsoft Blue 286 - Secondary Action */
-    --secondary: 229 100% 28%;
-    --secondary-foreground: 0 0% 100%;
+    /* Muted/Borders (Lighter grays) */
+    --muted: 0 0% 96.1%; /* Zinc 100 */
+    --muted-foreground: 0 0% 45.1%; /* Zinc 500 */
+    --border: 0 0% 89.8%; /* Zinc 200 */
+    --input: 0 0% 89.8%;
+    --ring: 217 91% 60%; /* Primary color for focus */
 
-    /* Cool Gray Palette */
-    --muted: 0 0% 90%;
-    --muted-foreground: 0 0% 31%;
+    --radius: 0.5rem; /* Slightly larger radius like target */
 
-    --accent: 193 100% 47%;
-    --accent-foreground: 0 0% 100%;
+    /* --- New Sidebar Gradient & Colors --- */
+    --sidebar-gradient-from: 258 70% 55%; /* Start Purple */
+    --sidebar-gradient-to: 300 80% 45%; /* End Purple */
+    --sidebar-bg: hsl(var(--sidebar-gradient-from)); /* Fallback */
+    --sidebar-foreground: 0 0% 100%; /* White text */
+    --sidebar-icon: 0 0% 88%;      /* Lighter White/Gray for icons */
+    --sidebar-hover-bg: 258 70% 60%; /* Slightly Lighter Purple */
+    --sidebar-active-bg: 0 0% 100%; /* White */
+    --sidebar-active-foreground: 258 70% 55%; /* Purple text */
+    --sidebar-border: 0 0% 100% / 0.2; /* White with transparency */
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    /* --- New Navbar Colors --- */
+    --navbar-bg: 0 0% 100%; /* White */
+    --navbar-border: 0 0% 90%; /* Light Gray */
+    --navbar-foreground: 0 0% 25%; /* Dark Gray */
+    --navbar-muted-foreground: 0 0% 50%; /* Medium Gray */
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 193 100% 47%;
+    /* --- New Service Card Backgrounds (Examples) --- */
+    /* Add specific HSL values for desired gradients or solid colors */
+    --service-card-1-bg: 210 90% 55%; /* Blue */
+    --service-card-2-bg: 0 85% 65%;   /* Red */
+    --service-card-3-bg: 90 60% 60%;  /* Lime Green */
+    --service-card-4-bg: 30 90% 65%;  /* Orange */
+    --service-card-5-bg: 260 80% 70%; /* Purple */
+    --service-card-6-bg: 180 70% 50%; /* Teal */
+    --service-card-7-bg: 330 80% 65%; /* Pink */
+    --service-card-8-bg: 50 95% 60%;  /* Yellow */
 
-    --radius: 0.25rem;
+    /* Add HSL values for the gradients in the target image if needed */
+    /* --gradient-user-from: ...; */
+    /* --gradient-user-to: ...; */
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
+    /* Define dark mode colors if needed */
+    /* Example: */
     --background: 0 0% 7%;
-    --foreground: 0 0% 100%;
-
+    --foreground: 0 0% 98%;
     --card: 0 0% 10%;
-    --card-foreground: 0 0% 100%;
+    --card-foreground: 0 0% 98%;
+    /* ... define all other variables for dark mode ... */
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 100%;
+    /* Adjust sidebar dark mode */
+    --sidebar-gradient-from: 258 50% 20%;
+    --sidebar-gradient-to: 300 60% 15%;
+    --sidebar-active-foreground: 0 0% 98%;
+    /* ... etc ... */
 
-    --primary: 193 100% 47%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 229 100% 28%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
-
-    --accent: 193 100% 47%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 193 100% 47%;
-    --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 193 100% 47%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 193 100% 47%;
+    /* Adjust navbar dark mode */
+    --navbar-bg: 0 0% 10%;
+    --navbar-border: 0 0% 20%;
+    /* ... etc ... */
   }
 }
 
@@ -105,15 +91,25 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 300;
-    letter-spacing: -0.02em;
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   }
 
-  input, textarea, select {
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+  input, textarea, select, button {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+  }
+}
+
+/* --- Added Sidebar Gradient Utility --- */
+@layer utilities {
+  .bg-sidebar-gradient {
+    background-color: hsl(var(--sidebar-bg)); /* Fallback */
+    background-image: linear-gradient(to bottom, hsl(var(--sidebar-gradient-from)), hsl(var(--sidebar-gradient-to)));
   }
 }

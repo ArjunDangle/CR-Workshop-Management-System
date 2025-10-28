@@ -1,90 +1,142 @@
 // src/components/layout/Sidebar.tsx
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Video, Settings, LifeBuoy, ChevronLeft } from 'lucide-react';
+import {
+    LayoutDashboard, // Main Dashboard
+    Settings,       // Services & Tasks / Settings (bottom)
+    Users,          // Staff
+    BarChart3,      // Reports (using BarChart as placeholder)
+    MessageSquare,  // Feedbacks (using MessageSquare as placeholder)
+    History,        // History
+    // Import other icons if needed
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
-import indianRailwaysLogoTrain from '@/assets/images/indian_railways_logo_train.png'; // Example logo path
+// Assuming you have a specific, smaller logo for the sidebar
+// import indianRailwaysLogoSmall from '@/assets/images/indian_railways_logo_small.png';
 
-// Define navigation items
+// Define navigation items based on the target image
 const navItems = [
   { href: '/dashboard', label: 'Main Dashboard', Icon: LayoutDashboard },
-  { href: '/services', label: 'Services & Tasks', Icon: Settings }, // Example, adjust routes
+  { href: '/services', label: 'Services & Tasks', Icon: Settings },
   { href: '/staff', label: 'Staff', Icon: Users },
-  { href: '/reports', label: 'Reports', Icon: Video }, // Using Video as placeholder icon
-  { href: '/feedbacks', label: 'Feedbacks', Icon: LifeBuoy }, // Placeholder
-  // Add other items...
+  { href: '/reports', label: 'Reports', Icon: BarChart3 },
+  { href: '/feedbacks', label: 'Feedbacks', Icon: MessageSquare },
+  { href: '/history', label: 'History', Icon: History },
 ];
 
+// Define bottom navigation items
 const bottomNavItems = [
     { href: '/settings', label: 'Settings', Icon: Settings },
 ]
 
 interface SidebarProps {
     isMobileOpen: boolean;
+    closeSidebar: () => void; // Function to close sidebar (used by NavLink clicks on mobile)
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, closeSidebar }) => {
   const location = useLocation();
 
+  const handleLinkClick = () => {
+    // Close the sidebar when a link is clicked on mobile
+    if (window.innerWidth < 1024) { // Tailwind's lg breakpoint
+        closeSidebar();
+    }
+  };
+
   return (
+    // Sidebar container: Fixed position, applies gradient, handles mobile transform
     <aside className={cn(
-        "w-64 bg-sidebar-gradient text-[hsl(var(--sidebar-foreground))] flex flex-col fixed inset-y-0 left-0 z-40 transition-transform duration-300 ease-in-out lg:translate-x-0",
-        isMobileOpen ? 'translate-x-0' : '-translate-x-full' // Mobile open/close
+        "w-64 bg-sidebar-gradient text-[hsl(var(--sidebar-foreground))] flex flex-col",
+        "fixed inset-y-0 left-0 z-40 transition-transform duration-300 ease-in-out lg:translate-x-0",
+        isMobileOpen ? 'translate-x-0 shadow-xl' : '-translate-x-full' // Mobile open/close transition and shadow
     )}>
        {/* Logo Area */}
-      <div className="h-16 flex items-center justify-between border-b border-white/20 px-4 flex-shrink-0">
-         {/* Use your logo */}
-         <img src={indianRailwaysLogoTrain} alt="Indian Railways" className="h-8 w-auto invert brightness-0" />
-         {/* Placeholder for collapse button if needed */}
-         {/* <button className="text-[hsl(var(--sidebar-icon))] hover:text-white lg:block hidden">
-            <ChevronLeft />
-         </button> */}
+      <div className="h-16 flex items-center border-b border-[hsl(var(--sidebar-border))] px-4 flex-shrink-0">
+         {/* Placeholder Logo Text - Replace with your actual logo */}
+         {/* <img src={indianRailwaysLogoSmall} alt="RWMS" className="h-8 w-auto" /> */}
+         <span className="text-xl font-bold tracking-tight text-white">RWMS LOGO</span>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-grow px-4 py-6 space-y-2 overflow-y-auto">
+      {/* Main Navigation */}
+      <nav className="flex-grow px-3 py-4 space-y-1.5 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.href || (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
+          // Check if the current path exactly matches or starts with the item's path
+          // Special case for dashboard to only match exactly
+          const baseIsActive = item.href === '/dashboard'
+              ? location.pathname === item.href
+              : location.pathname.startsWith(item.href);
+
           return (
             <NavLink
               key={item.label}
               to={item.href}
-              end={item.href === '/dashboard'}
-              className={({ isActive: navIsActive }) => // Use NavLink's isActive
+              end={item.href === '/dashboard'} // Ensures exact match for root dashboard
+              onClick={handleLinkClick} // Close sidebar on mobile click
+              // Apply styles based on isActive state provided by NavLink
+              className={({ isActive = baseIsActive }) => // Use NavLink's isActive
                 cn(
-                  "flex items-center px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-150 group",
-                  navIsActive
-                    ? 'bg-[hsl(var(--sidebar-active-bg))] text-[hsl(var(--sidebar-active-foreground))] shadow-inner'
-                    : 'text-[hsl(var(--sidebar-icon))] hover:text-white hover:bg-[hsl(var(--sidebar-hover-bg))]'
+                  "flex items-center px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-150 group relative", // Added relative for potential ::before pseudo-element
+                  isActive
+                    ? 'bg-[hsl(var(--sidebar-active-bg))] text-[hsl(var(--sidebar-active-foreground))] font-semibold shadow-inner' // Active state: white bg, purple text, bold
+                    : 'text-[hsl(var(--sidebar-icon))] hover:text-white hover:bg-[hsl(var(--sidebar-hover-bg))]' // Inactive state: light icon/text, purple hover
                 )
               }
             >
-              <item.Icon className={cn("mr-3 h-5 w-5 flex-shrink-0 transition-colors", navIsActive ? "text-[hsl(var(--sidebar-active-foreground))]" : "text-[hsl(var(--sidebar-icon))] group-hover:text-white")} />
-              <span className={cn(navIsActive ? "text-[hsl(var(--sidebar-active-foreground))]" : "text-white")}>{item.label}</span>
+              {/* Render icon and label, adjusting color based on active state */}
+              {({ isActive = baseIsActive }) => (
+                <>
+                  <item.Icon className={cn(
+                      "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
+                      isActive
+                        ? "text-[hsl(var(--sidebar-active-foreground))]" // Purple icon when active
+                        : "text-[hsl(var(--sidebar-icon))] group-hover:text-white" // Light icon, white on hover
+                    )}
+                    strokeWidth={isActive ? 2 : 1.5} // Make icon slightly bolder when active
+                  />
+                  <span className={cn(
+                      isActive
+                        ? "text-[hsl(var(--sidebar-active-foreground))]" // Purple text when active
+                        : "text-white" // White text when inactive
+                    )}
+                  >
+                      {item.label}
+                  </span>
+                  {/* Optional: Add badge like in target image */}
+                  {item.label === 'Feedbacks' && (
+                     <span className="ml-auto inline-block py-0.5 px-2 text-xs rounded bg-red-500 text-white">2</span>
+                  )}
+                </>
+              )}
             </NavLink>
           );
         })}
       </nav>
 
-        {/* Bottom Navigation */}
-        <div className="px-4 py-4 border-t border-white/20 mt-auto flex-shrink-0">
+        {/* Bottom Navigation (Settings) */}
+        <div className="px-3 py-4 border-t border-[hsl(var(--sidebar-border))] mt-auto flex-shrink-0">
              {bottomNavItems.map((item) => {
-                 const isActive = location.pathname.startsWith(item.href);
+                 const baseIsActive = location.pathname.startsWith(item.href);
                  return (
                     <NavLink
                         key={item.label}
                         to={item.href}
-                         className={({ isActive: navIsActive }) =>
+                        onClick={handleLinkClick}
+                        className={({ isActive = baseIsActive }) =>
                             cn(
                               "flex items-center px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-150 group",
-                              navIsActive
-                                ? 'bg-[hsl(var(--sidebar-active-bg))] text-[hsl(var(--sidebar-active-foreground))] shadow-inner'
+                              isActive
+                                ? 'bg-[hsl(var(--sidebar-active-bg))] text-[hsl(var(--sidebar-active-foreground))] font-semibold shadow-inner'
                                 : 'text-[hsl(var(--sidebar-icon))] hover:text-white hover:bg-[hsl(var(--sidebar-hover-bg))]'
                             )
                           }
                     >
-                         <item.Icon className={cn("mr-3 h-5 w-5 flex-shrink-0 transition-colors", navIsActive ? "text-[hsl(var(--sidebar-active-foreground))]" : "text-[hsl(var(--sidebar-icon))] group-hover:text-white")} />
-                         <span className={cn(navIsActive ? "text-[hsl(var(--sidebar-active-foreground))]" : "text-white")}>{item.label}</span>
+                         {({ isActive = baseIsActive }) => (
+                            <>
+                                <item.Icon className={cn("mr-3 h-5 w-5 flex-shrink-0 transition-colors", isActive ? "text-[hsl(var(--sidebar-active-foreground))]" : "text-[hsl(var(--sidebar-icon))] group-hover:text-white")} strokeWidth={isActive ? 2 : 1.5} />
+                                <span className={cn(isActive ? "text-[hsl(var(--sidebar-active-foreground))]" : "text-white")}>{item.label}</span>
+                            </>
+                         )}
                     </NavLink>
                  );
              })}
