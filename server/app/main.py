@@ -1,8 +1,12 @@
+# FILE: server/app/main.py
 # app/main.py
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from app.modules.auth.auth_router import router as auth_router
+# --- Import the new permit router ---
+from app.modules.permit.permit_router import router as permit_router
+# ---
 # --- Import settings ---
 from app.core.config import settings
 # ---
@@ -27,7 +31,8 @@ app.add_middleware(
     CORSMiddleware,
     # --- Use setting here ---
     allow_origins=settings.allowed_origins,
-    # ---
+ 
+#    # ---
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,6 +43,10 @@ async def read_root():
     return {"message": "Welcome to the Railway Workshop Management System API!"}
 
 app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+
+# --- Add the new permit router ---
+app.include_router(permit_router, prefix="/permits", tags=["Permit Management"])
+# ---
 
 @app.get("/health", tags=["Health Check"])
 async def health_check():
