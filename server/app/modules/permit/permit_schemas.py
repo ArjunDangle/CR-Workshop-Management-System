@@ -194,3 +194,16 @@ class PermitRead(BaseModel):
 # --- Update Schemas for Actions ---
 class PermitApprove(BaseModel):
     approver_remarks: str = Field(..., max_length=500, examples=["Ensure all safety gear is worn."])
+
+
+# --- NEW: SCHEMAS FOR PHASES 3 & 4 ---
+
+class PermitExtensionRequest(BaseModel):
+    """Schema for requesting a permit extension."""
+    extension_reason: str = Field(..., min_length=10, max_length=500, examples=["Job taking longer than expected."])
+    # --- FIX: Use datetime.datetime ---
+    requested_new_end_time: datetime.datetime
+
+# Note: For actions like activate, close, and approve_extension,
+# we don't need a request body, so no new schemas are required for them.
+

@@ -139,6 +139,14 @@ export interface Permit {
   approved_at: string | null;
   approver_remarks: string | null;
   approver: User | null;
+
+  // --- NEW FIELDS (Phases 3 & 4) ---
+  actual_start_time: string | null; // ISO datetime string
+  actual_end_time: string | null; // ISO datetime string
+  extension_requested: boolean | null;
+  extension_reason: string | null;
+  requested_new_end_time: string | null; // ISO datetime string
+  // --- END NEW FIELDS ---
   
   ppes: PermitPPE[];
   attendees: PermitAttendee[];
@@ -148,3 +156,16 @@ export interface Permit {
 export interface PermitApproveData {
   approver_remarks: string;
 }
+
+// --- NEW: Zod Schema and Type for Extension Request ---
+// This matches the PermitExtensionRequest schema in permit_schemas.py
+export const permitExtensionRequestSchema = z.object({
+  extension_reason: z.string().min(1, "An extension reason is required."),
+  // The backend expects a full datetime string
+  requested_new_end_time: z.string().refine(val => !isNaN(Date.parse(val)), {
+    message: "Invalid datetime string",
+  }),
+});
+
+// This is the exported type that was missing
+export type PermitExtensionRequestData = z.infer<typeof permitExtensionRequestSchema>;

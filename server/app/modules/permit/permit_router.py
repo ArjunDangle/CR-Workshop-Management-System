@@ -122,3 +122,84 @@ def approve_permit_action(
         permit_data=permit_data, 
         approver=current_user
     )
+
+# --- NEW: ENDPOINTS FOR PHASES 3 & 4 ---
+
+@router.put(
+    "/{permit_id}/activate", 
+    response_model=permit_schemas.PermitRead,
+    summary="Activate an approved permit (Permittee)"
+)
+def activate_permit_action(
+    permit_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Activate a permit. This can only be done by the **original permittee**
+    on a permit that is 'Approved'.
+    Moves the permit status to 'Active'.
+    """
+    return permit_service.activate_permit(db=db, permit_id=permit_id, user=current_user)
+
+@router.put(
+    "/{permit_id}/close", 
+    response_model=permit_schemas.PermitRead,
+    summary="Close an active permit (Permittee)"
+)
+def close_permit_action(
+    permit_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Close a permit. This can only be done by the **original permittee**
+    on a permit that is 'Active'.
+    Moves the permit status to 'Closed'.
+    """
+    return permit_service.close_permit(db=db, permit_id=permit_id, user=current_user)
+
+@router.post(
+    "/{permit_id}/request-extension", 
+    response_model=permit_schemas.PermitRead,
+    summary="Request a time extension (Permittee)"
+)
+def request_extension_action(
+    permit_id: UUID,
+    extension_data: permit_schemas.PermitExtensionRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Request an extension for an 'Active' permit. This can only be done
+    by the **original permittee**.
+    Sets the `extension_requested` flag to true.
+    """
+    return permit_service.request_permit_extension(
+        db=db, 
+        permit_id=permit_id, 
+        extension_data=extension_data, 
+        user=current_user
+    )
+
+@router.put(
+    "/{permit_id}/approve-extension", 
+    response_model=permit_schemas.PermitRead,
+    summary="Approve a time extension (SSE-Office)"
+)
+def approve_extension_action(
+    permit_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """
+    Approve an extension request. This can only be done by an **SSE-Office** user
+    on a permit that is 'Active' and has a pending request.
+    Updates the permit's finish time and clears the extension flag.
+    """
+    return permit_service.approve_permit_extension(
+        db=db, 
+        permit_id=permit_id, 
+        authorizer=current_user
+    )
+

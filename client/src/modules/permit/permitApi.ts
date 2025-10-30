@@ -7,7 +7,9 @@ import api from '@/lib/api';
 import type {
   Permit,
   PermitCreateData,
-  PermitApproveData
+  PermitApproveData,
+  // --- NEW: Import extension request type ---
+  PermitExtensionRequestData
 } from './permitTypes';
 
 // --- API Functions ---
@@ -58,6 +60,7 @@ export const getPermitById = async (permitId: string): Promise<Permit> => {
  */
 export const authorizePermit = async (permitId: string): Promise<Permit> => {
   try {
+    // No request body is needed for authorization
     const response = await api.put<Permit>(`/permits/${permitId}/authorize`);
     return response.data;
   } catch (error: any) {
@@ -78,3 +81,58 @@ export const approvePermit = async (permitId: string, data: PermitApproveData): 
     throw new Error(error.response?.data?.detail || "Failed to approve permit");
   }
 };
+
+// --- NEW: FUNCTIONS FOR PHASES 3 & 4 ---
+
+/**
+ * Activates an 'Approved' permit (Action for Permittee).
+ */
+export const activatePermit = async (permitId: string): Promise<Permit> => {
+  try {
+    const response = await api.put<Permit>(`/permits/${permitId}/activate`);
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to activate permit ${permitId}:`, error);
+    throw new Error(error.response?.data?.detail || "Failed to activate permit");
+  }
+};
+
+/**
+ * Closes an 'Active' permit (Action for Permittee).
+ */
+export const closePermit = async (permitId: string): Promise<Permit> => {
+  try {
+    const response = await api.put<Permit>(`/permits/${permitId}/close`);
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to close permit ${permitId}:`, error);
+    throw new Error(error.response?.data?.detail || "Failed to close permit");
+  }
+};
+
+/**
+ * Requests an extension for an 'Active' permit (Action for Permittee).
+ */
+export const requestExtension = async (permitId: string, data: PermitExtensionRequestData): Promise<Permit> => {
+  try {
+    const response = await api.post<Permit>(`/permits/${permitId}/request-extension`, data);
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to request extension for permit ${permitId}:`, error);
+    throw new Error(error.response?.data?.detail || "Failed to request extension");
+  }
+};
+
+/**
+ * Approves an extension request (Action for SSE-Office).
+ */
+export const approveExtension = async (permitId: string): Promise<Permit> => {
+  try {
+    const response = await api.put<Permit>(`/permits/${permitId}/approve-extension`);
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to approve extension for permit ${permitId}:`, error);
+    throw new Error(error.response?.data?.detail || "Failed to approve extension");
+  }
+};
+

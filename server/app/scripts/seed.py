@@ -1,5 +1,20 @@
 # scripts/seed.py
 import uuid
+import sys  # <-- ADD THIS
+import os   # <-- ADD THIS
+
+# --- ADD THIS BLOCK TO FIX THE ModuleNotFoundError ---
+# Get the absolute path of the 'server' directory
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+APP_DIR = os.path.dirname(SCRIPT_DIR)
+SERVER_DIR = os.path.dirname(APP_DIR)
+
+# Add the 'server' directory to the Python path
+# This allows the script to find the 'app' module
+if SERVER_DIR not in sys.path:
+    sys.path.insert(0, SERVER_DIR)
+# --- END OF FIX ---
+
 from sqlmodel import Session, select
 from app.core.database import get_db_session
 from app.models import Role, User
@@ -38,6 +53,25 @@ USERS_DATA = [
         "role_name": "Safety Officer",
         "full_name": "Safety Test User",
     },
+    # --- ADD THE USERS YOU REQUESTED ---
+    {
+        "email": "mw_user@example.com",
+        "password": "password123",
+        "role_name": "SSE-Maintenance - MW",
+        "full_name": "MW User",
+    },
+    {
+        "email": "substation_user@example.com",
+        "password": "password123",
+        "role_name": "SSE-Maintenance - Substation",
+        "full_name": "Substation User",
+    },
+    {
+        "email": "office_user@example.com",
+        "password": "password123",
+        "role_name": "SSE-Office",
+        "full_name": "Office User",
+    }
 ]
 
 
