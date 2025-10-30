@@ -1,4 +1,3 @@
-# FILE: server/app/models.py
 # app/models.py
 from typing import List, Optional
 from uuid import UUID, uuid4
@@ -206,6 +205,14 @@ class PermitBase(SQLModel):
     approver_id: Optional[UUID] = Field(default=None, foreign_key="user.id", index=True)
     approved_at: Optional[datetime.datetime] = Field(default=None)
     approver_remarks: Optional[str] = Field(default=None, max_length=500)
+    
+    # --- NEW FIELDS (Phases 3 & 4) ---
+    actual_start_time: Optional[datetime.datetime] = Field(default=None)
+    actual_end_time: Optional[datetime.datetime] = Field(default=None)
+    extension_requested: Optional[bool] = Field(default=False, index=True)
+    extension_reason: Optional[str] = Field(default=None, max_length=500)
+    requested_new_end_time: Optional[datetime.datetime] = Field(default=None)
+    # --- END NEW FIELDS ---
 
 
 class Permit(PermitBase, table=True):

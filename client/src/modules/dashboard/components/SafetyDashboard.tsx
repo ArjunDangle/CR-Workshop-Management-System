@@ -23,9 +23,11 @@ const SafetyDashboard = () => {
   return (
     <div className="space-y-8">
       <div className="text-left">
+        {/* --- THIS IS THE FIX --- */}
         <h1 className="text-3xl font-semibold tracking-tight text-gray-700">
           Welcome, Safety Officer!
         </h1>
+        {/* --- END FIX --- */}
       </div>
 
        <h2 className="text-xl font-medium text-gray-600">Safety Services</h2>
@@ -44,8 +46,10 @@ const SafetyDashboard = () => {
 
        <div className="mt-10">
            <Card>
+                {/* --- THIS IS THE FIX --- */}
                <CardHeader><CardTitle className="text-lg font-medium">Recent Incidents</CardTitle></CardHeader>
                <CardContent><p className="text-muted-foreground">List of recent incidents will appear here...</p></CardContent>
+                {/* --- END FIX --- */}
            </Card>
        </div>
     </div>
@@ -53,3 +57,4 @@ const SafetyDashboard = () => {
 };
 
 export default SafetyDashboard;
+
