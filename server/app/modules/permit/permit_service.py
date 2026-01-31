@@ -2,16 +2,29 @@
 """
 Service Layer for the Permit Management Module.
 Contains all business logic for permit operations, including creation, approval,
-activation, closure, and extension handling (Phases 1, 3, and 4).
+activation, closure, and extension handling.
+
+PHASE 2 UPDATE:
+- Integrates with Machine Service for LOTO (Lock Out / Tag Out).
+- Automated Criticality Checks based on Maintenance Plans.
 """
-from sqlmodel import Session
+from sqlmodel import Session, select
 from uuid import UUID
 from typing import List
 import datetime
+from datetime import timezone
 from fastapi import HTTPException, status
+
+# Models
 from app.models import User, Permit, PermitPPE, PermitAttendee
+from app.modules.machine.machine_models import MaintenanceTask
+
+# Repositories and Schemas
 from app.modules.permit import permit_repo, permit_schemas
-from datetime import timezone # Explicitly import timezone
+
+# --- PHASE 2 INTEGRATION: Machine Service ---
+from app.modules.machine import machine_service
+
 
 # --- Helper to determine permit type from user role ---
 def _get_permit_type_for_user(user: User) -> str:
@@ -33,30 +46,47 @@ def _get_permit_type_for_user(user: User) -> str:
 def create_permit(db: Session, permit_data: permit_schemas.PermitCreate, permittee: User) -> Permit:
     """
     Creates a new permit, associated PPEs, and attendees.
-    The permittee is the currently logged-in user.
-    This function correctly constructs the parent Permit object and its
-    child relationships before passing them to the repository.
+    
+    PHASE 2 LOGIC:
+    1. Links the Permit to a specific Machine and Maintenance Plan (if provided).
+    2. Automatically flags the permit as 'is_critical' if the selected 
+       Maintenance Plan contains any critical tasks.
     """
     # 1. Determine permit type from the user's role.
     permit_type = _get_permit_type_for_user(permittee)
 
-    # 2. Create the main Permit object from the flat fields of the request data.
+    # 2. Criticality Logic (Phase 2)
+    # If a maintenance plan is selected, check if it contains any "Critical" tasks.
+    is_critical = False
+    if permit_data.maintenance_plan_id:
+        statement = select(MaintenanceTask).where(
+            MaintenanceTask.plan_id == permit_data.maintenance_plan_id,
+            MaintenanceTask.is_critical == True
+        )
+        # If even one critical task exists, the whole permit is Critical.
+        if db.execute(statement).first():
+            is_critical = True
+
+    # 3. Create the main Permit object from the flat fields of the request data.
+    # We explicitly map Phase 2 fields here.
     new_permit = Permit.model_validate(
         permit_data.model_dump(exclude={"ppes", "attendees"}),
         update={
             "permit_type": permit_type,
             "permittee_id": permittee.id,
-            "status": "Pending Authorization"
+            "status": "Pending Authorization",
+            # Phase 2 Fields
+            "machine_id": permit_data.machine_id,
+            "maintenance_plan_id": permit_data.maintenance_plan_id,
+            "is_critical": is_critical
         }
     )
 
-    # 3. Instantiate the child SQLModel objects and assign them to the relationship.
-    #    By creating instances this way, we let the ORM handle the foreign key
-    #    assignment during the database commit.
+    # 4. Instantiate the child SQLModel objects
     new_permit.ppes = [PermitPPE(**p.model_dump()) for p in permit_data.ppes]
     new_permit.attendees = [PermitAttendee(**a.model_dump()) for a in permit_data.attendees]
 
-    # 4. Use the simplified repository function to save the entire object graph.
+    # 5. Save via Repository
     try:
         return permit_repo.create_permit(db=db, permit=new_permit)
     except Exception as e:
@@ -86,7 +116,7 @@ def get_permits_for_user(db: Session, user: User) -> List[Permit]:
     Fetches a list of permits relevant to the current user's role.
     """
     role_name = user.role.name
-    print(f"Fetching permits for user {user.email} with role {role_name}")
+    # print(f"Fetching permits for user {user.email} with role {role_name}")
 
     if role_name.startswith("SSE-Maintenance"):
         # Permittee: Sees all permits they initiated
@@ -162,12 +192,16 @@ def approve_permit(db: Session, permit_id: UUID, permit_data: permit_schemas.Per
     updated_permit = permit_repo.update_permit(db=db, permit=permit)
     return updated_permit
 
-# --- SERVICE FUNCTIONS FOR PHASES 3 & 4 ---
+# --- ACTIONS & EXTENSIONS (PHASE 2 UPDATED) ---
 
 def activate_permit(db: Session, permit_id: UUID, user: User) -> Permit:
     """
     Activates a permit (Permittee action).
-    Sets the status to 'Active' and records the start time (Phase 3).
+    
+    PHASE 2 LOGIC (LOTO TRIGGER):
+    1. Sets permit status to 'Active'.
+    2. If permit is linked to a Machine, calls machine_service to LOCK it
+       (Status -> UNDER_MAINTENANCE).
     """
     permit = get_permit_by_id(db=db, permit_id=permit_id)
 
@@ -185,7 +219,7 @@ def activate_permit(db: Session, permit_id: UUID, user: User) -> Permit:
             detail=f"Permit must be 'Approved' to be activated. Current status: {permit.status}"
         )
         
-    # 3. Check for extension request: Cannot activate if extension is pending approval.
+    # 3. Check for extension request
     if permit.extension_requested:
          raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -197,12 +231,21 @@ def activate_permit(db: Session, permit_id: UUID, user: User) -> Permit:
     permit.actual_start_time = datetime.datetime.now(timezone.utc)
     
     updated_permit = permit_repo.update_permit(db=db, permit=permit)
+    
+    # --- LOTO ENFORCEMENT ---
+    if updated_permit.machine_id:
+        machine_service.lock_machine_status(db, updated_permit.machine_id)
+    
     return updated_permit
 
 def close_permit(db: Session, permit_id: UUID, user: User) -> Permit:
     """
     Closes a permit (Permittee action).
-    Sets the status to 'Closed' and records the end time (Phase 3).
+    
+    PHASE 2 LOGIC (LOTO RELEASE):
+    1. Sets permit status to 'Closed'.
+    2. If permit is linked to a Machine, calls machine_service to UNLOCK it
+       (Status -> OPERATIONAL).
     """
     permit = get_permit_by_id(db=db, permit_id=permit_id)
 
@@ -232,42 +275,42 @@ def close_permit(db: Session, permit_id: UUID, user: User) -> Permit:
     permit.actual_end_time = datetime.datetime.now(timezone.utc)
     
     updated_permit = permit_repo.update_permit(db=db, permit=permit)
+    
+    # --- LOTO RELEASE ---
+    if updated_permit.machine_id:
+        machine_service.unlock_machine_status(db, updated_permit.machine_id)
+
     return updated_permit
 
 def request_permit_extension(db: Session, permit_id: UUID, extension_data: permit_schemas.PermitExtensionRequest, user: User) -> Permit:
     """
-    Requests an extension for an 'Active' permit (Permittee action) (Phase 4).
+    Requests an extension for an 'Active' permit (Permittee action).
     Sets the extension flags and requested new end time.
     """
     permit = get_permit_by_id(db=db, permit_id=permit_id)
 
-    # 1. Check permissions: Only the original permittee can request.
+    # 1. Check permissions
     if permit.permittee_id != user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only the user who initiated the permit can request an extension."
         )
 
-    # 2. Check status: Must be 'Active'.
+    # 2. Check status
     if permit.status != "Active":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Permit must be 'Active' to request an extension. Current status: {permit.status}"
         )
         
-    # 3. Check if already requested: Prevent duplicate requests.
+    # 3. Check if already requested
     if permit.extension_requested:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="An extension has already been requested for this permit."
         )
         
-    # 4. Check new end time: Must be after the original finish time.
-    # Note: finish_time in the DB is a datetime.time object, finish_date is a datetime.date object.
-    # requested_new_end_time from the client is a full datetime object.
-    
-    # Simple check: Ensure the new time is strictly in the future relative to the current planned finish date/time.
-    # Construct the existing finish datetime for comparison
+    # 4. Check new end time logic
     try:
         if permit.finish_date and permit.finish_time:
             current_finish_datetime = datetime.datetime.combine(permit.finish_date, permit.finish_time, tzinfo=timezone.utc)
@@ -277,10 +320,9 @@ def request_permit_extension(db: Session, permit_id: UUID, extension_data: permi
                     detail="Requested new end time must be later than the current permit finish date/time."
                 )
     except Exception:
-        # If conversion fails due to missing data (unlikely if original form validation passed)
         pass 
 
-    # 5. Update permit: Set the extension fields.
+    # 5. Update permit
     permit.extension_requested = True
     permit.extension_reason = extension_data.extension_reason
     permit.requested_new_end_time = extension_data.requested_new_end_time
@@ -290,19 +332,19 @@ def request_permit_extension(db: Session, permit_id: UUID, extension_data: permi
 
 def approve_permit_extension(db: Session, permit_id: UUID, authorizer: User) -> Permit:
     """
-    Approves an extension request (SSE-Office action) (Phase 4).
+    Approves an extension request (SSE-Office action).
     Updates the permit's finish time and clears the extension flags.
     """
     permit = get_permit_by_id(db=db, permit_id=permit_id)
 
-    # 1. Check permissions: Only 'SSE-Office' can approve extensions.
+    # 1. Check permissions
     if authorizer.role.name != "SSE-Office":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only 'SSE-Office' users can approve permit extensions."
         )
 
-    # 2. Check status: Must be 'Active' AND have a request pending.
+    # 2. Check status
     if permit.status != "Active" or not permit.extension_requested:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -315,17 +357,14 @@ def approve_permit_extension(db: Session, permit_id: UUID, authorizer: User) -> 
             detail="Cannot approve extension: requested new end time is missing."
         )
 
-    # 3. Update permit: Apply the new end time/date.
-    # The requested_new_end_time is a full datetime, we extract date and time components.
+    # 3. Update permit dates
     permit.finish_date = permit.requested_new_end_time.date()
     permit.finish_time = permit.requested_new_end_time.time()
     
-    # Clear extension flags and status fields
+    # Clear extension flags
     permit.extension_requested = False
     permit.extension_reason = None
     permit.requested_new_end_time = None
-    
-    # Permit remains 'Active'
     
     updated_permit = permit_repo.update_permit(db=db, permit=permit)
     return updated_permit

@@ -6,6 +6,9 @@ from alembic import context
 import os
 import sys
 from sqlmodel import SQLModel
+from app import models  # This loads User, Role, Permit models
+from app.modules.machine import machine_models # THIS LINE IS THE FIX
+
 # Add the 'app' directory to the system path so we can import 'models'
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from app import models

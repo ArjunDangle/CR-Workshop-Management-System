@@ -1,6 +1,8 @@
 from sqlmodel import Session, select
 from typing import List
-from app.modules.machine.machine_models import Machine
+from fastapi import HTTPException, status
+from app.modules.machine.machine_models import Machine, MaintenancePlan, MaintenanceTask
+from uuid import UUID
 
 def get_all_machines(db: Session) -> List[Machine]:
     """Retrieve all physical assets in the workshop."""
@@ -10,3 +12,50 @@ def get_all_machines(db: Session) -> List[Machine]:
 def get_machine_by_asset_id(db: Session, asset_id: str) -> Machine | None:
     statement = select(Machine).where(Machine.asset_id == asset_id)
     return db.execute(statement).scalar_one_or_none()
+
+def get_machine_checklist(db: Session, machine_id: UUID) -> List[MaintenanceTask]:
+    """
+    Fetches the Standard Operating Procedure (SOP) checklist for a specific machine.
+    Logic: Machine -> MachineType -> MaintenancePlan -> Tasks
+    """
+    machine = db.get(Machine, machine_id)
+    if not machine:
+        raise HTTPException(status_code=404, detail="Machine not found")
+
+    # Fetch the default plan for this machine type (Simplified logic for Phase 2)
+    # In a full system, you might select *which* plan (Weekly/Monthly)
+    statement = select(MaintenancePlan).where(MaintenancePlan.machine_type_id == machine.type_id)
+    plan = db.execute(statement).scalars().first()
+
+    if not plan:
+        return []
+
+    # Fetch tasks linked to this plan
+    task_statement = select(MaintenanceTask).where(MaintenanceTask.plan_id == plan.id)
+    return db.execute(task_statement).scalars().all()
+
+def lock_machine_status(db: Session, machine_id: UUID):
+    """
+    LOTO ENFORCEMENT: Hard-locks the machine status in the DB.
+    Triggered when a Permit becomes ACTIVE.
+    """
+    machine = db.get(Machine, machine_id)
+    if machine:
+        print(f"🔒 LOTO TRIGGER: Locking Machine {machine.asset_id} (Under Maintenance)")
+        machine.status = "UNDER_MAINTENANCE"
+        db.add(machine)
+        db.commit()
+        db.refresh(machine)
+
+def unlock_machine_status(db: Session, machine_id: UUID):
+    """
+    LOTO RELEASE: Resets the machine status.
+    Triggered when a Permit becomes CLOSED.
+    """
+    machine = db.get(Machine, machine_id)
+    if machine:
+        print(f"🔓 LOTO RELEASE: Unlocking Machine {machine.asset_id} (Operational)")
+        machine.status = "OPERATIONAL"
+        db.add(machine)
+        db.commit()
+        db.refresh(machine)

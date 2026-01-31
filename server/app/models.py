@@ -7,6 +7,7 @@ import datetime
 
 from sqlmodel import Field, Relationship, SQLModel 
 from sqlalchemy import Column, Date, Time
+from app.modules.machine.machine_models import Machine, MaintenancePlan
 
 
 # --- Role Model ---
@@ -212,6 +213,10 @@ class PermitBase(SQLModel):
     extension_requested: Optional[bool] = Field(default=False, index=True)
     extension_reason: Optional[str] = Field(default=None, max_length=500)
     requested_new_end_time: Optional[datetime.datetime] = Field(default=None)
+    
+    machine_id: Optional[UUID] = Field(default=None, foreign_key="machine.id", index=True)
+    maintenance_plan_id: Optional[UUID] = Field(default=None, foreign_key="maintenanceplan.id")
+    is_critical: bool = Field(default=False) # Logic: True if any SOP task is critical
     # --- END NEW FIELDS ---
 
 
@@ -235,6 +240,13 @@ class Permit(PermitBase, table=True):
     # --- NEW Relationships to related tables ---
     ppes: List["PermitPPE"] = Relationship(back_populates="permit")
     attendees: List["PermitAttendee"] = Relationship(back_populates="permit")
+    
+    machine: Optional["Machine"] = Relationship(
+        sa_relationship_kwargs={"primaryjoin": "Permit.machine_id==Machine.id", "lazy": "selectin"}
+    )
+    maintenance_plan: Optional["MaintenancePlan"] = Relationship(
+        sa_relationship_kwargs={"primaryjoin": "Permit.maintenance_plan_id==MaintenancePlan.id", "lazy": "selectin"}
+    )
 # --- END NEW ---
 
 # --- Machines & Plants Module ---
