@@ -1,0 +1,278 @@
+# Railway Management System
+
+### **Project Deep Dive: The Railway Workshop Management System (RWMS)**
+
+### **1.0 Executive Summary: The Vision**
+
+The Railway Workshop Management System (RWMS) is an enterprise-grade software platform designed to fundamentally modernize the operational and safety management of a Central Railway workshop. At its core, this project is about a paradigm shift: moving from legacy, paper-based, and fragmented processes to a single, centralized, and intelligent digital ecosystem.
+
+The initial and most critical objective is the development of a world-class **Safety Management System**. This system will not merely be a record-keeping tool; it will be an active, real-time operational platform that enforces safety protocols, provides complete visibility into workshop activities, and ensures ironclad regulatory compliance. By building this robust safety foundation, we create the backbone upon which all future workshop management modules (asset tracking, inventory, production planning) can be built.
+
+### **2.0 The Problem: The Pains of the Present**
+
+To understand the RWMS, one must first understand the challenges it is designed to solve. A typical railway workshop operates with a complex web of processes that are often:
+
+- **Manual and Paper-Based:** Work permits are physical documents, machine maintenance logs are kept in physical ledgers, and incident reports are filled out on paper forms. This is slow, prone to data loss, difficult to search, and generates immense administrative overhead.
+- **Information Silos:** Data is fragmented. Machine maintenance records are with one department, contractor details with another, and safety incident reports with a third. There is no single, unified view of the workshop's operational status.
+- **Lack of Real-Time Visibility:** Management cannot get an immediate, accurate picture of the workshop floor. It's difficult to know which machines are operational, where contractors are working, which permits are active, or if a safety incident has just occurred.
+- **Compliance and Audit Burdens:** Preparing for a safety audit is a monumental task of gathering, organizing, and verifying mountains of paperwork. Proving compliance is reactive and labor-intensive, rather than proactive and automatic.
+- **Operational Inefficiencies:** Simple processes, like authorizing a contractor to begin repair work, can be delayed for hours due to the need for physical signatures and manual verification of credentials and permits.
+
+### **3.0 The Solution: A Unified Digital Command Center**
+
+The RWMS tackles these problems head-on by becoming the workshop's central nervous system. It is a **single source of truth** that provides:
+
+- **Digital Workflows:** All processes, from issuing a work permit to reporting an incident, are handled through structured digital forms and approval chains.
+- **A Centralized Database:** All information about machines, personnel, contractors, incidents, and permits is stored in one secure, relational database.
+- **Real-Time Dashboards:** Role-specific dashboards provide users with immediate access to the information they need to do their jobs safely and efficiently.
+- **Role-Based Access Control (RBAC):** A sophisticated, hierarchical user model ensures that every user—from a maintenance engineer to a safety officer—sees only the data and functionalities relevant to their role, guaranteeing data security and reducing complexity.
+- **Auditable Digital Records:** Every action in the system is logged and timestamped, creating an unimpeachable digital record that makes safety audits simple and transparent.
+
+### **4.0 Detailed Functional Breakdown: The System Modules**
+
+The RWMS is composed of a series of tightly integrated modules.
+
+1. **Machine & Plant Management:**
+    - **Purpose:** To serve as the definitive digital registry for every piece of machinery and plant equipment in the workshop.
+    - **Key Functionalities:**
+        - **Digital Asset Log:** A detailed profile for each machine, including make, model, commissioning date, and technical specifications.
+        - **Maintenance Scheduling:** Manages and logs all planned preventive maintenance (PPM) and records all breakdown maintenance activities. It tracks history and schedules future work.
+        - **Live Status Tracking:** Real-time status updates ("Operational," "Under Maintenance," "Out of Service") visible across the system.
+        - **Safety & Performance Records:** A log of all mandatory safety inspections, performance tests, and calibration records.
+2. **Permit Management:**
+    - **Purpose:** To enforce a rigorous, digital "permit-to-work" system, eliminating unauthorized work and ensuring all preconditions for a task are met.
+    - **Key Functionalities:**
+        - **Digital Permit Creation & Approval:** Standardized forms for different types of work (e.g., Hot Work, Electrical, Working at Height).
+        - **Multi-Level Approval Workflow:** Permits are digitally routed to the correct authorities (e.g., SSE, Safety Officer) for review and approval.
+        - **Linkage to Assets & Personnel:** Permits are explicitly linked to the specific machine they authorize work on and the contractors/staff assigned to the task.
+        - **Real-Time Permit Dashboard:** A view of all active, pending, and expired permits in the workshop.
+3. **Incident Management:**
+    - **Purpose:** To ensure that every safety-related event, no matter how minor, is logged, investigated, and learned from.
+    - **Key Functionalities:**
+        - **Comprehensive Reporting:** Forms to log all types of incidents, including injuries, property damage, near misses, and unsafe conditions.
+        - **Investigation Workflow:** A structured process to assign investigators, gather evidence (including photo uploads), and determine the root cause.
+        - **Corrective & Preventive Action (CAPA) Tracking:** Manages the implementation and verification of actions taken to prevent recurrence.
+4. **Contract Management:**
+    - **Purpose:** To manage all third-party contractors working within the workshop, ensuring they are compliant and their activities are tracked.
+    - **Key Functionalities:**
+        - **Contractor & Labor Database:** A central record of all approved contracting companies and their registered workforce.
+        - **Compliance Document Management:** Tracks essential documents like insurance, certifications, and legal compliances.
+        - **Permit & Work Association:** Links active work permits directly to the contractor and specific laborers performing the task.
+
+🔷 SECONDARY MODULES 
+Project Management Tracks ongoing infrastructure projects in the workshop. Monitors timelines, scope, and completion statuses. Supports visualization of planned vs existing infrastructure. Interacts with: • Contract Management (projects assigned to contractors) • Permit Management (permits needed for project-related work) • Compliance Management (project-level regulations) • Mapping Management (visualize infra changes in layout)
+ 
+Power Management Monitors electrical consumption and control panel access. Tracks solar power generation and distribution data. Interacts with: • Machine & Plant Management (tracks machine power usage) • Permit Management (permits required to access/control panels) 
+
+Compliance Management Ensures the system follows safety laws and environmental standards. Tracks incidents, permits, labor records, and legal documents. Interacts with: • Incident Management (incident reports required by law) • Contract Management (labor law compliance) • Project Management (regulations for infrastructure projects) 
+
+
+### **5.0 The User Journey: A Day in the Life of the RWMS**
+
+To understand how these modules create a cohesive system, consider a common scenario: **an urgent repair on a critical machine.**
+
+1. **Detection (Machine Management):** An SSE-Maintenance (MW) user identifies a faulty CNC machine. They log into the RWMS on a tablet, find the machine's profile in the **Machine Management** module, and change its status to "Out of Service," adding a note about the fault. This status change is now visible to everyone in the system.
+2. **Assignment (Contract Management):** The repair requires a specialist contractor. The SSE navigates to the **Contract Management** module, finds the approved contractor for CNC repairs, and assigns the job.
+3. **Authorization (Permit Management):** The work is high-risk. The SSE initiates a new "Electrical Work Permit" in the **Permit Management** module. The form automatically prompts for the Machine ID and the Contractor ID, linking the two. The permit request is digitally submitted.
+4. **Approval & Oversight:** The Safety Officer receives a notification. They review the permit details—the machine's history, the contractor's credentials, and the safety precautions listed—all within the system. They approve the permit with a digital signature.
+5. **Real-Time Visualization (Mapping Management):** On the main workshop dashboard, the 3D map in the **Mapping Management** module now shows an icon over the CNC machine, indicating that it is under maintenance with an active work permit. Clicking it shows the permit details.
+6. **Incident & Compliance:** During the repair, a minor, non-injury incident (a near miss) occurs. The contractor immediately reports it to the Safety Officer. The Officer logs the event in the **Incident Management** module, linking it directly to the active work permit. This automatically flags a record in the **Compliance Management** module for mandatory review.
+7. **Closure:** Once the repair is complete and verified, the SSE closes the work permit in the system. The machine's status is changed back to "Operational," and the icon on the 3D map turns green. The entire sequence of events, from fault detection to repair completion, is now a permanent, fully auditable digital record.
+
+This journey illustrates how the RWMS transforms isolated tasks into a single, transparent, and efficient workflow, with safety and compliance built-in at every step.
+
+### **Project Charter & Architectural Blueprint: Railway Workshop Management System (RWMS)**
+
+**Version:** 1.0
+
+**Date:** October 22, 2025
+
+### **1.0 Project Vision & Goal**
+
+**1.1. Vision:**
+
+To engineer a modern, modular, and scalable software solution to digitize and streamline the operational management of a Central Railway workshop. The initial focus is on creating a comprehensive Safety Management System, which will serve as the robust foundation for future expansion into other workshop-related domains (e.g., asset management, inventory, operations).
+
+**1.2. Core Objectives:**
+
+- **Enhance Safety:** Drastically reduce safety incidents by providing real-time data, enforcing permit-to-work protocols, and ensuring comprehensive incident tracking.
+- **Ensure Compliance:** Create an auditable, digital trail for all safety-related activities, ensuring adherence to national safety laws and railway regulations.
+- **Improve Efficiency:** Replace manual, paper-based processes with streamlined digital workflows, reducing administrative overhead and speeding up operations like maintenance and contractor onboarding.
+- **Increase Transparency:** Provide a single source of truth for all stakeholders, from workshop floor staff to management, with role-appropriate access to data.
+
+### **2.0 Guiding Principles & Standard Operating Procedures (SOPs)**
+
+These principles govern our design and development decisions to ensure consistency and quality.
+
+- **Security by Design:** Security is the foundational layer, not an add-on. All features are built with authentication and authorization in mind from the outset.
+- **Modular Architecture:** The system is built as a collection of independent, feature-focused modules (both on the backend and frontend). This allows for parallel development, easier maintenance, and future scalability.
+- **Layered Separation of Concerns:** Within each module, logic is strictly separated into distinct layers (e.g., API, Business Logic, Data Access) to ensure the codebase is clean, testable, and maintainable.
+- **Stateless Backend:** The backend does not maintain user session state. It uses JSON Web Tokens (JWT) for authentication, making the system highly scalable and robust.
+- **Intuitive Code Structure:** We adhere to clear and explicit naming conventions (e.g., [module_name]_[layer_name].py) and directory structures to make the codebase self-documenting and easy for any developer to navigate.
+
+### **3.0 Finalized Technology Stack**
+
+The technology stack is selected for performance, developer productivity, and long-term viability.
+
+| **Category** | **Technology** | **Key Libraries / Enhancements** |
+| --- | --- | --- |
+| **Frontend** | React + Vite (TypeScript) | **Styling:** Tailwind CSS<br>**Data Fetching:** TanStack Query<br>**Global State:** Zustand<br>**Forms:** React Hook Form + Zod<br>**Routing:** React Router |
+| **Backend** | FastAPI (Python) | **Security:** passlib[bcrypt], python-jose |
+| **Database** | PostgreSQL | - |
+| **ORM** | SQLModel | - |
+| **Web Server** | Nginx | To be used in production as a reverse proxy and for serving static frontend files. |
+
+---
+
+### **4.0 System Architecture**
+
+**4.1. Backend Architecture (Modular, Layered, API-Centric)**
+
+The backend is structured by feature modules, each containing its own layers.
+
+- **Directory Structure:**codeCode
+    
+    `server/
+    └── app/
+        ├── main.py               # Main application entry point & router aggregation
+        ├── core/                 # Shared config (database.py, config.py)
+        ├── modules/              # Parent directory for all business modules
+        │   ├── auth/             # Authentication Module
+        │   │   ├── auth_router.py
+        │   │   ├── auth_service.py
+        │   │   └── ...
+        │   └── machine/          # (Example) Machine Management Module
+        │       ├── machine_router.py
+        │       └── ...
+        └── models.py             # Central SQLModel table definitions`
+    
+- **How it Works:** The main.py file is the central hub. It imports and includes the APIRouter from each module's ..._router.py file. This creates a clean, plug-and-play system where adding a new module is as simple as creating its folder and adding one line to main.py.
+
+**4.2. Frontend Architecture (Modular, Component-Based)**
+
+The frontend structure mirrors the backend's modularity to maintain cognitive consistency.
+
+- **Directory Structure:**codeCode
+    
+    `client/
+    └── src/
+        ├── components/           # SHARED UI components (Button, Modal, Layout.tsx)
+        ├── lib/                  # Shared library code (e.g., configured Axios instance)
+        ├── modules/              # Parent directory for all business features
+        │   ├── auth/             # Authentication Feature
+        │   │   ├── components/
+        │   │   ├── authApi.ts
+        │   │   └── LoginPage.tsx
+        │   └── machine/          # (Example) Machine Management Feature
+        │       ├── components/
+        │       └── Machine.tsx
+        └── App.tsx               # Main application routing`
+    
+- **How it Works:** The App.tsx file defines the application's routes using react-router-dom. It uses a ProtectedRoute.tsx component to guard access to authenticated sections of the site. When a user navigates to a URL (e.g., /machines), the router mounts the corresponding main page component (e.g., Machine.tsx), which in turn orchestrates the rendering of its own feature-specific components.
+
+---
+
+### **5.0 Functional Breakdown: The Safety Management System**
+
+This is a detailed breakdown of what we are building.
+
+- **Primary Modules (Core Workflows):**
+    - **Machine & Plant Management**
+    - **Permit Management**
+    - **Incident Management**
+    - **Contract Management**
+- **Secondary Modules (Supporting Functions):**
+    - **Project Management**
+    - **Power Management**
+    - **Compliance Management**
+    - **Mapping Management**
+
+### **6.0 User & Authorization Model**
+
+The system is built on a hierarchical Role-Based Access Control (RBAC) model.
+
+- **Parent Classes (Job Groups):** High-level roles that can have permissions assigned to them but are not directly assigned to users.
+    - SSE-Maintenance
+- **Assignable Roles:** Specific roles (or subclasses) that are assigned to users.
+    - SSE-Maintenance - MW (Child of SSE-Maintenance)
+    - SSE-Maintenance - Substation (Child of SSE-Maintenance)
+    - SSE-Office (No parent)
+    - Safety Officer (No parent)
+- **How it Works:** The Role table in the database uses a parent_id to create this hierarchy. When checking for a permission, the system first checks the user's direct role, and if the permission is not found, it checks the parent role, allowing for powerful permission inheritance.
+
+---
+
+### **7.0 Development Plan & Current Status**
+
+**7.1. The Plan:**
+
+The development will proceed in a modular fashion, building upon a solid foundation.
+
+1. **Phase 0 (Complete):** Foundational Authentication & Authorization System.
+2. **Phase 1 (Next):** Implement the Primary Modules, starting with Machine & Plant Management.
+3. **Phase 2:** Implement the Secondary Modules.
+4. **Phase 3:** Integration, testing, and deployment.
+
+**7.2. What We Have Done So Far (Status: Phase 0 COMPLETE):**
+
+We have successfully designed, built, and tested the complete, end-to-end Authentication System. The deliverables for this phase are:
+
+- **Backend:**
+    - A secure POST /auth/token endpoint for user login that returns a JWT.
+    - A protected GET /auth/users/me endpoint that validates a JWT and returns the current user's profile and role.
+    - A fully functional hierarchical role and user model in the PostgreSQL database.
+    - Robust password hashing and JWT management services.
+    - Automated database table creation and data seeding scripts.
+- **Frontend:**
+    - A public LandingPage for pre-login role selection.
+    - A public LoginPage with a performant and validated form.
+    - A ProtectedRoute mechanism to guard access to secure parts of the application.
+    - A DashboardPage that fetches the logged-in user's profile and is ready to display role-specific content.
+    - Global state management (Zustand) for handling the user's authentication status across the application.
+    - A complete end-to-end flow where a user can log in, be authorized, access a protected page, and log out.
+
+The project's foundation is solid and ready for the development of the primary business modules.
+
+# Permit Module
+
+### **The Lifecycle of a Work Permit**
+
+This process can be broken down into four distinct stages, each involving a specific role and set of actions.
+
+### **Stage 1: Permit Initiation (The Request)**
+
+- **Actor:** The **SSE-Maintenance** user (the "Permittee"). This could be an **SSE-MW** or an **SSE-Substation** user.
+- **Action:** The process begins when an SSE-Maintenance user needs to perform a task that requires a permit. They log into the system and create a new permit request.
+    - If they are an **SSE-MW**, they will issue a **Height Permit**.
+    - If they are an **SSE-Substation**, they will issue an **Electrical Permit**.
+- **Outcome:** A new permit is created in the system with an initial status of **"Pending Authorization"**. This digital permit request is then automatically forwarded to the designated SSE-Office user.
+
+---
+
+### **Stage 2: Authorization (The First Checkpoint)**
+
+- **Actor:** The **SSE-Office** user (the "Permit Authorizer").
+- **Action:** This user receives the permit request. Their responsibility is to review the details of the work from an operational or departmental perspective. They verify if the work is necessary, correctly scheduled, and appropriate for their shop. They then make a decision:
+    - **Authorize:** If they agree, they apply their digital signature. The system records their name and the exact timestamp of the authorization.
+    - **Reject:** If they do not agree, they reject the permit, likely providing a reason. (The flow would stop here and notify the initiator).
+- **Outcome:** If authorized, the permit's status changes to **"Pending Approval"**. The system now automatically forwards the authorized permit, which includes the SSE-Office user's digital signature and timestamp, to the Safety Officers.
+
+---
+
+### **Stage 3: Approval (The Final Safety Checkpoint)**
+
+- **Actor:** A **Safety Officer** (the "Final Approver").
+- **Action:** The Safety Officer reviews the permit. Critically, they can see that it has already been authorized by the SSE-Office. Their review is purely from a safety and compliance standpoint. They check for adherence to safety protocols and can add their own mandatory conditions or remarks. They then make a decision:
+    - **Approve:** They apply their digital signature. The system records their name, the timestamp of the approval, and any remarks they added.
+    - **Reject:** If they find a safety concern, they reject the permit, and their remarks become the official reason for rejection. (The flow would stop here and return to the initiator).
+- **Outcome:** If approved, the permit's status changes to **"Approved"**. It now contains a complete, auditable trail of all three stages: the initial request, the authorization signature, and the final approval signature with remarks.
+
+---
+
+### **Stage 4: Issuance (Ready for Work)**
+
+- **Actor:** The original **SSE-Maintenance** user who initiated the request.
+- **Action:** The user receives a notification that their permit has been fully approved. They can now view the final, approved digital permit in the system.
+- **Outcome:** The Permittee now possesses a fully validated, signed, and approved permit. This is their official authorization to begin the work safely.
+
+In essence, a permit cannot be acted upon until it has successfully passed through this sequential chain of custody, ensuring that both the operational department and the safety department have provided their explicit consent.

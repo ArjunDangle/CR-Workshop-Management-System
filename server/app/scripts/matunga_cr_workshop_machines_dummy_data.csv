@@ -1,0 +1,121 @@
+asset_id,shop_name,machine_type,model_name,manufacturer,install_year,last_maintenance_date,criticality
+CR-MAT-0001,Wheel Reprofiling Plant,CNC Axle Turning Lathe,HMT NH26 Lathe,Olympus,2021,26-11-2024,High
+CR-MAT-0002,LHB Coach Maintenance Facility,CNC Axle Turning Lathe,HMT RM65,Enerpac,2010,19-12-2024,Medium
+CR-MAT-0003,Automatic Bogie Wash Plant,Bogie Wash System,IR Underframe Jig Mk3,SMS Meer,2011,22-02-2023,Low
+CR-MAT-0004,Trolley Shop,Spring Testing Machine,IR Bogie Assembly Fixture Mk2,FIE,2023,18-07-2025,High
+CR-MAT-0005,Lifting Underframe Shop,Slotting Machine,HMT VDM50,SMS Meer,2022,01-09-2025,High
+CR-MAT-0006,Shock Absorber Shop,CNC Axle Turning Lathe,HMT FN3 Milling,MTS,2018,21-05-2025,Medium
+CR-MAT-0007,Wheel Reprofiling Plant,Hydraulic Wheel Press,SKF TIH Heater,SMS Meer,2018,15-02-2023,Low
+CR-MAT-0008,Axle Turning Lathe Section,CNC Axle Turning Lathe,MTS Damper Tester,MTS,2008,04-07-2025,Medium
+CR-MAT-0009,Lifting Underframe Shop,Spring Testing Machine,HMT Slotter S200,Enerpac,2021,24-11-2025,Medium
+CR-MAT-0010,Wheel Reprofiling Plant,Radial Drilling Machine,IR Bogie Assembly Fixture Mk2,MTS,2012,01-04-2024,High
+CR-MAT-0011,Automatic Bogie Wash Plant,Slotting Machine,ESAB Arc Welding Pro,FIE,2012,26-01-2025,Medium
+CR-MAT-0012,LHB Coach Maintenance Facility,Grinding Machine,HMT FN2 Shaper,MTS,2020,27-02-2023,High
+CR-MAT-0013,Heavy Corrosion Shop,Bearing Induction Heater,IR Bogie Assembly Fixture Mk2,SMS Meer,2023,25-02-2024,Low
+CR-MAT-0014,Shock Absorber Shop,Slotting Machine,Automatic Bogie Wash Mk2,Enerpac,2010,17-01-2025,High
+CR-MAT-0015,Axle Turning Lathe Section,Grinding Machine,IR Underframe Jig Mk3,FIE,2009,14-11-2025,Medium
+CR-MAT-0016,Centre Lathe Section,Shaper Machine,Enerpac 500T Press,MTS,2011,01-12-2023,High
+CR-MAT-0017,LHB Coach Maintenance Facility,Ultrasonic Wheel Inspection System,Olympus UT System,HMT,2012,07-11-2023,Medium
+CR-MAT-0018,Lifting Underframe Shop,Gang Drilling Machine,IR Bogie Assembly Fixture Mk2,HMT,2023,27-02-2025,High
+CR-MAT-0019,Wheel Reprofiling Plant,Planer Machine,ATL-200 Fanuc CNC,SMS Meer,2016,04-02-2025,High
+CR-MAT-0020,Lifting Underframe Shop,Wheel Re-Disking Machine,MTS Damper Tester,ESAB,2019,19-09-2025,Medium
+CR-MAT-0021,Shock Absorber Shop,Hydraulic Wheel Press,HMT Slotter S200,Olympus,2016,20-01-2025,Medium
+CR-MAT-0022,Centre Lathe Section,Wheel Re-Disking Machine,HMT RM65,FIE,2018,02-10-2023,Medium
+CR-MAT-0023,General Machine Shop,Grinding Machine,ATL-200 Fanuc CNC,MTS,2018,20-02-2025,Low
+CR-MAT-0024,Centre Lathe Section,Grinding Machine,HMT Slotter S200,FIE,2009,03-04-2023,Low
+CR-MAT-0025,Heavy Corrosion Shop,Underframe Inspection Jig,HMT FN3 Milling,SKF,2010,19-01-2025,Medium
+CR-MAT-0026,Centre Lathe Section,Bogie Wash System,Olympus UT System,HMT,2023,15-04-2025,Low
+CR-MAT-0027,LHB Coach Maintenance Facility,Grinding Machine,MTS Damper Tester,Olympus,2009,21-07-2023,Medium
+CR-MAT-0028,Heavy Corrosion Shop,Industrial Welding Machine,HMT Slotter S200,Olympus,2019,24-11-2025,High
+CR-MAT-0029,Wheel Reprofiling Plant,Grinding Machine,SMS Meer 600T,FIE,2017,16-06-2023,Low
+CR-MAT-0030,Centre Lathe Section,Spring Testing Machine,HMT FN2 Shaper,FIE,2013,10-06-2025,High
+CR-MAT-0031,Automatic Bogie Wash Plant,Vertical Drilling Machine,HMT Slotter S200,MTS,2010,22-02-2023,High
+CR-MAT-0032,Axle Turning Lathe Section,Bogie Assembly Fixture,Enerpac 500T Press,Enerpac,2013,09-04-2023,High
+CR-MAT-0033,Axle Turning Lathe Section,Shock Absorber Test Rig,ATL-200 Fanuc CNC,FIE,2016,20-09-2025,Low
+CR-MAT-0034,Lifting Underframe Shop,Slotting Machine,HMT G9 Grinder,Indian Railways,2017,10-06-2025,High
+CR-MAT-0035,Trolley Shop,Slotting Machine,HMT VDM50,HMT,2014,22-11-2025,High
+CR-MAT-0036,Shock Absorber Shop,Ultrasonic Wheel Inspection System,FIE Spring Tester,Enerpac,2016,16-08-2025,High
+CR-MAT-0037,General Machine Shop,Shaper Machine,HMT G9 Grinder,SKF,2009,21-03-2025,Medium
+CR-MAT-0038,General Machine Shop,Shaper Machine,Olympus UT System,Enerpac,2008,18-07-2025,Medium
+CR-MAT-0039,Heavy Corrosion Shop,Vertical Drilling Machine,Olympus UT System,HMT,2013,05-06-2024,Medium
+CR-MAT-0040,Wheel Shop,CNC Axle Turning Lathe,HMT Gang Drill GD30,FIE,2011,19-12-2024,Low
+CR-MAT-0041,Heavy Corrosion Shop,Radial Drilling Machine,SMS Meer 600T,HMT,2019,01-10-2023,Low
+CR-MAT-0042,Trolley Shop,Slotting Machine,HMT Gang Drill GD30,SMS Meer,2015,16-02-2023,High
+CR-MAT-0043,LHB Coach Maintenance Facility,Planer Machine,HMT VDM50,HMT,2015,14-09-2024,Low
+CR-MAT-0044,Centre Lathe Section,Slotting Machine,MTS Damper Tester,MTS,2009,18-07-2023,Low
+CR-MAT-0045,Wheel Shop,Radial Drilling Machine,ATL-200 Fanuc CNC,SKF,2008,21-01-2023,Low
+CR-MAT-0046,Wheel Shop,Centre Lathe,HMT NH26 Lathe,ESAB,2015,24-12-2025,Low
+CR-MAT-0047,Automatic Bogie Wash Plant,Shaper Machine,ATL-200 Fanuc CNC,SMS Meer,2019,07-06-2025,High
+CR-MAT-0048,Wheel Reprofiling Plant,Grinding Machine,Automatic Bogie Wash Mk2,SKF,2022,13-03-2023,High
+CR-MAT-0049,Wheel Shop,Bogie Assembly Fixture,Automatic Bogie Wash Mk2,FIE,2009,14-12-2024,High
+CR-MAT-0050,Automatic Bogie Wash Plant,Underframe Inspection Jig,HMT FN2 Shaper,ESAB,2020,21-10-2025,Medium
+CR-MAT-0051,Trolley Shop,Shock Absorber Test Rig,HMT Slotter S200,ESAB,2020,27-11-2025,Low
+CR-MAT-0052,Heavy Corrosion Shop,Grinding Machine,HMT Slotter S200,SMS Meer,2009,28-09-2023,High
+CR-MAT-0053,Automatic Bogie Wash Plant,CNC Axle Turning Lathe,HMT Gang Drill GD30,ESAB,2011,26-03-2024,High
+CR-MAT-0054,Automatic Bogie Wash Plant,Centre Lathe,HMT FN3 Milling,MTS,2024,17-09-2024,Low
+CR-MAT-0055,Lifting Underframe Shop,Industrial Welding Machine,Enerpac 500T Press,FIE,2021,27-10-2023,Medium
+CR-MAT-0056,Wheel Shop,Shaper Machine,HMT VDM50,SMS Meer,2010,27-04-2024,Medium
+CR-MAT-0057,Wheel Reprofiling Plant,Bogie Wash System,SKF TIH Heater,FIE,2009,26-06-2023,Medium
+CR-MAT-0058,Centre Lathe Section,Planer Machine,SMS Meer 600T,FIE,2009,12-09-2024,High
+CR-MAT-0059,Heavy Corrosion Shop,Hydraulic Wheel Press,HMT FN2 Shaper,Olympus,2011,24-10-2025,Medium
+CR-MAT-0060,Centre Lathe Section,Hydraulic Wheel Press,ATL-200 Fanuc CNC,FIE,2016,16-06-2025,Medium
+CR-MAT-0061,Lifting Underframe Shop,Wheel Re-Disking Machine,ATL-200 Fanuc CNC,Enerpac,2023,01-11-2025,Low
+CR-MAT-0062,Lifting Underframe Shop,Milling Machine,Enerpac 500T Press,Olympus,2024,15-01-2023,Low
+CR-MAT-0063,Heavy Corrosion Shop,Industrial Welding Machine,HMT VDM50,Indian Railways,2011,18-10-2023,Low
+CR-MAT-0064,Automatic Bogie Wash Plant,Bogie Wash System,Automatic Bogie Wash Mk2,SMS Meer,2013,24-11-2023,Low
+CR-MAT-0065,General Machine Shop,Industrial Welding Machine,IR Bogie Assembly Fixture Mk2,SMS Meer,2013,11-04-2025,Low
+CR-MAT-0066,Heavy Corrosion Shop,Radial Drilling Machine,HMT FN2 Shaper,SKF,2015,11-03-2024,Low
+CR-MAT-0067,Lifting Underframe Shop,Shock Absorber Test Rig,HMT Double Housing Planer,SKF,2011,26-08-2023,Low
+CR-MAT-0068,General Machine Shop,Centre Lathe,IR Underframe Jig Mk3,Indian Railways,2023,02-03-2023,Low
+CR-MAT-0069,General Machine Shop,Shock Absorber Test Rig,HMT Double Housing Planer,Enerpac,2018,17-09-2023,High
+CR-MAT-0070,Centre Lathe Section,Radial Drilling Machine,HMT Gang Drill GD30,Olympus,2023,17-06-2025,Low
+CR-MAT-0071,Wheel Reprofiling Plant,Radial Drilling Machine,MTS Damper Tester,MTS,2024,27-04-2025,High
+CR-MAT-0072,Wheel Reprofiling Plant,Ultrasonic Wheel Inspection System,SMS Meer 600T,MTS,2015,20-06-2024,Medium
+CR-MAT-0073,Centre Lathe Section,Slotting Machine,HMT FN2 Shaper,Olympus,2014,23-05-2025,Medium
+CR-MAT-0074,Heavy Corrosion Shop,Gang Drilling Machine,SKF TIH Heater,SKF,2015,22-06-2024,Low
+CR-MAT-0075,Heavy Corrosion Shop,Milling Machine,HMT Slotter S200,MTS,2011,19-07-2024,Low
+CR-MAT-0076,Lifting Underframe Shop,Shaper Machine,FIE Spring Tester,Indian Railways,2009,16-01-2025,Low
+CR-MAT-0077,Trolley Shop,Underframe Inspection Jig,HMT Slotter S200,Enerpac,2017,17-06-2024,High
+CR-MAT-0078,General Machine Shop,Milling Machine,HMT Slotter S200,Olympus,2018,24-01-2024,Low
+CR-MAT-0079,Axle Turning Lathe Section,Centre Lathe,HMT VDM50,FIE,2010,12-08-2025,High
+CR-MAT-0080,General Machine Shop,Vertical Drilling Machine,ATL-200 Fanuc CNC,ESAB,2008,27-08-2023,High
+CR-MAT-0081,Lifting Underframe Shop,Underframe Inspection Jig,HMT G9 Grinder,Indian Railways,2023,04-08-2025,Low
+CR-MAT-0082,Axle Turning Lathe Section,Spring Testing Machine,HMT NH26 Lathe,FIE,2012,28-08-2025,Low
+CR-MAT-0083,Wheel Shop,Slotting Machine,Olympus UT System,SMS Meer,2021,14-02-2024,Low
+CR-MAT-0084,Wheel Reprofiling Plant,Centre Lathe,Enerpac 500T Press,SKF,2008,20-10-2023,High
+CR-MAT-0085,Wheel Shop,Bogie Wash System,Olympus UT System,FIE,2019,27-11-2024,Medium
+CR-MAT-0086,Automatic Bogie Wash Plant,Bearing Induction Heater,IR Bogie Assembly Fixture Mk2,Enerpac,2010,02-06-2024,Low
+CR-MAT-0087,General Machine Shop,Gang Drilling Machine,HMT Gang Drill GD30,Indian Railways,2021,09-11-2023,Medium
+CR-MAT-0088,Trolley Shop,Bearing Induction Heater,Olympus UT System,Olympus,2020,20-10-2024,Low
+CR-MAT-0089,Wheel Reprofiling Plant,Bogie Assembly Fixture,ESAB Arc Welding Pro,MTS,2008,13-01-2023,Medium
+CR-MAT-0090,Axle Turning Lathe Section,Bogie Wash System,Enerpac 500T Press,Enerpac,2022,10-04-2025,Medium
+CR-MAT-0091,Axle Turning Lathe Section,Milling Machine,SKF TIH Heater,Olympus,2017,16-03-2023,Low
+CR-MAT-0092,Axle Turning Lathe Section,Vertical Drilling Machine,Enerpac 500T Press,HMT,2020,02-08-2024,Medium
+CR-MAT-0093,Heavy Corrosion Shop,Gang Drilling Machine,Automatic Bogie Wash Mk2,Indian Railways,2024,14-10-2024,High
+CR-MAT-0094,Shock Absorber Shop,CNC Axle Turning Lathe,HMT Slotter S200,Indian Railways,2021,08-11-2023,Medium
+CR-MAT-0095,Heavy Corrosion Shop,Shaper Machine,HMT RM65,HMT,2024,16-06-2024,Low
+CR-MAT-0096,Automatic Bogie Wash Plant,Planer Machine,IR Bogie Assembly Fixture Mk2,SKF,2013,17-02-2023,Low
+CR-MAT-0097,Heavy Corrosion Shop,Bogie Assembly Fixture,HMT NH26 Lathe,ESAB,2020,04-08-2024,High
+CR-MAT-0098,Automatic Bogie Wash Plant,Industrial Welding Machine,Enerpac 500T Press,SMS Meer,2017,17-01-2023,High
+CR-MAT-0099,Axle Turning Lathe Section,Hydraulic Wheel Press,SKF TIH Heater,ESAB,2019,22-04-2023,Low
+CR-MAT-0100,Axle Turning Lathe Section,Vertical Drilling Machine,FIE Spring Tester,ESAB,2019,18-04-2025,Medium
+CR-MAT-0101,Automatic Bogie Wash Plant,Shaper Machine,Olympus UT System,HMT,2013,02-12-2025,High
+CR-MAT-0102,Heavy Corrosion Shop,Grinding Machine,HMT FN2 Shaper,Olympus,2012,28-07-2024,Low
+CR-MAT-0103,Heavy Corrosion Shop,Bogie Wash System,Enerpac 500T Press,SMS Meer,2024,04-07-2024,Medium
+CR-MAT-0104,Heavy Corrosion Shop,Shock Absorber Test Rig,Automatic Bogie Wash Mk2,SMS Meer,2014,28-04-2023,Low
+CR-MAT-0105,LHB Coach Maintenance Facility,Wheel Re-Disking Machine,HMT RM65,HMT,2023,25-10-2025,High
+CR-MAT-0106,General Machine Shop,Planer Machine,MTS Damper Tester,ESAB,2016,02-01-2025,Low
+CR-MAT-0107,Wheel Reprofiling Plant,Shaper Machine,IR Bogie Assembly Fixture Mk2,FIE,2010,16-07-2024,Medium
+CR-MAT-0108,Shock Absorber Shop,Underframe Inspection Jig,HMT VDM50,Enerpac,2012,16-06-2023,Medium
+CR-MAT-0109,Automatic Bogie Wash Plant,Wheel Re-Disking Machine,HMT RM65,SKF,2016,21-09-2024,Medium
+CR-MAT-0110,Lifting Underframe Shop,Planer Machine,HMT G9 Grinder,HMT,2016,27-02-2025,Medium
+CR-MAT-0111,Automatic Bogie Wash Plant,Ultrasonic Wheel Inspection System,SMS Meer 600T,ESAB,2012,22-12-2023,Medium
+CR-MAT-0112,Wheel Reprofiling Plant,Bogie Wash System,HMT Slotter S200,SKF,2021,01-08-2023,Medium
+CR-MAT-0113,Trolley Shop,CNC Axle Turning Lathe,SMS Meer 600T,ESAB,2022,15-11-2025,Low
+CR-MAT-0114,Wheel Reprofiling Plant,Grinding Machine,IR Underframe Jig Mk3,HMT,2019,18-11-2024,Low
+CR-MAT-0115,Wheel Reprofiling Plant,Shaper Machine,SMS Meer 600T,Indian Railways,2011,01-11-2024,Medium
+CR-MAT-0116,Shock Absorber Shop,Centre Lathe,MTS Damper Tester,MTS,2012,18-04-2024,Medium
+CR-MAT-0117,Trolley Shop,Planer Machine,HMT VDM50,MTS,2016,27-05-2023,Low
+CR-MAT-0118,Centre Lathe Section,Shock Absorber Test Rig,HMT NH26 Lathe,FIE,2018,11-01-2023,High
+CR-MAT-0119,Heavy Corrosion Shop,Wheel Re-Disking Machine,HMT FN2 Shaper,Olympus,2021,06-03-2024,Low
+CR-MAT-0120,Trolley Shop,Hydraulic Wheel Press,HMT RM65,Olympus,2012,04-12-2023,Medium

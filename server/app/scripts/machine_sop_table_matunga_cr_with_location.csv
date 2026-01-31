@@ -1,0 +1,1441 @@
+asset_id,machine_type,sop_task,frequency,ppe_required,critical_task,location
+CR-MAT-0001,CNC Axle Turning Lathe,Check CNC axis calibration,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Inspect hydraulic pressure system,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Check spindle bearing vibration,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Verify servo motor performance,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Inspect lubrication pump operation,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Check tool turret indexing accuracy,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Inspect coolant filtration unit,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Verify CNC backup battery health,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Check way cover condition,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Inspect chip conveyor operation,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Verify axis ball screw backlash,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0001,CNC Axle Turning Lathe,Check emergency stop circuit integrity,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0002,CNC Axle Turning Lathe,Check CNC axis calibration,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Inspect hydraulic pressure system,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Check spindle bearing vibration,Quarterly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Verify servo motor performance,Quarterly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Inspect lubrication pump operation,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Check tool turret indexing accuracy,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Inspect coolant filtration unit,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Verify CNC backup battery health,Quarterly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Check way cover condition,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Inspect chip conveyor operation,Monthly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Verify axis ball screw backlash,Quarterly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0002,CNC Axle Turning Lathe,Check emergency stop circuit integrity,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0003,Bogie Wash System,General lubrication of moving parts,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Check electrical panel health,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Inspect structural bolts tightness,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Check vibration levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Verify emergency stop function,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Check sensor calibration,Quarterly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Inspect safety guards,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Check noise levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Inspect foundation integrity,Yearly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Verify control system backup,Quarterly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0003,Bogie Wash System,Clean machine body and surroundings,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0004,Spring Testing Machine,General lubrication of moving parts,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Check electrical panel health,Quarterly,No,No,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Check vibration levels,Monthly,Yes,No,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Verify emergency stop function,Monthly,No,Yes,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Check sensor calibration,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Inspect safety guards,Monthly,Yes,No,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Check noise levels,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Inspect foundation integrity,Yearly,Yes,No,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Verify control system backup,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0004,Spring Testing Machine,Clean machine body and surroundings,Monthly,Yes,No,Trolley Shop
+CR-MAT-0005,Slotting Machine,General lubrication of moving parts,Monthly,No,No,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Check electrical panel health,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Inspect structural bolts tightness,Quarterly,No,No,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Check vibration levels,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Verify emergency stop function,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Check sensor calibration,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Inspect safety guards,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Check noise levels,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Inspect foundation integrity,Yearly,No,Yes,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Verify control system backup,Quarterly,No,Yes,Lifting Underframe Shop
+CR-MAT-0005,Slotting Machine,Clean machine body and surroundings,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Check CNC axis calibration,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Inspect hydraulic pressure system,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Check spindle bearing vibration,Quarterly,No,No,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Verify servo motor performance,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Inspect lubrication pump operation,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Check tool turret indexing accuracy,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Inspect coolant filtration unit,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Verify CNC backup battery health,Quarterly,Yes,No,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Check way cover condition,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Inspect chip conveyor operation,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Verify axis ball screw backlash,Quarterly,No,Yes,Shock Absorber Shop
+CR-MAT-0006,CNC Axle Turning Lathe,Check emergency stop circuit integrity,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0007,Hydraulic Wheel Press,Check hydraulic pressure stability,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Inspect piston seals,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Verify load cell calibration,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Inspect hydraulic oil contamination,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Check pressure relief valve operation,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Inspect pump motor current draw,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Check ram alignment,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Verify pressure gauge calibration,Quarterly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Inspect hoses for leaks,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Check emergency stop function,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Inspect structural frame bolts,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0007,Hydraulic Wheel Press,Clean hydraulic reservoir breather,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0008,CNC Axle Turning Lathe,Check CNC axis calibration,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Inspect hydraulic pressure system,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Check spindle bearing vibration,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Verify servo motor performance,Quarterly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Inspect lubrication pump operation,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Check tool turret indexing accuracy,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Inspect coolant filtration unit,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Verify CNC backup battery health,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Check way cover condition,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Inspect chip conveyor operation,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Verify axis ball screw backlash,Quarterly,No,No,Axle Turning Lathe Section
+CR-MAT-0008,CNC Axle Turning Lathe,Check emergency stop circuit integrity,Monthly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0009,Spring Testing Machine,General lubrication of moving parts,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Check electrical panel health,Quarterly,No,Yes,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Check vibration levels,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Verify emergency stop function,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Inspect hydraulic / pneumatic lines,Monthly,No,No,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Check sensor calibration,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Inspect safety guards,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Check noise levels,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Inspect foundation integrity,Yearly,Yes,No,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Verify control system backup,Quarterly,No,No,Lifting Underframe Shop
+CR-MAT-0009,Spring Testing Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0010,Radial Drilling Machine,Check spindle alignment,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Lubricate column guideways,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Inspect motor current draw,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Check coolant flow,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Inspect chuck wear,Quarterly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Check belt tension,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Verify emergency stop function,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Check foundation bolts tightness,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Inspect wiring insulation,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Check vibration levels,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Verify speed calibration,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0010,Radial Drilling Machine,Clean chip trays and guards,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0011,Slotting Machine,General lubrication of moving parts,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Check electrical panel health,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Check vibration levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Verify emergency stop function,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Check sensor calibration,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Inspect safety guards,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Check noise levels,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Inspect foundation integrity,Yearly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Verify control system backup,Quarterly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0011,Slotting Machine,Clean machine body and surroundings,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0012,Grinding Machine,General lubrication of moving parts,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Check electrical panel health,Quarterly,No,No,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Inspect structural bolts tightness,Quarterly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Check vibration levels,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Verify emergency stop function,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Inspect hydraulic / pneumatic lines,Monthly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Check sensor calibration,Quarterly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Inspect safety guards,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Check noise levels,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Inspect foundation integrity,Yearly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Verify control system backup,Quarterly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0012,Grinding Machine,Clean machine body and surroundings,Monthly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0013,Bearing Induction Heater,General lubrication of moving parts,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Check electrical panel health,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Inspect structural bolts tightness,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Check vibration levels,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Verify emergency stop function,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Check sensor calibration,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Inspect safety guards,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Check noise levels,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Inspect foundation integrity,Yearly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Verify control system backup,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0013,Bearing Induction Heater,Clean machine body and surroundings,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0014,Slotting Machine,General lubrication of moving parts,Monthly,No,Yes,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Check electrical panel health,Quarterly,Yes,No,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Inspect structural bolts tightness,Quarterly,No,No,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Check vibration levels,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Verify emergency stop function,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Check sensor calibration,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Inspect safety guards,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Check noise levels,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Inspect foundation integrity,Yearly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Verify control system backup,Quarterly,No,No,Shock Absorber Shop
+CR-MAT-0014,Slotting Machine,Clean machine body and surroundings,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0015,Grinding Machine,General lubrication of moving parts,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Check electrical panel health,Quarterly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Check vibration levels,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Verify emergency stop function,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Inspect hydraulic / pneumatic lines,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Check sensor calibration,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Inspect safety guards,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Check noise levels,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Inspect foundation integrity,Yearly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Verify control system backup,Quarterly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0015,Grinding Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0016,Shaper Machine,General lubrication of moving parts,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Check electrical panel health,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Check vibration levels,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Verify emergency stop function,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Check sensor calibration,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Inspect safety guards,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Check noise levels,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Inspect foundation integrity,Yearly,Yes,Yes,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Verify control system backup,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0016,Shaper Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0017,Ultrasonic Wheel Inspection System,General lubrication of moving parts,Monthly,No,No,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Check electrical panel health,Quarterly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Inspect structural bolts tightness,Quarterly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Check vibration levels,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Verify emergency stop function,Monthly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Check sensor calibration,Quarterly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Inspect safety guards,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Check noise levels,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Inspect foundation integrity,Yearly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Verify control system backup,Quarterly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0017,Ultrasonic Wheel Inspection System,Clean machine body and surroundings,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0018,Gang Drilling Machine,Check multi spindle alignment,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Lubricate feed gears,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Inspect tool holders,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Check coolant distribution manifold,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Inspect motor load balance,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Verify spindle synchronization,Quarterly,No,Yes,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Check belt condition,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Inspect electrical relays,Quarterly,No,Yes,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Check vibration levels,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Verify safety guards interlock,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Check spindle nose wear,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0018,Gang Drilling Machine,Clean chip conveyor,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0019,Planer Machine,General lubrication of moving parts,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Check electrical panel health,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Check vibration levels,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Verify emergency stop function,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Check sensor calibration,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Inspect safety guards,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Check noise levels,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Inspect foundation integrity,Yearly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Verify control system backup,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0019,Planer Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0020,Wheel Re-Disking Machine,General lubrication of moving parts,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Check electrical panel health,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Check vibration levels,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Verify emergency stop function,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Check sensor calibration,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Inspect safety guards,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Check noise levels,Monthly,No,No,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Inspect foundation integrity,Yearly,Yes,No,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Verify control system backup,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0020,Wheel Re-Disking Machine,Clean machine body and surroundings,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0021,Hydraulic Wheel Press,Check hydraulic pressure stability,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Inspect piston seals,Monthly,No,Yes,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Verify load cell calibration,Quarterly,Yes,No,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Inspect hydraulic oil contamination,Monthly,No,Yes,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Check pressure relief valve operation,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Inspect pump motor current draw,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Check ram alignment,Quarterly,Yes,No,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Verify pressure gauge calibration,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Inspect hoses for leaks,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Check emergency stop function,Monthly,No,Yes,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Inspect structural frame bolts,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0021,Hydraulic Wheel Press,Clean hydraulic reservoir breather,Monthly,No,Yes,Shock Absorber Shop
+CR-MAT-0022,Wheel Re-Disking Machine,General lubrication of moving parts,Monthly,No,No,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Check electrical panel health,Quarterly,No,Yes,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Check vibration levels,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Verify emergency stop function,Monthly,No,No,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Inspect hydraulic / pneumatic lines,Monthly,No,No,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Check sensor calibration,Quarterly,No,No,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Inspect safety guards,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Check noise levels,Monthly,No,No,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Inspect foundation integrity,Yearly,Yes,Yes,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Verify control system backup,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0022,Wheel Re-Disking Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0023,Grinding Machine,General lubrication of moving parts,Monthly,No,No,General Machine Shop
+CR-MAT-0023,Grinding Machine,Check electrical panel health,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0023,Grinding Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0023,Grinding Machine,Check vibration levels,Monthly,Yes,No,General Machine Shop
+CR-MAT-0023,Grinding Machine,Verify emergency stop function,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0023,Grinding Machine,Inspect hydraulic / pneumatic lines,Monthly,No,Yes,General Machine Shop
+CR-MAT-0023,Grinding Machine,Check sensor calibration,Quarterly,No,No,General Machine Shop
+CR-MAT-0023,Grinding Machine,Inspect safety guards,Monthly,Yes,No,General Machine Shop
+CR-MAT-0023,Grinding Machine,Check noise levels,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0023,Grinding Machine,Inspect foundation integrity,Yearly,Yes,No,General Machine Shop
+CR-MAT-0023,Grinding Machine,Verify control system backup,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0023,Grinding Machine,Clean machine body and surroundings,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0024,Grinding Machine,General lubrication of moving parts,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Check electrical panel health,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Check vibration levels,Monthly,No,Yes,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Verify emergency stop function,Monthly,No,No,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Check sensor calibration,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Inspect safety guards,Monthly,No,No,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Check noise levels,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Inspect foundation integrity,Yearly,Yes,No,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Verify control system backup,Quarterly,No,No,Centre Lathe Section
+CR-MAT-0024,Grinding Machine,Clean machine body and surroundings,Monthly,No,Yes,Centre Lathe Section
+CR-MAT-0025,Underframe Inspection Jig,General lubrication of moving parts,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Check electrical panel health,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Inspect structural bolts tightness,Quarterly,No,No,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Check vibration levels,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Verify emergency stop function,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Check sensor calibration,Quarterly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Inspect safety guards,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Check noise levels,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Inspect foundation integrity,Yearly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Verify control system backup,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0025,Underframe Inspection Jig,Clean machine body and surroundings,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0026,Bogie Wash System,General lubrication of moving parts,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Check electrical panel health,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Inspect structural bolts tightness,Quarterly,No,No,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Check vibration levels,Monthly,No,No,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Verify emergency stop function,Monthly,No,No,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Check sensor calibration,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Inspect safety guards,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Check noise levels,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Inspect foundation integrity,Yearly,Yes,No,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Verify control system backup,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0026,Bogie Wash System,Clean machine body and surroundings,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0027,Grinding Machine,General lubrication of moving parts,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Check electrical panel health,Quarterly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Inspect structural bolts tightness,Quarterly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Check vibration levels,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Verify emergency stop function,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Check sensor calibration,Quarterly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Inspect safety guards,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Check noise levels,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Inspect foundation integrity,Yearly,No,No,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Verify control system backup,Quarterly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0027,Grinding Machine,Clean machine body and surroundings,Monthly,No,No,LHB Coach Maintenance Facility
+CR-MAT-0028,Industrial Welding Machine,Check output current calibration,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Inspect cable insulation,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Verify grounding integrity,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Inspect electrode holder wear,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Check cooling fan operation,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Inspect power contactors,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Check welding waveform stability,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Inspect control panel switches,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Check gas hose leakage,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Verify emergency stop function,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Inspect torch nozzle wear,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0028,Industrial Welding Machine,Clean dust from internal electronics,Quarterly,No,No,Heavy Corrosion Shop
+CR-MAT-0029,Grinding Machine,General lubrication of moving parts,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Check electrical panel health,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Check vibration levels,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Verify emergency stop function,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Check sensor calibration,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Inspect safety guards,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Check noise levels,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Inspect foundation integrity,Yearly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Verify control system backup,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0029,Grinding Machine,Clean machine body and surroundings,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0030,Spring Testing Machine,General lubrication of moving parts,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Check electrical panel health,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Inspect structural bolts tightness,Quarterly,No,No,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Check vibration levels,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Verify emergency stop function,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Check sensor calibration,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Inspect safety guards,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Check noise levels,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Inspect foundation integrity,Yearly,Yes,No,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Verify control system backup,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0030,Spring Testing Machine,Clean machine body and surroundings,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0031,Vertical Drilling Machine,Check chuck runout,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Lubricate spindle bearings,Monthly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Inspect electrical panel,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Check feed mechanism smoothness,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Inspect coolant pump,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Verify depth stop calibration,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Check column locking mechanism,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Inspect drive belts,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Check noise levels,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Verify emergency stop function,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Check spindle temperature rise,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0031,Vertical Drilling Machine,Clean machine enclosure,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0032,Bogie Assembly Fixture,General lubrication of moving parts,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Check electrical panel health,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Inspect structural bolts tightness,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Check vibration levels,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Verify emergency stop function,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Inspect hydraulic / pneumatic lines,Monthly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Check sensor calibration,Quarterly,No,No,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Inspect safety guards,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Check noise levels,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Inspect foundation integrity,Yearly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Verify control system backup,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0032,Bogie Assembly Fixture,Clean machine body and surroundings,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,General lubrication of moving parts,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Check electrical panel health,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Inspect structural bolts tightness,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Check vibration levels,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Verify emergency stop function,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Inspect hydraulic / pneumatic lines,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Check sensor calibration,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Inspect safety guards,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Check noise levels,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Inspect foundation integrity,Yearly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Verify control system backup,Quarterly,No,No,Axle Turning Lathe Section
+CR-MAT-0033,Shock Absorber Test Rig,Clean machine body and surroundings,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0034,Slotting Machine,General lubrication of moving parts,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Check electrical panel health,Quarterly,No,Yes,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Check vibration levels,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Verify emergency stop function,Monthly,No,No,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Check sensor calibration,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Inspect safety guards,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Check noise levels,Monthly,No,No,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Inspect foundation integrity,Yearly,No,Yes,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Verify control system backup,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0034,Slotting Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0035,Slotting Machine,General lubrication of moving parts,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0035,Slotting Machine,Check electrical panel health,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0035,Slotting Machine,Inspect structural bolts tightness,Quarterly,No,No,Trolley Shop
+CR-MAT-0035,Slotting Machine,Check vibration levels,Monthly,Yes,No,Trolley Shop
+CR-MAT-0035,Slotting Machine,Verify emergency stop function,Monthly,No,Yes,Trolley Shop
+CR-MAT-0035,Slotting Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0035,Slotting Machine,Check sensor calibration,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0035,Slotting Machine,Inspect safety guards,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0035,Slotting Machine,Check noise levels,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0035,Slotting Machine,Inspect foundation integrity,Yearly,Yes,Yes,Trolley Shop
+CR-MAT-0035,Slotting Machine,Verify control system backup,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0035,Slotting Machine,Clean machine body and surroundings,Monthly,Yes,No,Trolley Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,General lubrication of moving parts,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Check electrical panel health,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Inspect structural bolts tightness,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Check vibration levels,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Verify emergency stop function,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Inspect hydraulic / pneumatic lines,Monthly,No,No,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Check sensor calibration,Quarterly,Yes,No,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Inspect safety guards,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Check noise levels,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Inspect foundation integrity,Yearly,No,No,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Verify control system backup,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0036,Ultrasonic Wheel Inspection System,Clean machine body and surroundings,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0037,Shaper Machine,General lubrication of moving parts,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0037,Shaper Machine,Check electrical panel health,Quarterly,No,No,General Machine Shop
+CR-MAT-0037,Shaper Machine,Inspect structural bolts tightness,Quarterly,No,Yes,General Machine Shop
+CR-MAT-0037,Shaper Machine,Check vibration levels,Monthly,No,No,General Machine Shop
+CR-MAT-0037,Shaper Machine,Verify emergency stop function,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0037,Shaper Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0037,Shaper Machine,Check sensor calibration,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0037,Shaper Machine,Inspect safety guards,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0037,Shaper Machine,Check noise levels,Monthly,Yes,No,General Machine Shop
+CR-MAT-0037,Shaper Machine,Inspect foundation integrity,Yearly,Yes,No,General Machine Shop
+CR-MAT-0037,Shaper Machine,Verify control system backup,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0037,Shaper Machine,Clean machine body and surroundings,Monthly,No,Yes,General Machine Shop
+CR-MAT-0038,Shaper Machine,General lubrication of moving parts,Monthly,Yes,No,General Machine Shop
+CR-MAT-0038,Shaper Machine,Check electrical panel health,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0038,Shaper Machine,Inspect structural bolts tightness,Quarterly,No,Yes,General Machine Shop
+CR-MAT-0038,Shaper Machine,Check vibration levels,Monthly,No,No,General Machine Shop
+CR-MAT-0038,Shaper Machine,Verify emergency stop function,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0038,Shaper Machine,Inspect hydraulic / pneumatic lines,Monthly,No,No,General Machine Shop
+CR-MAT-0038,Shaper Machine,Check sensor calibration,Quarterly,No,No,General Machine Shop
+CR-MAT-0038,Shaper Machine,Inspect safety guards,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0038,Shaper Machine,Check noise levels,Monthly,No,No,General Machine Shop
+CR-MAT-0038,Shaper Machine,Inspect foundation integrity,Yearly,Yes,No,General Machine Shop
+CR-MAT-0038,Shaper Machine,Verify control system backup,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0038,Shaper Machine,Clean machine body and surroundings,Monthly,Yes,No,General Machine Shop
+CR-MAT-0039,Vertical Drilling Machine,Check chuck runout,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Lubricate spindle bearings,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Inspect electrical panel,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Check feed mechanism smoothness,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Inspect coolant pump,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Verify depth stop calibration,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Check column locking mechanism,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Inspect drive belts,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Check noise levels,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Verify emergency stop function,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Check spindle temperature rise,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0039,Vertical Drilling Machine,Clean machine enclosure,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Check CNC axis calibration,Monthly,No,No,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Inspect hydraulic pressure system,Monthly,Yes,No,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Check spindle bearing vibration,Quarterly,No,No,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Verify servo motor performance,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Inspect lubrication pump operation,Monthly,No,Yes,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Check tool turret indexing accuracy,Monthly,No,Yes,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Inspect coolant filtration unit,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Verify CNC backup battery health,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Check way cover condition,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Inspect chip conveyor operation,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Verify axis ball screw backlash,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0040,CNC Axle Turning Lathe,Check emergency stop circuit integrity,Monthly,Yes,No,Wheel Shop
+CR-MAT-0041,Radial Drilling Machine,Check spindle alignment,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Lubricate column guideways,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Inspect motor current draw,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Check coolant flow,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Inspect chuck wear,Quarterly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Check belt tension,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Verify emergency stop function,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Check foundation bolts tightness,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Inspect wiring insulation,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Check vibration levels,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Verify speed calibration,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0041,Radial Drilling Machine,Clean chip trays and guards,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0042,Slotting Machine,General lubrication of moving parts,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0042,Slotting Machine,Check electrical panel health,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0042,Slotting Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0042,Slotting Machine,Check vibration levels,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0042,Slotting Machine,Verify emergency stop function,Monthly,Yes,No,Trolley Shop
+CR-MAT-0042,Slotting Machine,Inspect hydraulic / pneumatic lines,Monthly,No,No,Trolley Shop
+CR-MAT-0042,Slotting Machine,Check sensor calibration,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0042,Slotting Machine,Inspect safety guards,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0042,Slotting Machine,Check noise levels,Monthly,Yes,No,Trolley Shop
+CR-MAT-0042,Slotting Machine,Inspect foundation integrity,Yearly,Yes,Yes,Trolley Shop
+CR-MAT-0042,Slotting Machine,Verify control system backup,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0042,Slotting Machine,Clean machine body and surroundings,Monthly,No,Yes,Trolley Shop
+CR-MAT-0043,Planer Machine,General lubrication of moving parts,Monthly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Check electrical panel health,Quarterly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Inspect structural bolts tightness,Quarterly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Check vibration levels,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Verify emergency stop function,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Check sensor calibration,Quarterly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Inspect safety guards,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Check noise levels,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Inspect foundation integrity,Yearly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Verify control system backup,Quarterly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0043,Planer Machine,Clean machine body and surroundings,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0044,Slotting Machine,General lubrication of moving parts,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Check electrical panel health,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Check vibration levels,Monthly,No,Yes,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Verify emergency stop function,Monthly,No,No,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Check sensor calibration,Quarterly,No,No,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Inspect safety guards,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Check noise levels,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Inspect foundation integrity,Yearly,Yes,No,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Verify control system backup,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0044,Slotting Machine,Clean machine body and surroundings,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0045,Radial Drilling Machine,Check spindle alignment,Monthly,No,No,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Lubricate column guideways,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Inspect motor current draw,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Check coolant flow,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Inspect chuck wear,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Check belt tension,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Verify emergency stop function,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Check foundation bolts tightness,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Inspect wiring insulation,Quarterly,No,Yes,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Check vibration levels,Monthly,No,No,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Verify speed calibration,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0045,Radial Drilling Machine,Clean chip trays and guards,Monthly,No,Yes,Wheel Shop
+CR-MAT-0046,Centre Lathe,Check chuck jaw wear,Monthly,Yes,No,Wheel Shop
+CR-MAT-0046,Centre Lathe,Lubricate lead screw,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0046,Centre Lathe,Inspect gearbox oil level,Quarterly,No,No,Wheel Shop
+CR-MAT-0046,Centre Lathe,Check tailstock alignment,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0046,Centre Lathe,Inspect coolant flow rate,Monthly,No,Yes,Wheel Shop
+CR-MAT-0046,Centre Lathe,Check spindle bearing temperature,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0046,Centre Lathe,Verify feed gearbox shifting,Quarterly,No,Yes,Wheel Shop
+CR-MAT-0046,Centre Lathe,Inspect drive belts,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0046,Centre Lathe,Check bed wear patterns,Yearly,Yes,Yes,Wheel Shop
+CR-MAT-0046,Centre Lathe,Verify emergency stop function,Monthly,Yes,No,Wheel Shop
+CR-MAT-0046,Centre Lathe,Check electrical panel cooling fans,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0046,Centre Lathe,Clean swarf tray and guards,Monthly,Yes,No,Wheel Shop
+CR-MAT-0047,Shaper Machine,General lubrication of moving parts,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Check electrical panel health,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Check vibration levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Verify emergency stop function,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Check sensor calibration,Quarterly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Inspect safety guards,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Check noise levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Inspect foundation integrity,Yearly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Verify control system backup,Quarterly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0047,Shaper Machine,Clean machine body and surroundings,Monthly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0048,Grinding Machine,General lubrication of moving parts,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Check electrical panel health,Quarterly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Inspect structural bolts tightness,Quarterly,No,No,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Check vibration levels,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Verify emergency stop function,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Check sensor calibration,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Inspect safety guards,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Check noise levels,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Inspect foundation integrity,Yearly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Verify control system backup,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0048,Grinding Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0049,Bogie Assembly Fixture,General lubrication of moving parts,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Check electrical panel health,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Inspect structural bolts tightness,Quarterly,No,Yes,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Check vibration levels,Monthly,No,No,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Verify emergency stop function,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Check sensor calibration,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Inspect safety guards,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Check noise levels,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Inspect foundation integrity,Yearly,No,No,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Verify control system backup,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0049,Bogie Assembly Fixture,Clean machine body and surroundings,Monthly,No,Yes,Wheel Shop
+CR-MAT-0050,Underframe Inspection Jig,General lubrication of moving parts,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Check electrical panel health,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Inspect structural bolts tightness,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Check vibration levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Verify emergency stop function,Monthly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Check sensor calibration,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Inspect safety guards,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Check noise levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Inspect foundation integrity,Yearly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Verify control system backup,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0050,Underframe Inspection Jig,Clean machine body and surroundings,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0051,Shock Absorber Test Rig,General lubrication of moving parts,Monthly,Yes,No,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Check electrical panel health,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Inspect structural bolts tightness,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Check vibration levels,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Verify emergency stop function,Monthly,No,Yes,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Check sensor calibration,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Inspect safety guards,Monthly,Yes,No,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Check noise levels,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Inspect foundation integrity,Yearly,No,No,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Verify control system backup,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0051,Shock Absorber Test Rig,Clean machine body and surroundings,Monthly,Yes,No,Trolley Shop
+CR-MAT-0052,Grinding Machine,General lubrication of moving parts,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Check electrical panel health,Quarterly,No,No,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Check vibration levels,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Verify emergency stop function,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Check sensor calibration,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Inspect safety guards,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Check noise levels,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Inspect foundation integrity,Yearly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Verify control system backup,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0052,Grinding Machine,Clean machine body and surroundings,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0053,CNC Axle Turning Lathe,Check CNC axis calibration,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Inspect hydraulic pressure system,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Check spindle bearing vibration,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Verify servo motor performance,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Inspect lubrication pump operation,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Check tool turret indexing accuracy,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Inspect coolant filtration unit,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Verify CNC backup battery health,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Check way cover condition,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Inspect chip conveyor operation,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Verify axis ball screw backlash,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0053,CNC Axle Turning Lathe,Check emergency stop circuit integrity,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Check chuck jaw wear,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Lubricate lead screw,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Inspect gearbox oil level,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Check tailstock alignment,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Inspect coolant flow rate,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Check spindle bearing temperature,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Verify feed gearbox shifting,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Inspect drive belts,Quarterly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Check bed wear patterns,Yearly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Verify emergency stop function,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Check electrical panel cooling fans,Quarterly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0054,Centre Lathe,Clean swarf tray and guards,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0055,Industrial Welding Machine,Check output current calibration,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Inspect cable insulation,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Verify grounding integrity,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Inspect electrode holder wear,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Check cooling fan operation,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Inspect power contactors,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Check welding waveform stability,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Inspect control panel switches,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Check gas hose leakage,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Verify emergency stop function,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Inspect torch nozzle wear,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0055,Industrial Welding Machine,Clean dust from internal electronics,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0056,Shaper Machine,General lubrication of moving parts,Monthly,Yes,No,Wheel Shop
+CR-MAT-0056,Shaper Machine,Check electrical panel health,Quarterly,No,Yes,Wheel Shop
+CR-MAT-0056,Shaper Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0056,Shaper Machine,Check vibration levels,Monthly,No,Yes,Wheel Shop
+CR-MAT-0056,Shaper Machine,Verify emergency stop function,Monthly,No,No,Wheel Shop
+CR-MAT-0056,Shaper Machine,Inspect hydraulic / pneumatic lines,Monthly,No,Yes,Wheel Shop
+CR-MAT-0056,Shaper Machine,Check sensor calibration,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0056,Shaper Machine,Inspect safety guards,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0056,Shaper Machine,Check noise levels,Monthly,No,No,Wheel Shop
+CR-MAT-0056,Shaper Machine,Inspect foundation integrity,Yearly,Yes,Yes,Wheel Shop
+CR-MAT-0056,Shaper Machine,Verify control system backup,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0056,Shaper Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0057,Bogie Wash System,General lubrication of moving parts,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Check electrical panel health,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Inspect structural bolts tightness,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Check vibration levels,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Verify emergency stop function,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Check sensor calibration,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Inspect safety guards,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Check noise levels,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Inspect foundation integrity,Yearly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Verify control system backup,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0057,Bogie Wash System,Clean machine body and surroundings,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0058,Planer Machine,General lubrication of moving parts,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Check electrical panel health,Quarterly,No,No,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Inspect structural bolts tightness,Quarterly,No,No,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Check vibration levels,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Verify emergency stop function,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Check sensor calibration,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Inspect safety guards,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Check noise levels,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Inspect foundation integrity,Yearly,No,Yes,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Verify control system backup,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0058,Planer Machine,Clean machine body and surroundings,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0059,Hydraulic Wheel Press,Check hydraulic pressure stability,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Inspect piston seals,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Verify load cell calibration,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Inspect hydraulic oil contamination,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Check pressure relief valve operation,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Inspect pump motor current draw,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Check ram alignment,Quarterly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Verify pressure gauge calibration,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Inspect hoses for leaks,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Check emergency stop function,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Inspect structural frame bolts,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0059,Hydraulic Wheel Press,Clean hydraulic reservoir breather,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0060,Hydraulic Wheel Press,Check hydraulic pressure stability,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Inspect piston seals,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Verify load cell calibration,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Inspect hydraulic oil contamination,Monthly,No,No,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Check pressure relief valve operation,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Inspect pump motor current draw,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Check ram alignment,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Verify pressure gauge calibration,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Inspect hoses for leaks,Monthly,No,Yes,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Check emergency stop function,Monthly,No,No,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Inspect structural frame bolts,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0060,Hydraulic Wheel Press,Clean hydraulic reservoir breather,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0061,Wheel Re-Disking Machine,General lubrication of moving parts,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Check electrical panel health,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Inspect structural bolts tightness,Quarterly,No,Yes,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Check vibration levels,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Verify emergency stop function,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Check sensor calibration,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Inspect safety guards,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Check noise levels,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Inspect foundation integrity,Yearly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Verify control system backup,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0061,Wheel Re-Disking Machine,Clean machine body and surroundings,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,General lubrication of moving parts,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Check electrical panel health,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Check vibration levels,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Verify emergency stop function,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Inspect hydraulic / pneumatic lines,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Check sensor calibration,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Inspect safety guards,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Check noise levels,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Inspect foundation integrity,Yearly,Yes,No,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Verify control system backup,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0062,Milling Machine,Clean machine body and surroundings,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0063,Industrial Welding Machine,Check output current calibration,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Inspect cable insulation,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Verify grounding integrity,Quarterly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Inspect electrode holder wear,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Check cooling fan operation,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Inspect power contactors,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Check welding waveform stability,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Inspect control panel switches,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Check gas hose leakage,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Verify emergency stop function,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Inspect torch nozzle wear,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0063,Industrial Welding Machine,Clean dust from internal electronics,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0064,Bogie Wash System,General lubrication of moving parts,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Check electrical panel health,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Inspect structural bolts tightness,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Check vibration levels,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Verify emergency stop function,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Check sensor calibration,Quarterly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Inspect safety guards,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Check noise levels,Monthly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Inspect foundation integrity,Yearly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Verify control system backup,Quarterly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0064,Bogie Wash System,Clean machine body and surroundings,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0065,Industrial Welding Machine,Check output current calibration,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Inspect cable insulation,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Verify grounding integrity,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Inspect electrode holder wear,Monthly,Yes,No,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Check cooling fan operation,Monthly,No,Yes,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Inspect power contactors,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Check welding waveform stability,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Inspect control panel switches,Monthly,No,Yes,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Check gas hose leakage,Monthly,No,Yes,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Verify emergency stop function,Monthly,Yes,No,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Inspect torch nozzle wear,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0065,Industrial Welding Machine,Clean dust from internal electronics,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0066,Radial Drilling Machine,Check spindle alignment,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Lubricate column guideways,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Inspect motor current draw,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Check coolant flow,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Inspect chuck wear,Quarterly,No,No,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Check belt tension,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Verify emergency stop function,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Check foundation bolts tightness,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Inspect wiring insulation,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Check vibration levels,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Verify speed calibration,Quarterly,No,No,Heavy Corrosion Shop
+CR-MAT-0066,Radial Drilling Machine,Clean chip trays and guards,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0067,Shock Absorber Test Rig,General lubrication of moving parts,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Check electrical panel health,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Inspect structural bolts tightness,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Check vibration levels,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Verify emergency stop function,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Check sensor calibration,Quarterly,No,No,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Inspect safety guards,Monthly,No,No,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Check noise levels,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Inspect foundation integrity,Yearly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Verify control system backup,Quarterly,No,No,Lifting Underframe Shop
+CR-MAT-0067,Shock Absorber Test Rig,Clean machine body and surroundings,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0068,Centre Lathe,Check chuck jaw wear,Monthly,No,No,General Machine Shop
+CR-MAT-0068,Centre Lathe,Lubricate lead screw,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0068,Centre Lathe,Inspect gearbox oil level,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0068,Centre Lathe,Check tailstock alignment,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0068,Centre Lathe,Inspect coolant flow rate,Monthly,Yes,No,General Machine Shop
+CR-MAT-0068,Centre Lathe,Check spindle bearing temperature,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0068,Centre Lathe,Verify feed gearbox shifting,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0068,Centre Lathe,Inspect drive belts,Quarterly,No,No,General Machine Shop
+CR-MAT-0068,Centre Lathe,Check bed wear patterns,Yearly,Yes,No,General Machine Shop
+CR-MAT-0068,Centre Lathe,Verify emergency stop function,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0068,Centre Lathe,Check electrical panel cooling fans,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0068,Centre Lathe,Clean swarf tray and guards,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,General lubrication of moving parts,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Check electrical panel health,Quarterly,No,No,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Inspect structural bolts tightness,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Check vibration levels,Monthly,No,No,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Verify emergency stop function,Monthly,No,No,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Check sensor calibration,Quarterly,No,Yes,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Inspect safety guards,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Check noise levels,Monthly,Yes,No,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Inspect foundation integrity,Yearly,Yes,Yes,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Verify control system backup,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0069,Shock Absorber Test Rig,Clean machine body and surroundings,Monthly,Yes,No,General Machine Shop
+CR-MAT-0070,Radial Drilling Machine,Check spindle alignment,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Lubricate column guideways,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Inspect motor current draw,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Check coolant flow,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Inspect chuck wear,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Check belt tension,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Verify emergency stop function,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Check foundation bolts tightness,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Inspect wiring insulation,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Check vibration levels,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Verify speed calibration,Quarterly,No,No,Centre Lathe Section
+CR-MAT-0070,Radial Drilling Machine,Clean chip trays and guards,Monthly,No,Yes,Centre Lathe Section
+CR-MAT-0071,Radial Drilling Machine,Check spindle alignment,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Lubricate column guideways,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Inspect motor current draw,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Check coolant flow,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Inspect chuck wear,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Check belt tension,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Verify emergency stop function,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Check foundation bolts tightness,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Inspect wiring insulation,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Check vibration levels,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Verify speed calibration,Quarterly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0071,Radial Drilling Machine,Clean chip trays and guards,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,General lubrication of moving parts,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Check electrical panel health,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Inspect structural bolts tightness,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Check vibration levels,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Verify emergency stop function,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Check sensor calibration,Quarterly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Inspect safety guards,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Check noise levels,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Inspect foundation integrity,Yearly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Verify control system backup,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0072,Ultrasonic Wheel Inspection System,Clean machine body and surroundings,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0073,Slotting Machine,General lubrication of moving parts,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Check electrical panel health,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Check vibration levels,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Verify emergency stop function,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Inspect hydraulic / pneumatic lines,Monthly,No,No,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Check sensor calibration,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Inspect safety guards,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Check noise levels,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Inspect foundation integrity,Yearly,No,Yes,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Verify control system backup,Quarterly,No,Yes,Centre Lathe Section
+CR-MAT-0073,Slotting Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0074,Gang Drilling Machine,Check multi spindle alignment,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Lubricate feed gears,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Inspect tool holders,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Check coolant distribution manifold,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Inspect motor load balance,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Verify spindle synchronization,Quarterly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Check belt condition,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Inspect electrical relays,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Check vibration levels,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Verify safety guards interlock,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Check spindle nose wear,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0074,Gang Drilling Machine,Clean chip conveyor,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,General lubrication of moving parts,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Check electrical panel health,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Check vibration levels,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Verify emergency stop function,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Check sensor calibration,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Inspect safety guards,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Check noise levels,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Inspect foundation integrity,Yearly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Verify control system backup,Quarterly,No,No,Heavy Corrosion Shop
+CR-MAT-0075,Milling Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0076,Shaper Machine,General lubrication of moving parts,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Check electrical panel health,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Inspect structural bolts tightness,Quarterly,No,No,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Check vibration levels,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Verify emergency stop function,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Inspect hydraulic / pneumatic lines,Monthly,No,No,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Check sensor calibration,Quarterly,No,Yes,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Inspect safety guards,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Check noise levels,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Inspect foundation integrity,Yearly,No,No,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Verify control system backup,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0076,Shaper Machine,Clean machine body and surroundings,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0077,Underframe Inspection Jig,General lubrication of moving parts,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Check electrical panel health,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Inspect structural bolts tightness,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Check vibration levels,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Verify emergency stop function,Monthly,No,No,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Check sensor calibration,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Inspect safety guards,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Check noise levels,Monthly,No,Yes,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Inspect foundation integrity,Yearly,Yes,Yes,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Verify control system backup,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0077,Underframe Inspection Jig,Clean machine body and surroundings,Monthly,No,Yes,Trolley Shop
+CR-MAT-0078,Milling Machine,General lubrication of moving parts,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0078,Milling Machine,Check electrical panel health,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0078,Milling Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0078,Milling Machine,Check vibration levels,Monthly,Yes,No,General Machine Shop
+CR-MAT-0078,Milling Machine,Verify emergency stop function,Monthly,No,No,General Machine Shop
+CR-MAT-0078,Milling Machine,Inspect hydraulic / pneumatic lines,Monthly,No,Yes,General Machine Shop
+CR-MAT-0078,Milling Machine,Check sensor calibration,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0078,Milling Machine,Inspect safety guards,Monthly,Yes,No,General Machine Shop
+CR-MAT-0078,Milling Machine,Check noise levels,Monthly,Yes,No,General Machine Shop
+CR-MAT-0078,Milling Machine,Inspect foundation integrity,Yearly,Yes,Yes,General Machine Shop
+CR-MAT-0078,Milling Machine,Verify control system backup,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0078,Milling Machine,Clean machine body and surroundings,Monthly,Yes,No,General Machine Shop
+CR-MAT-0079,Centre Lathe,Check chuck jaw wear,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Lubricate lead screw,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Inspect gearbox oil level,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Check tailstock alignment,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Inspect coolant flow rate,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Check spindle bearing temperature,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Verify feed gearbox shifting,Quarterly,No,No,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Inspect drive belts,Quarterly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Check bed wear patterns,Yearly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Verify emergency stop function,Monthly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Check electrical panel cooling fans,Quarterly,No,No,Axle Turning Lathe Section
+CR-MAT-0079,Centre Lathe,Clean swarf tray and guards,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0080,Vertical Drilling Machine,Check chuck runout,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Lubricate spindle bearings,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Inspect electrical panel,Quarterly,No,No,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Check feed mechanism smoothness,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Inspect coolant pump,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Verify depth stop calibration,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Check column locking mechanism,Monthly,Yes,No,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Inspect drive belts,Quarterly,No,No,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Check noise levels,Monthly,No,Yes,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Verify emergency stop function,Monthly,Yes,No,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Check spindle temperature rise,Quarterly,No,Yes,General Machine Shop
+CR-MAT-0080,Vertical Drilling Machine,Clean machine enclosure,Monthly,Yes,No,General Machine Shop
+CR-MAT-0081,Underframe Inspection Jig,General lubrication of moving parts,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Check electrical panel health,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Inspect structural bolts tightness,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Check vibration levels,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Verify emergency stop function,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Check sensor calibration,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Inspect safety guards,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Check noise levels,Monthly,No,Yes,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Inspect foundation integrity,Yearly,Yes,No,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Verify control system backup,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0081,Underframe Inspection Jig,Clean machine body and surroundings,Monthly,No,No,Lifting Underframe Shop
+CR-MAT-0082,Spring Testing Machine,General lubrication of moving parts,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Check electrical panel health,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Inspect structural bolts tightness,Quarterly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Check vibration levels,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Verify emergency stop function,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Check sensor calibration,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Inspect safety guards,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Check noise levels,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Inspect foundation integrity,Yearly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Verify control system backup,Quarterly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0082,Spring Testing Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0083,Slotting Machine,General lubrication of moving parts,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0083,Slotting Machine,Check electrical panel health,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0083,Slotting Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0083,Slotting Machine,Check vibration levels,Monthly,No,No,Wheel Shop
+CR-MAT-0083,Slotting Machine,Verify emergency stop function,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0083,Slotting Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0083,Slotting Machine,Check sensor calibration,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0083,Slotting Machine,Inspect safety guards,Monthly,Yes,No,Wheel Shop
+CR-MAT-0083,Slotting Machine,Check noise levels,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0083,Slotting Machine,Inspect foundation integrity,Yearly,Yes,No,Wheel Shop
+CR-MAT-0083,Slotting Machine,Verify control system backup,Quarterly,No,Yes,Wheel Shop
+CR-MAT-0083,Slotting Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0084,Centre Lathe,Check chuck jaw wear,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Lubricate lead screw,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Inspect gearbox oil level,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Check tailstock alignment,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Inspect coolant flow rate,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Check spindle bearing temperature,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Verify feed gearbox shifting,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Inspect drive belts,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Check bed wear patterns,Yearly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Verify emergency stop function,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Check electrical panel cooling fans,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0084,Centre Lathe,Clean swarf tray and guards,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0085,Bogie Wash System,General lubrication of moving parts,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Check electrical panel health,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Inspect structural bolts tightness,Quarterly,Yes,Yes,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Check vibration levels,Monthly,Yes,No,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Verify emergency stop function,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Check sensor calibration,Quarterly,Yes,No,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Inspect safety guards,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Check noise levels,Monthly,Yes,Yes,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Inspect foundation integrity,Yearly,Yes,Yes,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Verify control system backup,Quarterly,No,Yes,Wheel Shop
+CR-MAT-0085,Bogie Wash System,Clean machine body and surroundings,Monthly,No,No,Wheel Shop
+CR-MAT-0086,Bearing Induction Heater,General lubrication of moving parts,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Check electrical panel health,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Inspect structural bolts tightness,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Check vibration levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Verify emergency stop function,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Inspect hydraulic / pneumatic lines,Monthly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Check sensor calibration,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Inspect safety guards,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Check noise levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Inspect foundation integrity,Yearly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Verify control system backup,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0086,Bearing Induction Heater,Clean machine body and surroundings,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0087,Gang Drilling Machine,Check multi spindle alignment,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Lubricate feed gears,Monthly,No,Yes,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Inspect tool holders,Quarterly,No,No,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Check coolant distribution manifold,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Inspect motor load balance,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Verify spindle synchronization,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Check belt condition,Monthly,No,Yes,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Inspect electrical relays,Quarterly,No,Yes,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Check vibration levels,Monthly,Yes,Yes,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Verify safety guards interlock,Monthly,Yes,No,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Check spindle nose wear,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0087,Gang Drilling Machine,Clean chip conveyor,Monthly,Yes,No,General Machine Shop
+CR-MAT-0088,Bearing Induction Heater,General lubrication of moving parts,Monthly,Yes,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Check electrical panel health,Quarterly,No,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Inspect structural bolts tightness,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Check vibration levels,Monthly,Yes,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Verify emergency stop function,Monthly,Yes,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Check sensor calibration,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Inspect safety guards,Monthly,Yes,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Check noise levels,Monthly,Yes,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Inspect foundation integrity,Yearly,No,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Verify control system backup,Quarterly,No,No,Trolley Shop
+CR-MAT-0088,Bearing Induction Heater,Clean machine body and surroundings,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0089,Bogie Assembly Fixture,General lubrication of moving parts,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Check electrical panel health,Quarterly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Inspect structural bolts tightness,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Check vibration levels,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Verify emergency stop function,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Check sensor calibration,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Inspect safety guards,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Check noise levels,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Inspect foundation integrity,Yearly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Verify control system backup,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0089,Bogie Assembly Fixture,Clean machine body and surroundings,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0090,Bogie Wash System,General lubrication of moving parts,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Check electrical panel health,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Inspect structural bolts tightness,Quarterly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Check vibration levels,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Verify emergency stop function,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Check sensor calibration,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Inspect safety guards,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Check noise levels,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Inspect foundation integrity,Yearly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Verify control system backup,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0090,Bogie Wash System,Clean machine body and surroundings,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,General lubrication of moving parts,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Check electrical panel health,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Check vibration levels,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Verify emergency stop function,Monthly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Check sensor calibration,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Inspect safety guards,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Check noise levels,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Inspect foundation integrity,Yearly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Verify control system backup,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0091,Milling Machine,Clean machine body and surroundings,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Check chuck runout,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Lubricate spindle bearings,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Inspect electrical panel,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Check feed mechanism smoothness,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Inspect coolant pump,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Verify depth stop calibration,Quarterly,No,No,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Check column locking mechanism,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Inspect drive belts,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Check noise levels,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Verify emergency stop function,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Check spindle temperature rise,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0092,Vertical Drilling Machine,Clean machine enclosure,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0093,Gang Drilling Machine,Check multi spindle alignment,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Lubricate feed gears,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Inspect tool holders,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Check coolant distribution manifold,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Inspect motor load balance,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Verify spindle synchronization,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Check belt condition,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Inspect electrical relays,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Check vibration levels,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Verify safety guards interlock,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Check spindle nose wear,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0093,Gang Drilling Machine,Clean chip conveyor,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Check CNC axis calibration,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Inspect hydraulic pressure system,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Check spindle bearing vibration,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Verify servo motor performance,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Inspect lubrication pump operation,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Check tool turret indexing accuracy,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Inspect coolant filtration unit,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Verify CNC backup battery health,Quarterly,No,No,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Check way cover condition,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Inspect chip conveyor operation,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Verify axis ball screw backlash,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0094,CNC Axle Turning Lathe,Check emergency stop circuit integrity,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0095,Shaper Machine,General lubrication of moving parts,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Check electrical panel health,Quarterly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Check vibration levels,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Verify emergency stop function,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Check sensor calibration,Quarterly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Inspect safety guards,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Check noise levels,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Inspect foundation integrity,Yearly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Verify control system backup,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0095,Shaper Machine,Clean machine body and surroundings,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0096,Planer Machine,General lubrication of moving parts,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Check electrical panel health,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Check vibration levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Verify emergency stop function,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Check sensor calibration,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Inspect safety guards,Monthly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Check noise levels,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Inspect foundation integrity,Yearly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Verify control system backup,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0096,Planer Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0097,Bogie Assembly Fixture,General lubrication of moving parts,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Check electrical panel health,Quarterly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Inspect structural bolts tightness,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Check vibration levels,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Verify emergency stop function,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Check sensor calibration,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Inspect safety guards,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Check noise levels,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Inspect foundation integrity,Yearly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Verify control system backup,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0097,Bogie Assembly Fixture,Clean machine body and surroundings,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0098,Industrial Welding Machine,Check output current calibration,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Inspect cable insulation,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Verify grounding integrity,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Inspect electrode holder wear,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Check cooling fan operation,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Inspect power contactors,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Check welding waveform stability,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Inspect control panel switches,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Check gas hose leakage,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Verify emergency stop function,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Inspect torch nozzle wear,Monthly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0098,Industrial Welding Machine,Clean dust from internal electronics,Quarterly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0099,Hydraulic Wheel Press,Check hydraulic pressure stability,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Inspect piston seals,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Verify load cell calibration,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Inspect hydraulic oil contamination,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Check pressure relief valve operation,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Inspect pump motor current draw,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Check ram alignment,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Verify pressure gauge calibration,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Inspect hoses for leaks,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Check emergency stop function,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Inspect structural frame bolts,Quarterly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0099,Hydraulic Wheel Press,Clean hydraulic reservoir breather,Monthly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Check chuck runout,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Lubricate spindle bearings,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Inspect electrical panel,Quarterly,No,No,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Check feed mechanism smoothness,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Inspect coolant pump,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Verify depth stop calibration,Quarterly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Check column locking mechanism,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Inspect drive belts,Quarterly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Check noise levels,Monthly,Yes,No,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Verify emergency stop function,Monthly,No,No,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Check spindle temperature rise,Quarterly,No,Yes,Axle Turning Lathe Section
+CR-MAT-0100,Vertical Drilling Machine,Clean machine enclosure,Monthly,Yes,Yes,Axle Turning Lathe Section
+CR-MAT-0101,Shaper Machine,General lubrication of moving parts,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Check electrical panel health,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Check vibration levels,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Verify emergency stop function,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Inspect hydraulic / pneumatic lines,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Check sensor calibration,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Inspect safety guards,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Check noise levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Inspect foundation integrity,Yearly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Verify control system backup,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0101,Shaper Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0102,Grinding Machine,General lubrication of moving parts,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Check electrical panel health,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Check vibration levels,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Verify emergency stop function,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Check sensor calibration,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Inspect safety guards,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Check noise levels,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Inspect foundation integrity,Yearly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Verify control system backup,Quarterly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0102,Grinding Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,General lubrication of moving parts,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Check electrical panel health,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Inspect structural bolts tightness,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Check vibration levels,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Verify emergency stop function,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Check sensor calibration,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Inspect safety guards,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Check noise levels,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Inspect foundation integrity,Yearly,No,No,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Verify control system backup,Quarterly,No,No,Heavy Corrosion Shop
+CR-MAT-0103,Bogie Wash System,Clean machine body and surroundings,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,General lubrication of moving parts,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Check electrical panel health,Quarterly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Inspect structural bolts tightness,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Check vibration levels,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Verify emergency stop function,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Check sensor calibration,Quarterly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Inspect safety guards,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Check noise levels,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Inspect foundation integrity,Yearly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Verify control system backup,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0104,Shock Absorber Test Rig,Clean machine body and surroundings,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0105,Wheel Re-Disking Machine,General lubrication of moving parts,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Check electrical panel health,Quarterly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Inspect structural bolts tightness,Quarterly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Check vibration levels,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Verify emergency stop function,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Check sensor calibration,Quarterly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Inspect safety guards,Monthly,Yes,Yes,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Check noise levels,Monthly,No,No,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Inspect foundation integrity,Yearly,No,Yes,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Verify control system backup,Quarterly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0105,Wheel Re-Disking Machine,Clean machine body and surroundings,Monthly,Yes,No,LHB Coach Maintenance Facility
+CR-MAT-0106,Planer Machine,General lubrication of moving parts,Monthly,Yes,No,General Machine Shop
+CR-MAT-0106,Planer Machine,Check electrical panel health,Quarterly,No,No,General Machine Shop
+CR-MAT-0106,Planer Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0106,Planer Machine,Check vibration levels,Monthly,No,No,General Machine Shop
+CR-MAT-0106,Planer Machine,Verify emergency stop function,Monthly,Yes,No,General Machine Shop
+CR-MAT-0106,Planer Machine,Inspect hydraulic / pneumatic lines,Monthly,No,Yes,General Machine Shop
+CR-MAT-0106,Planer Machine,Check sensor calibration,Quarterly,Yes,Yes,General Machine Shop
+CR-MAT-0106,Planer Machine,Inspect safety guards,Monthly,Yes,No,General Machine Shop
+CR-MAT-0106,Planer Machine,Check noise levels,Monthly,No,No,General Machine Shop
+CR-MAT-0106,Planer Machine,Inspect foundation integrity,Yearly,No,No,General Machine Shop
+CR-MAT-0106,Planer Machine,Verify control system backup,Quarterly,Yes,No,General Machine Shop
+CR-MAT-0106,Planer Machine,Clean machine body and surroundings,Monthly,No,No,General Machine Shop
+CR-MAT-0107,Shaper Machine,General lubrication of moving parts,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Check electrical panel health,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Check vibration levels,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Verify emergency stop function,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Check sensor calibration,Quarterly,No,No,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Inspect safety guards,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Check noise levels,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Inspect foundation integrity,Yearly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Verify control system backup,Quarterly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0107,Shaper Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0108,Underframe Inspection Jig,General lubrication of moving parts,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Check electrical panel health,Quarterly,Yes,No,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Inspect structural bolts tightness,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Check vibration levels,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Verify emergency stop function,Monthly,No,No,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Inspect hydraulic / pneumatic lines,Monthly,No,No,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Check sensor calibration,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Inspect safety guards,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Check noise levels,Monthly,No,Yes,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Inspect foundation integrity,Yearly,No,No,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Verify control system backup,Quarterly,Yes,No,Shock Absorber Shop
+CR-MAT-0108,Underframe Inspection Jig,Clean machine body and surroundings,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0109,Wheel Re-Disking Machine,General lubrication of moving parts,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Check electrical panel health,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Check vibration levels,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Verify emergency stop function,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Check sensor calibration,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Inspect safety guards,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Check noise levels,Monthly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Inspect foundation integrity,Yearly,No,No,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Verify control system backup,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0109,Wheel Re-Disking Machine,Clean machine body and surroundings,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0110,Planer Machine,General lubrication of moving parts,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Check electrical panel health,Quarterly,Yes,No,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Check vibration levels,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Verify emergency stop function,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Inspect hydraulic / pneumatic lines,Monthly,No,No,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Check sensor calibration,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Inspect safety guards,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Check noise levels,Monthly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Inspect foundation integrity,Yearly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Verify control system backup,Quarterly,Yes,Yes,Lifting Underframe Shop
+CR-MAT-0110,Planer Machine,Clean machine body and surroundings,Monthly,Yes,No,Lifting Underframe Shop
+CR-MAT-0111,Ultrasonic Wheel Inspection System,General lubrication of moving parts,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Check electrical panel health,Quarterly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Inspect structural bolts tightness,Quarterly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Check vibration levels,Monthly,No,Yes,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Verify emergency stop function,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Check sensor calibration,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Inspect safety guards,Monthly,Yes,Yes,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Check noise levels,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Inspect foundation integrity,Yearly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Verify control system backup,Quarterly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0111,Ultrasonic Wheel Inspection System,Clean machine body and surroundings,Monthly,Yes,No,Automatic Bogie Wash Plant
+CR-MAT-0112,Bogie Wash System,General lubrication of moving parts,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Check electrical panel health,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Inspect structural bolts tightness,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Check vibration levels,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Verify emergency stop function,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Check sensor calibration,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Inspect safety guards,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Check noise levels,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Inspect foundation integrity,Yearly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Verify control system backup,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0112,Bogie Wash System,Clean machine body and surroundings,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0113,CNC Axle Turning Lathe,Check CNC axis calibration,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Inspect hydraulic pressure system,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Check spindle bearing vibration,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Verify servo motor performance,Quarterly,No,Yes,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Inspect lubrication pump operation,Monthly,Yes,No,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Check tool turret indexing accuracy,Monthly,Yes,No,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Inspect coolant filtration unit,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Verify CNC backup battery health,Quarterly,Yes,No,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Check way cover condition,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Inspect chip conveyor operation,Monthly,Yes,No,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Verify axis ball screw backlash,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0113,CNC Axle Turning Lathe,Check emergency stop circuit integrity,Monthly,No,No,Trolley Shop
+CR-MAT-0114,Grinding Machine,General lubrication of moving parts,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Check electrical panel health,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Check vibration levels,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Verify emergency stop function,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Check sensor calibration,Quarterly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Inspect safety guards,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Check noise levels,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Inspect foundation integrity,Yearly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Verify control system backup,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0114,Grinding Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,General lubrication of moving parts,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Check electrical panel health,Quarterly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Check vibration levels,Monthly,No,No,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Verify emergency stop function,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Check sensor calibration,Quarterly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Inspect safety guards,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Check noise levels,Monthly,No,Yes,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Inspect foundation integrity,Yearly,No,No,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Verify control system backup,Quarterly,No,No,Wheel Reprofiling Plant
+CR-MAT-0115,Shaper Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Wheel Reprofiling Plant
+CR-MAT-0116,Centre Lathe,Check chuck jaw wear,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Lubricate lead screw,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Inspect gearbox oil level,Quarterly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Check tailstock alignment,Quarterly,No,No,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Inspect coolant flow rate,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Check spindle bearing temperature,Monthly,Yes,No,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Verify feed gearbox shifting,Quarterly,Yes,No,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Inspect drive belts,Quarterly,Yes,No,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Check bed wear patterns,Yearly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Verify emergency stop function,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Check electrical panel cooling fans,Quarterly,Yes,No,Shock Absorber Shop
+CR-MAT-0116,Centre Lathe,Clean swarf tray and guards,Monthly,Yes,Yes,Shock Absorber Shop
+CR-MAT-0117,Planer Machine,General lubrication of moving parts,Monthly,Yes,No,Trolley Shop
+CR-MAT-0117,Planer Machine,Check electrical panel health,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0117,Planer Machine,Inspect structural bolts tightness,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0117,Planer Machine,Check vibration levels,Monthly,No,No,Trolley Shop
+CR-MAT-0117,Planer Machine,Verify emergency stop function,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0117,Planer Machine,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Trolley Shop
+CR-MAT-0117,Planer Machine,Check sensor calibration,Quarterly,No,Yes,Trolley Shop
+CR-MAT-0117,Planer Machine,Inspect safety guards,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0117,Planer Machine,Check noise levels,Monthly,No,Yes,Trolley Shop
+CR-MAT-0117,Planer Machine,Inspect foundation integrity,Yearly,Yes,Yes,Trolley Shop
+CR-MAT-0117,Planer Machine,Verify control system backup,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0117,Planer Machine,Clean machine body and surroundings,Monthly,Yes,No,Trolley Shop
+CR-MAT-0118,Shock Absorber Test Rig,General lubrication of moving parts,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Check electrical panel health,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Inspect structural bolts tightness,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Check vibration levels,Monthly,No,Yes,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Verify emergency stop function,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Inspect hydraulic / pneumatic lines,Monthly,Yes,No,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Check sensor calibration,Quarterly,Yes,Yes,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Inspect safety guards,Monthly,No,No,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Check noise levels,Monthly,No,No,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Inspect foundation integrity,Yearly,Yes,Yes,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Verify control system backup,Quarterly,Yes,No,Centre Lathe Section
+CR-MAT-0118,Shock Absorber Test Rig,Clean machine body and surroundings,Monthly,Yes,Yes,Centre Lathe Section
+CR-MAT-0119,Wheel Re-Disking Machine,General lubrication of moving parts,Monthly,No,No,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Check electrical panel health,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Inspect structural bolts tightness,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Check vibration levels,Monthly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Verify emergency stop function,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Inspect hydraulic / pneumatic lines,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Check sensor calibration,Quarterly,No,No,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Inspect safety guards,Monthly,No,Yes,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Check noise levels,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Inspect foundation integrity,Yearly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Verify control system backup,Quarterly,Yes,No,Heavy Corrosion Shop
+CR-MAT-0119,Wheel Re-Disking Machine,Clean machine body and surroundings,Monthly,Yes,Yes,Heavy Corrosion Shop
+CR-MAT-0120,Hydraulic Wheel Press,Check hydraulic pressure stability,Monthly,Yes,No,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Inspect piston seals,Monthly,Yes,No,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Verify load cell calibration,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Inspect hydraulic oil contamination,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Check pressure relief valve operation,Quarterly,No,Yes,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Inspect pump motor current draw,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Check ram alignment,Quarterly,No,No,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Verify pressure gauge calibration,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Inspect hoses for leaks,Monthly,Yes,Yes,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Check emergency stop function,Monthly,Yes,No,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Inspect structural frame bolts,Quarterly,Yes,Yes,Trolley Shop
+CR-MAT-0120,Hydraulic Wheel Press,Clean hydraulic reservoir breather,Monthly,Yes,Yes,Trolley Shop

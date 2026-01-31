@@ -10,32 +10,16 @@ from typing import List, Optional
 
 from app.models import Permit, User, PermitPPE, PermitAttendee
 
-def create_permit(
-    db: Session, 
-    permit: Permit, 
-    ppes: List[PermitPPE], 
-    attendees: List[PermitAttendee]
-) -> Permit:
+def create_permit(db: Session, permit: Permit) -> Permit:
     """
-    Adds a new Permit, its related PPEs, and its related Attendees 
+    Adds a new Permit object (with its relationships already populated)
     to the database in a single transaction.
     """
-    # Add all objects to the session
+    # Add the single parent object to the session.
+    # The ORM will automatically handle the related ppes and attendees.
     db.add(permit)
-    for ppe in ppes:
-        db.add(ppe)
-    for attendee in attendees:
-        db.add(attendee)
-    
-    # Commit all changes at once
     db.commit()
-    
-    # Refresh the main permit object to get its ID and relationships
     db.refresh(permit)
-    # Eagerly load the newly created children (optional but good practice)
-    db.refresh(permit.ppes) 
-    db.refresh(permit.attendees)
-    
     return permit
 
 def get_permit_by_id(db: Session, permit_id: UUID) -> Optional[Permit]:
@@ -85,19 +69,15 @@ def get_permits_by_permittee_id(db: Session, user_id: UUID) -> List[Permit]:
 
 def update_permit(db: Session, permit: Permit) -> Permit:
     """
-After modifications in the service layer, this function
-    commits the changes to the database.
+    After modifications in the service layer, this function
+    commits the changes to the database and refreshes the permit instance.
     """
-    db.add(permit) # Add the modified object to the session
-    db.commit()
-    db.refresh(permit)
-    # Re-load the relationships to ensure they are fresh
-    db.refresh(permit.permittee)
-    if permit.authorizer:
-        db.refresh(permit.authorizer)
-    if permit.approver:
-        db.refresh(permit.approver)
-    db.refresh(permit.ppes)
-    db.refresh(permit.attendees)
+    db.add(permit)  # Add the modified permit object to the session
+    db.commit()     # Commit the transaction to save changes
+    db.refresh(permit) # Refresh the permit object to get the updated state from the DB
+    
+    # The relationships (ppes, attendees, authorizer, etc.) are automatically
+    # managed by the ORM and will be correctly loaded on next access.
+    # No need to refresh them individually.
     
     return permit

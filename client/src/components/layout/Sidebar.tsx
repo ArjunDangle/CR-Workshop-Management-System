@@ -11,16 +11,14 @@ import {
     // Import other icons if needed
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-// Assuming you have a specific, smaller logo for the sidebar
-// import indianRailwaysLogoSmall from '@/assets/images/indian_railways_logo_small.png';
+// --- IMPORT THE LOGO IMAGE ---
+import rwmsLogo from '@/assets/images/indian-logo-white.png';
 
 // Define navigation items based on the target image
 const navItems = [
   { href: '/dashboard', label: 'Main Dashboard', Icon: LayoutDashboard },
   { href: '/services', label: 'Services & Tasks', Icon: Settings },
   { href: '/staff', label: 'Staff', Icon: Users },
-  { href: '/reports', label: 'Reports', Icon: BarChart3 },
-  { href: '/feedbacks', label: 'Feedbacks', Icon: MessageSquare },
   { href: '/history', label: 'History', Icon: History },
 ];
 
@@ -51,11 +49,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, closeSidebar }) => {
         "fixed inset-y-0 left-0 z-40 transition-transform duration-300 ease-in-out lg:translate-x-0",
         isMobileOpen ? 'translate-x-0 shadow-xl' : '-translate-x-full' // Mobile open/close transition and shadow
     )}>
-       {/* Logo Area */}
-      <div className="h-16 flex items-center border-b border-[hsl(var(--sidebar-border))] px-4 flex-shrink-0">
-         {/* Placeholder Logo Text - Replace with your actual logo */}
-         {/* <img src={indianRailwaysLogoSmall} alt="RWMS" className="h-8 w-auto" /> */}
-         <span className="text-xl font-bold tracking-tight text-white">RWMS LOGO</span>
+       {/* --- UPDATED LOGO AREA --- */}
+      <div className="h-16 flex items-center justify-center border-b border-[hsl(var(--sidebar-border))] px-4 flex-shrink-0">
+         <img src={rwmsLogo} alt="Indian Railways Logo" className="h-16 w-auto" />
       </div>
 
       {/* Main Navigation */}

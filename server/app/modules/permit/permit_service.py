@@ -34,50 +34,34 @@ def create_permit(db: Session, permit_data: permit_schemas.PermitCreate, permitt
     """
     Creates a new permit, associated PPEs, and attendees.
     The permittee is the currently logged-in user.
-    
-    FIX: This correctly handles nested Pydantic models by converting them
-    to SQLModel objects (PermitPPE, PermitAttendee) before instantiating
-    the main Permit model, resolving the ORM error.
+    This function correctly constructs the parent Permit object and its
+    child relationships before passing them to the repository.
     """
-    # 1. Determine permit type and separate nested data
+    # 1. Determine permit type from the user's role.
     permit_type = _get_permit_type_for_user(permittee)
-    
-    ppes_data = permit_data.ppes
-    attendees_data = permit_data.attendees
-    
-    # 2. Create the main permit object from the top-level fields
+
+    # 2. Create the main Permit object from the flat fields of the request data.
     new_permit = Permit.model_validate(
-        # Exclude nested lists from the main validation, as they will be handled separately
         permit_data.model_dump(exclude={"ppes", "attendees"}),
         update={
             "permit_type": permit_type,
             "permittee_id": permittee.id,
-            "status": "Pending Authorization" # Set initial status
+            "status": "Pending Authorization"
         }
     )
-    
-    # 3. Convert Pydantic nested models into full SQLModel ORM objects and link them
-    # Note: We use the permit_id from the new_permit instance for linking.
-    new_permit.ppes = [
-        PermitPPE.model_validate(ppe_schema)
-        for ppe_schema in ppes_data
-    ]
-    new_permit.attendees = [
-        PermitAttendee.model_validate(attendee_schema)
-        for attendee_schema in attendees_data
-    ]
-    
-    # 4. Use the repository to create all objects in a single database transaction
+
+    # 3. Instantiate the child SQLModel objects and assign them to the relationship.
+    #    By creating instances this way, we let the ORM handle the foreign key
+    #    assignment during the database commit.
+    new_permit.ppes = [PermitPPE(**p.model_dump()) for p in permit_data.ppes]
+    new_permit.attendees = [PermitAttendee(**a.model_dump()) for a in permit_data.attendees]
+
+    # 4. Use the simplified repository function to save the entire object graph.
     try:
-        created_permit = permit_repo.create_permit(
-            db=db,
-            permit=new_permit,
-            # Pass the already converted SQLModel lists
-            ppes=new_permit.ppes,
-            attendees=new_permit.attendees
-        )
-        return created_permit
+        return permit_repo.create_permit(db=db, permit=new_permit)
     except Exception as e:
+        # Rollback in case of a database error
+        db.rollback()
         print(f"Error creating permit in repo: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

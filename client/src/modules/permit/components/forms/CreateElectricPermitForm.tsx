@@ -2,7 +2,7 @@
 import React from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Loader2, Plus, Trash2 } from 'lucide-react';
@@ -32,6 +32,7 @@ import {
 
 const CreateElectricPermitForm = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // --- Form Hook ---
   const {
@@ -84,6 +85,8 @@ const CreateElectricPermitForm = () => {
       toast.success(`Permit #${data.permit_no || data.id} Created!`, {
         description: 'Forwarded to SSE-Office for authorization.',
       });
+      // Invalidate queries to refetch the permit lists on the dashboard
+      queryClient.invalidateQueries({ queryKey: ['permits'] });
       // On success, navigate back to the main dashboard
       navigate('/dashboard'); // Changed from /permits to /dashboard
     },

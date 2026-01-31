@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.modules.auth.auth_router import router as auth_router
 # --- Import the new permit router ---
 from app.modules.permit.permit_router import router as permit_router
+from app.modules.machine.machine_router import router as machine_router
+
 # ---
 # --- Import settings ---
 from app.core.config import settings
@@ -47,6 +49,7 @@ app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 # --- Add the new permit router ---
 app.include_router(permit_router, prefix="/permits", tags=["Permit Management"])
 # ---
+app.include_router(machine_router, prefix="/machines", tags=["Machine Management"])
 
 @app.get("/health", tags=["Health Check"])
 async def health_check():

@@ -44,14 +44,7 @@ const SafetyDashboard = () => {
          ))}
       </div>
 
-       <div className="mt-10">
-           <Card>
-                {/* --- THIS IS THE FIX --- */}
-               <CardHeader><CardTitle className="text-lg font-medium">Recent Incidents</CardTitle></CardHeader>
-               <CardContent><p className="text-muted-foreground">List of recent incidents will appear here...</p></CardContent>
-                {/* --- END FIX --- */}
-           </Card>
-       </div>
+       
     </div>
   );
 };
