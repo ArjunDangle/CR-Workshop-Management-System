@@ -236,3 +236,12 @@ class Permit(PermitBase, table=True):
     ppes: List["PermitPPE"] = Relationship(back_populates="permit")
     attendees: List["PermitAttendee"] = Relationship(back_populates="permit")
 # --- END NEW ---
+
+# --- Machines & Plants Module ---
+from app.modules.machine.machine_models import (
+    Shop, 
+    MachineType, 
+    Machine, 
+    MaintenancePlan, 
+    MaintenanceTask
+)
