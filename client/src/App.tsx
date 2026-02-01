@@ -26,6 +26,9 @@ const CreatePermitPage = lazy(() => import('./modules/permit/pages/CreatePermitP
 const PermitDetailPage = lazy(() => import('./modules/permit/pages/PermitDetailPage'));
 // ---
 
+// Import Machine Page
+const MachinePage = lazy(() => import('./modules/machine/pages/MachinePage'));
+
 const queryClient = new QueryClient();
 
 // --- NEW: Create a simple loading fallback for lazy-loaded pages ---

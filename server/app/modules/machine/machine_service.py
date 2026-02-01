@@ -4,10 +4,18 @@ from fastapi import HTTPException, status
 from app.modules.machine.machine_models import Machine, MaintenancePlan, MaintenanceTask
 from uuid import UUID
 
+from sqlalchemy.orm import selectinload
+
 def get_all_machines(db: Session) -> List[Machine]:
-    """Retrieve all physical assets in the workshop."""
-    statement = select(Machine)
-    return db.execute(statement).scalars().all()
+    """Retrieve all assets with their shop details attached."""
+    # Use join to get shop names for grouping
+    statement = select(Machine).options(selectinload(Machine.shop))
+    results = db.execute(statement).scalars().all()
+    
+    # Map the shop name to the flat schema for the frontend
+    for m in results:
+        m.shop_name = m.shop.name
+    return results
 
 def get_machine_by_asset_id(db: Session, asset_id: str) -> Machine | None:
     statement = select(Machine).where(Machine.asset_id == asset_id)

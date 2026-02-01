@@ -22,6 +22,7 @@ class MachineRead(BaseModel):
     criticality: str
     last_maintenance_date: Optional[date]
     shop_id: UUID
+    shop_name: Optional[str] = None # <-- ADD THIS
     type_id: UUID
     
     class Config:

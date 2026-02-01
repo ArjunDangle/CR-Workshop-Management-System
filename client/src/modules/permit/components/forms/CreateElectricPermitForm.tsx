@@ -1,15 +1,18 @@
 // FILE: client/src/modules/permit/components/forms/CreateElectricPermitForm.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Loader2, Plus, Trash2 } from 'lucide-react';
+import { Loader2, Plus, Trash2, AlertTriangle, CheckSquare, ShieldAlert } from 'lucide-react';
 
 // --- Our API and Types ---
 import { createPermit } from '../../permitApi';
 import { permitCreateSchema, PermitCreateData } from '../../permitTypes';
+// --- New Machine Integration ---
+import MachineSelect from '@/modules/machine/components/MachineSelect';
+import { getMachineChecklist, MaintenanceTask } from '@/modules/machine/machineApi';
 
 // --- Shadcn UI Components ---
 import { Button } from '@/components/ui/button';
@@ -18,9 +21,11 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Table,
   TableBody,
@@ -33,24 +38,24 @@ import {
 const CreateElectricPermitForm = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
 
   // --- Form Hook ---
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
-  } = useForm<PermitCreateData>({
+  } = useForm<PermitCreateData & { machine_id?: string }>({
     resolver: zodResolver(permitCreateSchema),
     defaultValues: {
-      // Set defaults for arrays
       ppes: [
         { name: 'Full body harness (fall arresting type)', checked: false, issued_on: '' },
         { name: 'Safety Shoes', checked: false, issued_on: '' },
         { name: 'Safety Helmet', checked: false, issued_on: '' },
       ],
       attendees: Array(5).fill({ name: '', phone: '' }),
-      // Set defaults for booleans
       certified_crane_near_ladder: false,
       hazard_assessed: false,
       work_can_proceed: false,
@@ -63,20 +68,19 @@ const CreateElectricPermitForm = () => {
     },
   });
 
-  // --- Field Array Hooks for dynamic lists ---
-  const { fields: ppeFields } = useFieldArray({
-    control,
-    name: 'ppes',
+  // --- Fetch SOP Checklist Logic ---
+  const { data: checklist, isLoading: isLoadingChecklist } = useQuery({
+    queryKey: ['checklist', selectedMachineId],
+    queryFn: () => getMachineChecklist(selectedMachineId!),
+    enabled: !!selectedMachineId,
   });
 
-  const {
-    fields: attendeeFields,
-    append: appendAttendee,
-    remove: removeAttendee,
-  } = useFieldArray({
-    control,
-    name: 'attendees',
-  });
+  // Check if any task is critical
+  const hasCriticalTasks = checklist?.some(task => task.is_critical);
+
+  // --- Field Array Hooks ---
+  const { fields: ppeFields } = useFieldArray({ control, name: 'ppes' });
+  const { fields: attendeeFields, append: appendAttendee, remove: removeAttendee } = useFieldArray({ control, name: 'attendees' });
 
   // --- API Mutation ---
   const mutation = useMutation({
@@ -85,10 +89,8 @@ const CreateElectricPermitForm = () => {
       toast.success(`Permit #${data.permit_no || data.id} Created!`, {
         description: 'Forwarded to SSE-Office for authorization.',
       });
-      // Invalidate queries to refetch the permit lists on the dashboard
       queryClient.invalidateQueries({ queryKey: ['permits'] });
-      // On success, navigate back to the main dashboard
-      navigate('/dashboard'); // Changed from /permits to /dashboard
+      navigate('/dashboard');
     },
     onError: (error) => {
       toast.error('Failed to Create Permit', {
@@ -98,22 +100,22 @@ const CreateElectricPermitForm = () => {
   });
 
   // --- Submit Handler ---
-  const onSubmit = (data: PermitCreateData) => {
-    // Convert empty strings from date/time inputs to null
+  const onSubmit = (data: any) => {
+    // Inject the machine_id into the payload
     const cleanData = {
       ...data,
+      machine_id: selectedMachineId, // Add the machine link
       date: data.date || null,
       start_date: data.start_date || null,
       start_time: data.start_time || null,
       finish_date: data.finish_date || null,
       finish_time: data.finish_time || null,
       authorizer_signature_date: data.authorizer_signature_date || null,
-      ppes: data.ppes?.map(ppe => ({ ...ppe, issued_on: ppe.issued_on || null })),
+      ppes: data.ppes?.map((ppe: any) => ({ ...ppe, issued_on: ppe.issued_on || null })),
     };
     mutation.mutate(cleanData);
   };
 
-  // --- Helper to show form errors ---
   const getError = (fieldName: any) => {
     const error = errors[fieldName as keyof PermitCreateData];
     return error ? <p className="text-sm text-destructive mt-1">{String(error.message)}</p> : null;
@@ -126,7 +128,7 @@ const CreateElectricPermitForm = () => {
           Create Electrical Permit
         </CardTitle>
         <p className="text-gray-500 mt-2">
-          Fill the form below to create a Work at Height permit
+          Select a machine to load safety protocols and create a permit.
         </p>
       </CardHeader>
       
@@ -140,20 +142,90 @@ const CreateElectricPermitForm = () => {
             </Alert>
           )}
 
-          {/* Permit No / Date / Responsible */}
+          {/* Machine Selection Section (Replaces old text input) */}
+          <section className="space-y-4">
+            <h3 className="font-semibold text-lg text-gray-700 border-b pb-2">1. Asset Identification</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <Label htmlFor="machine_select" className="mb-2 block">Select Machine / Plant Asset</Label>
+                <MachineSelect 
+                  value={selectedMachineId}
+                  onSelect={(id, machine) => {
+                    setSelectedMachineId(id);
+                    // Auto-fill the old "work_location" field for backward compatibility/display
+                    setValue('work_location', `${machine.shop_id} - ${machine.name}`);
+                  }}
+                />
+                {/* Hidden input to satisfy Zod schema if strictly required, or handled in onSubmit */}
+                <input type="hidden" {...register('work_location')} />
+                {getError('work_location')}
+              </div>
+              
+              <div>
+                <Label htmlFor="work_description">Work Description</Label>
+                <Input id="work_description" {...register('work_description')} className="mt-1" placeholder="Describe the repair/maintenance work..." />
+                {getError('work_description')}
+              </div>
+            </div>
+          </section>
+
+          {/* SOP Checklist Visualization */}
+          {selectedMachineId && (
+            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+              <Alert className={`border-l-4 ${hasCriticalTasks ? 'border-l-red-600 bg-red-50' : 'border-l-blue-500 bg-blue-50'}`}>
+                {hasCriticalTasks ? <ShieldAlert className="h-5 w-5 text-red-600" /> : <CheckSquare className="h-5 w-5 text-blue-600" />}
+                <AlertTitle className={`text-lg font-bold ${hasCriticalTasks ? 'text-red-700' : 'text-blue-700'}`}>
+                  {hasCriticalTasks ? 'CRITICAL SAFETY CHECKS REQUIRED' : 'Standard Operating Procedures (SOP)'}
+                </AlertTitle>
+                <AlertDescription className="text-gray-700 mt-2">
+                  The following safety tasks are mandatory for this machine type.
+                </AlertDescription>
+                
+                <ScrollArea className="h-[200px] w-full rounded-md border bg-white p-4 mt-4">
+                  {isLoadingChecklist ? (
+                    <div className="flex items-center justify-center h-full text-muted-foreground">
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading SOPs...
+                    </div>
+                  ) : checklist && checklist.length > 0 ? (
+                    <div className="space-y-3">
+                      {checklist.map((task) => (
+                        <div key={task.id} className="flex items-start space-x-3 pb-3 border-b last:border-0">
+                          <Checkbox id={`sop-${task.id}`} disabled checked={true} />
+                          <div className="grid gap-1.5 leading-none">
+                            <label
+                              htmlFor={`sop-${task.id}`}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              {task.description}
+                            </label>
+                            <div className="flex gap-2">
+                              {task.is_critical && <Badge variant="destructive" className="text-[10px] px-1 py-0 h-5">CRITICAL</Badge>}
+                              {task.requires_ppe && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-5">PPE REQUIRED</Badge>}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No specific SOPs found for this machine type.</p>
+                  )}
+                </ScrollArea>
+              </Alert>
+            </div>
+          )}
+
+          {/* Standard Form Sections */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <Label htmlFor="permit_no">Permit No.</Label>
+              <Label htmlFor="permit_no">Permit No. (Auto/Manual)</Label>
               <Input id="permit_no" {...register('permit_no')} className="mt-1" />
-              {getError('permit_no')}
             </div>
             <div>
               <Label htmlFor="date">Date</Label>
               <Input type="date" id="date" {...register('date')} className="mt-1" />
-              {getError('date')}
             </div>
             <div>
-              <Label>Person responsible for work</Label>
+              <Label>Person responsible</Label>
               <Controller
                 name="person_responsible"
                 control={control}
@@ -174,24 +246,9 @@ const CreateElectricPermitForm = () => {
                   </RadioGroup>
                 )}
               />
-              {getError('person_responsible')}
             </div>
           </div>
 
-          {/* Work Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="work_location">Work Location</Label>
-              <Input id="work_location" {...register('work_location')} className="mt-1" />
-              {getError('work_location')}
-            </div>
-            <div>
-              <Label htmlFor="work_description">Work Description</Label>
-              <Input id="work_description" {...register('work_description')} className="mt-1" />
-              {getError('work_description')}
-            </div>
-          </div>
-          
           <Separator />
 
           {/* Schedule */}
@@ -288,7 +345,7 @@ const CreateElectricPermitForm = () => {
 
           {/* PPEs */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">Indicate type of fall protection to be used (PPE's)</h3>
+            <h3 className="font-semibold text-lg text-gray-700">Required PPEs (Verified from SOP)</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {ppeFields.map((field, index) => (
                 <div key={field.id} className="p-4 border rounded-lg space-y-3">
@@ -316,62 +373,15 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
 
-          {/* Method of access */}
-          <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">Method of Access to Target Work Position</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-4 border rounded-lg space-y-3">
-                <Label className="font-medium">Method of Access</Label>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="method_access_fixed_ladder">Fixed Ladder</Label>
-                  <Checkbox id="method_access_fixed_ladder" {...register('method_access_fixed_ladder')} />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="method_access_elevated_platform">Elevated work platform</Label>
-                  <Checkbox id="method_access_elevated_platform" {...register('method_access_elevated_platform')} />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="method_access_scissor_lift">Scissor lift</Label>
-                  <Checkbox id="method_access_scissor_lift" {...register('method_access_scissor_lift')} />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="method_access_boom_lifter">Boom Lifter platform</Label>
-                  <Checkbox id="method_access_boom_lifter" {...register('method_access_boom_lifter')} />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="method_access_catwalk">Catwalk</Label>
-                  <Checkbox id="method_access_catwalk" {...register('method_access_catwalk')} />
-                </div>
-              </div>
-              <div className="p-4 border rounded-lg">
-                <Label htmlFor="fixed_ladder_other_person_at_foot" className="font-medium">Checked / Surrounding Hazard control</Label>
-                <Textarea
-                  id="fixed_ladder_other_person_at_foot"
-                  {...register('fixed_ladder_other_person_at_foot')}
-                  className="mt-2 h-32"
-                  placeholder="Notes on surrounding hazard control"
-                />
-              </div>
-              <div className="p-4 border rounded-lg">
-                <Label htmlFor="fixed_ladder_adjustable_lanyard" className="font-medium">Key Control measure</Label>
-                <Textarea
-                  id="fixed_ladder_adjustable_lanyard"
-                  {...register('fixed_ladder_adjustable_lanyard')}
-                  className="mt-2 h-32"
-                  placeholder="e.g. Other person available at foot of ladder..."
-                />
-              </div>
-            </div>
-          </section>
-
-          <Separator />
-
           {/* Isolation and block required */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">Isolation and Block Required</h3>
+            <h3 className="font-semibold text-lg text-gray-700">LOTO: Isolation and Block</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-4 border rounded-lg space-y-3">
-                <Label>Electrical Isolation / Block obtained</Label>
+              <div className="p-4 border rounded-lg space-y-3 bg-red-50 border-red-200">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-red-600" />
+                  <Label className="font-bold text-red-700">Electrical Isolation Required?</Label>
+                </div>
                 <Controller
                   name="electrical_isolation_obtained"
                   control={control}
@@ -415,28 +425,9 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
 
-          {/* Declarations */}
-          <section className="space-y-4">
-            <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-              <li>I am aware about the Associated Hazards and risk...</li>
-              <li>Safety precaution for the associated Hazard ensured and are sufficient.</li>
-              <li>Machine and tools which will be used are inspected and are suitable to work.</li>
-            </ul>
-          </section>
-          
-          <Separator />
-
           {/* Signatures & attendees */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">Permission to work</h3>
-            <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-              <li>I agree to work within the condition indicated on this permit...</li>
-              <li>I declare that all work at height will be carried out under close supervision...</li>
-              <li>The following staff are nominated to work for crane maintenance...</li>
-              <li>They have been communicated about hazards and risk...</li>
-            </ul>
-            
-            <h3 className="font-semibold text-lg text-gray-700 mt-4">Authorisation / Signatures</h3>
+            <h3 className="font-semibold text-lg text-gray-700">Authorization / Signatures</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="authorizer_name">Name of person authorising for work</Label>
@@ -464,15 +455,9 @@ const CreateElectricPermitForm = () => {
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>
                       <Input {...register(`attendees.${index}.name`)} />
-                      {errors.attendees?.[index]?.name && (
-                        <p className="text-sm text-destructive mt-1">Name is required</p>
-                      )}
                     </TableCell>
                     <TableCell>
                       <Input {...register(`attendees.${index}.phone`)} />
-                      {errors.attendees?.[index]?.phone && (
-                        <p className="text-sm text-destructive mt-1">Phone is required</p>
-                      )}
                     </TableCell>
                     <TableCell>
                       <Button
@@ -499,26 +484,16 @@ const CreateElectricPermitForm = () => {
             </Button>
           </section>
 
-          <Separator />
-          
-          <section>
-            <h3 className="font-semibold text-lg text-gray-700">Perimeter Authorization (User Shop)</h3>
-            <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
-                <li>All staff working in the related area...</li>
-                <li>Working area below the camera is declared...</li>
-            </ul>
-          </section>
-
         </CardContent>
         <CardFooter>
-          <Button type="submit" className="w-full md:w-auto" disabled={mutation.isPending}>
+          <Button type="submit" className="w-full md:w-auto h-12 text-lg" disabled={mutation.isPending}>
             {mutation.isPending ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Processing Permit...
               </>
             ) : (
-              'Create Permit'
+              'Create Permit & Trigger LOTO'
             )}
           </Button>
         </CardFooter>
