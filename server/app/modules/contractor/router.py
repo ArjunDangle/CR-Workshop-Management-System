@@ -3,7 +3,7 @@ from sqlmodel import Session
 from uuid import UUID
 from typing import List
 
-from app.database import get_db
+from app.core.database import get_db
 from app.modules.contractor.models import ContractorStatus
 from app.modules.contractor.schemas import (
     ContractorCreate,
