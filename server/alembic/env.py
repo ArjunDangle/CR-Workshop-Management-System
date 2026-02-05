@@ -17,6 +17,23 @@ from app import models
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
+from sqlmodel import SQLModel
+
+# 2. IMPORT ALL MODELS HERE (Critical Step)
+# This registers them with SQLModel.metadata
+import app.models
+import app.core.common_models
+import app.scripts.find_models
+import app.modules.contractor.models
+import app.modules.machine.machine_models
+import app.modules.incident.models
+# If you have any other files with "table=True", import them here too!
+
+# 3. Set Target Metadata
+target_metadata = SQLModel.metadata
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

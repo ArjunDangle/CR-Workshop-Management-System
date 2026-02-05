@@ -2,6 +2,8 @@ from uuid import UUID
 from typing import Optional, List
 from datetime import date
 from pydantic import BaseModel
+from uuid import UUID, uuid4
+
 
 # --- Read Schemas ---
 
@@ -24,6 +26,11 @@ class MachineRead(BaseModel):
     shop_id: UUID
     shop_name: Optional[str] = None # <-- ADD THIS
     type_id: UUID
+    image_url: str | None = None
+    manufacturer: str | None = None
+    model_name: str | None = None
+    install_year: int | None = None
+    last_maintenance_date: date | None = None
     
     class Config:
         from_attributes = True

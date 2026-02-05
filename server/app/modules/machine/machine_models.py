@@ -1,5 +1,6 @@
 from typing import List, Optional
 from uuid import UUID, uuid4
+
 from datetime import date
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -31,6 +32,7 @@ class Machine(SQLModel, table=True):
 
     shop_id: UUID = Field(foreign_key="shop.id")
     type_id: UUID = Field(foreign_key="machinetype.id")
+    image_url: str | None = Field(default=None)  # <--- Add this line
 
     shop: Shop = Relationship(back_populates="machines")
     type: MachineType = Relationship(back_populates="machines")
@@ -57,3 +59,6 @@ class MaintenanceTask(SQLModel, table=True):
     plan_id: UUID = Field(foreign_key="maintenanceplan.id")
     
     plan: MaintenancePlan = Relationship(back_populates="tasks")
+
+
+    
