@@ -1,195 +1,209 @@
 import sys
 import os
 import random
-from datetime import date, timedelta, datetime
+from datetime import datetime, timedelta, date
 
 # ---------------------------------------------------------
-# PATH SETUP
+# 1. ROBUST PATH SETUP
 # ---------------------------------------------------------
+# Handles running from 'server/', 'server/app/', or 'server/app/scripts/'
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(os.path.dirname(current_dir)) # Points to 'server'
-if parent_dir not in sys.path:
-    sys.path.append(parent_dir)
+server_dir = None
 
-from sqlmodel import Session, select
-from app.core.database import engine
+if os.path.basename(current_dir) == "scripts":
+    server_dir = os.path.dirname(os.path.dirname(current_dir))
+elif os.path.basename(current_dir) == "app":
+    server_dir = os.path.dirname(current_dir)
+else:
+    server_dir = current_dir
+
+if server_dir and server_dir not in sys.path:
+    sys.path.insert(0, server_dir)
 
 # ---------------------------------------------------------
-# HYBRID IMPORTS (The Critical Fix)
+# 2. MODEL IMPORTS (With Fallbacks)
 # ---------------------------------------------------------
 try:
-    # 1. LEGACY MODULES (Auth, Machine, Permit) -> live in app.models
-    from app.models import User, Machine
-    print("✅ Loaded Legacy Models (User, Machine) from app.models")
-except ImportError:
-    # Fallback: Try modular path just in case
+    from sqlmodel import Session, select
+    from app.core.database import get_db_session
+    
+    # Auth & Machine
     try:
         from app.modules.auth.models import User
-        from app.modules.machine.models import Machine
+        from app.modules.machine.machine_models import Machine
     except ImportError:
-        print("❌ CRITICAL: Could not find User or Machine models.")
-        print("   checked: app.models AND app.modules.*.models")
-        sys.exit(1)
+        from app.models import User, Machine
 
-# 2. NEW MODULES (Contractor, Incident) -> live in their own folders
-try:
-    from app.modules.contractor.models import (
-        Contractor, Worker, ContractorStatus, ContractorType, WorkerSkill, WorkerTrade
-    )
-    from app.modules.incident.models import (
-        Incident, IncidentSeverity, IncidentStatus, IncidentVictim
-    )
-    print("✅ Loaded New Models (Contractor, Incident) from app.modules")
-except ImportError as e:
-    print(f"❌ CRITICAL: Could not find New Modules. Error: {e}")
+    # Contractor
+    try:
+        from app.modules.contractor.models import Contractor, Worker
+    except ImportError:
+        from app.models import Contractor, Worker
+
+    # Incident
+    try:
+        from app.modules.incident.models import Incident
+    except ImportError:
+        from app.models import Incident
+
+except Exception as e:
+    print(f"❌ Critical Import Error: {e}")
     sys.exit(1)
 
+# ---------------------------------------------------------
+# 3. DATA CONSTANTS & ENUMS
+# ---------------------------------------------------------
 
-# --- DATA GENERATORS ---
-FIRST_NAMES = [
-    "Rajesh", "Suresh", "Amit", "Rahul", "Mohammed", "Vijay", "Anil", "Sunil", "Dinesh", 
-    "Karthik", "Arjun", "Ravi", "Santosh", "Vikram", "Manoj", "Deepak", "Sanjay", 
-    "Vinod", "Praveen", "Rakesh", "Abdul", "Joseph", "David", "Krishna", "Ram"
-]
-LAST_NAMES = [
-    "Kumar", "Singh", "Sharma", "Patil", "Gupta", "Khan", "Yadav", "Mishra", "Reddy", 
-    "Nair", "Verma", "Jha", "Chavan", "Das", "Naik", "Sheikh", "Fernandes", "More"
+# Strict Enum Mappings (Based on your Schema)
+CONTRACTOR_TYPES = ["OEM", "MSME", "LOCAL"]
+WORKER_TRADES = ["ELECTRICIAN", "FITTER", "WELDER", "RIGGER", "HELPER"]
+WORKER_SKILLS = ["SKILLED", "SEMI_SKILLED", "UNSKILLED"]
+INCIDENT_SEVERITIES = ["MINOR", "MAJOR", "NEAR_MISS", "FATAL"]
+INCIDENT_STATUSES = ["OPEN", "CLOSED", "INVESTIGATING"]
+
+CONTRACTORS_DATA = [
+    {"name": "Siemens Mobility India", "code": "VN-SIE-01", "type": "OEM", "trade": "ELECTRICIAN"},
+    {"name": "Larsen & Toubro Heavy Engg", "code": "VN-LNT-04", "type": "OEM", "trade": "FITTER"},
+    {"name": "R.K. Engineering Works", "code": "VN-RKE-22", "type": "LOCAL", "trade": "WELDER"},
+    {"name": "Apex Electrical Solutions", "code": "VN-APX-99", "type": "LOCAL", "trade": "ELECTRICIAN"},
+    {"name": "Star Manpower Services", "code": "VN-SMS-101", "type": "MSME", "trade": "HELPER"},
+    {"name": "Global Tech Engineering", "code": "VN-GTE-55", "type": "MSME", "trade": "FITTER"}
 ]
 
-def generate_indian_name():
-    return f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}"
+FIRST_NAMES = ["Rajesh", "Suresh", "Amit", "Rahul", "Vijay", "Anil", "Sunil", "Dinesh", "Karthik", "Arjun", "Ravi", "Santosh", "Vikram", "Manoj", "Deepak"]
+LAST_NAMES = ["Kumar", "Singh", "Sharma", "Patil", "Gupta", "Khan", "Yadav", "Mishra", "Reddy", "Nair", "Verma", "Jha", "Chavan", "Das", "More"]
+
+INCIDENT_SCENARIOS = [
+    ("Oil spill near Pit Line", "NEAR_MISS", "Slippery floor detected during shift change."),
+    ("Minor cut during grinding", "MINOR", "Worker sustained minor cut. First aid provided."),
+    ("Cable trip hazard", "NEAR_MISS", "Loose cables found on main walkway."),
+    ("Scaffolding unstable", "MAJOR", "Work stopped immediately due to loose clamps."),
+    ("Welding spark in non-designated area", "MINOR", "Fire watch alerted. Hot work stopped.")
+]
+
+# ---------------------------------------------------------
+# 4. SEEDING FUNCTIONS
+# ---------------------------------------------------------
 
 def seed_authentic_data():
-    print("\n🚂 POPULATING RAILWAY WORKSHOP WITH AUTHENTIC DATA...")
+    print("🚀 Initializing Authentic Data Seeding...")
     
-    with Session(engine) as db:
-        # Get Admin context
-        admin_user = db.exec(select(User)).first()
-        if not admin_user:
-            print("⚠️  Warning: No Admin User found. Incidents will be anonymous.")
-
-        # Get Machines
-        machines = db.exec(select(Machine)).all()
-        if not machines:
-            print("❌ ERROR: No machines found in DB. Please run your machine seed script first.")
-            return
-
-        # ---------------------------------------------------------
-        # 1. CREATE CONTRACTORS (Real Companies)
-        # ---------------------------------------------------------
-        print("1️⃣  Onboarding Contractors...")
-        
-        contractors_data = [
-            {"name": "Siemens Mobility India Pvt Ltd", "code": "VN-SIE-MUM-01", "type": ContractorType.OEM, "status": ContractorStatus.ACTIVE},
-            {"name": "Larsen & Toubro (L&T) Heavy Engg", "code": "VN-LNT-CONST-04", "type": ContractorType.OEM, "status": ContractorStatus.ACTIVE},
-            {"name": "R.K. Engineering Works", "code": "VN-RKE-LOC-22", "type": ContractorType.LOCAL, "status": ContractorStatus.ACTIVE},
-            {"name": "Apex Electrical Solutions", "code": "VN-APX-ELEC-99", "type": ContractorType.LOCAL, "status": ContractorStatus.SUSPENDED},
-            {"name": "Star Manpower Services", "code": "VN-SMS-HR-101", "type": ContractorType.MSME, "status": ContractorStatus.ACTIVE}
-        ]
-
-        created_contractors = []
-        for c in contractors_data:
-            existing = db.exec(select(Contractor).where(Contractor.vendor_code == c["code"])).first()
-            if not existing:
-                new_contractor = Contractor(
-                    company_name=c["name"],
-                    vendor_code=c["code"],
-                    contractor_type=c["type"],
-                    status=c["status"],
-                    safety_rating=random.randint(70, 100),
-                    empanelment_valid_upto=date.today() + timedelta(days=random.randint(100, 700)),
-                    insurance_valid_upto=date.today() + timedelta(days=random.randint(50, 400)),
-                    insurance_policy_no=f"POL-{random.randint(10000, 99999)}-GEN"
-                )
-                db.add(new_contractor)
-                created_contractors.append(new_contractor)
-            else:
-                created_contractors.append(existing)
-        
-        db.commit()
-        for c in created_contractors: db.refresh(c)
-
-        # ---------------------------------------------------------
-        # 2. CREATE LABOR FORCE (50 Workers)
-        # ---------------------------------------------------------
-        print("2️⃣  Mobilizing Labor Force (50 Workers)...")
-        
-        trades = list(WorkerTrade)
-        skills = list(WorkerSkill)
-        workers_created = 0
-        
-        for i in range(50):
-            employer = random.choice(created_contractors)
-            # 10% chance of expired medicals
-            is_compliant = random.random() > 0.1
+    with get_db_session() as db:
+        try:
+            # --- 0. PRE-CHECKS ---
+            machines = db.execute(select(Machine)).scalars().all()
+            if not machines:
+                print("⚠️  No Machines found. Skipping Incidents.")
             
-            medical_date = date.today() + timedelta(days=random.randint(30, 365)) if is_compliant \
-                           else date.today() - timedelta(days=random.randint(1, 20))
-            
-            gate_pass = f"GP-{employer.vendor_code.split('-')[1]}-{random.randint(1000, 9999)}"
-            
-            existing_worker = db.exec(select(Worker).where(Worker.id_proof_number == gate_pass)).first()
-            if not existing_worker:
-                worker = Worker(
-                    full_name=generate_indian_name(),
-                    contractor_id=employer.id,
-                    id_proof_number=gate_pass,
-                    skill_category=random.choice(skills),
-                    trade=random.choice(trades),
-                    is_blacklisted=False,
-                    medical_valid_upto=medical_date,
-                    safety_training_valid_upto=date.today() + timedelta(days=random.randint(30, 365)),
-                    photo_url=None
-                )
-                db.add(worker)
-                workers_created += 1
+            admin = db.execute(select(User)).scalars().first()
 
-        db.commit()
-
-        # ---------------------------------------------------------
-        # 3. CREATE INCIDENT LOGS (History)
-        # ---------------------------------------------------------
-        print("3️⃣  Populating Safety Logs...")
-        
-        incident_scenarios = [
-            ("Oil spill near Pit Line", IncidentSeverity.NEAR_MISS, "Slippery floor detected."),
-            ("Minor cut during grinding", IncidentSeverity.MINOR, "Worker ignored PPE gloves."),
-            ("Cable trip hazard", IncidentSeverity.NEAR_MISS, "Loose cables on walkway."),
-            ("Scaffolding unstable", IncidentSeverity.MAJOR, "Work stopped immediately."),
-            ("Welding spark in non-designated area", IncidentSeverity.MINOR, "Fire watch alerted.")
-        ]
-
-        for i, (title, severity, desc) in enumerate(incident_scenarios):
-            machine = random.choice(machines)
-            contractor = random.choice(created_contractors)
+            # --- 1. CONTRACTORS ---
+            print(f"1️⃣  Onboarding {len(CONTRACTORS_DATA)} Contractors...")
+            created_contractors = []
             
-            # Check if incident exists
-            code = f"INC-2026-{i+100:03d}"
-            existing_inc = db.exec(select(Incident).where(Incident.incident_code == code)).first()
-            
-            if not existing_inc:
-                inc = Incident(
-                    incident_code=code,
-                    machine_id=machine.id,
-                    contractor_id=contractor.id,
-                    reported_by_id=admin_user.id if admin_user else None,
-                    severity=severity,
-                    title=title,
-                    description=desc,
-                    location_details=f"Bay {random.randint(1, 6)}",
-                    occurred_at=datetime.now() - timedelta(days=random.randint(1, 90)),
-                    status=IncidentStatus.CLOSED
-                )
-                db.add(inc)
+            for c_data in CONTRACTORS_DATA:
+                existing = db.execute(select(Contractor).where(Contractor.vendor_code == c_data["code"])).scalars().first()
+                
+                if not existing:
+                    contractor = Contractor(
+                        company_name=c_data["name"],     # Correct field: company_name
+                        vendor_code=c_data["code"],      # Correct field: vendor_code
+                        contractor_type=c_data["type"],  # Enum: OEM/MSME/LOCAL
+                        status="ACTIVE",
+                        safety_rating=random.randint(70, 100),
+                        contact_person=f"Mr. {random.choice(LAST_NAMES)}",
+                        email=f"contact@{c_data['code'].lower().replace('-', '')}.com",
+                        phone=f"9{random.randint(100000000, 999999999)}",
+                        empanelment_valid_upto=date.today() + timedelta(days=365),
+                        insurance_valid_upto=date.today() + timedelta(days=180),
+                        insurance_policy_no=f"POL-{random.randint(10000, 99999)}"
+                    )
+                    db.add(contractor)
+                    db.flush()
+                    created_contractors.append(contractor)
+                else:
+                    created_contractors.append(existing)
 
-        db.commit()
-        print(f"\n✅ DATABASE POPULATED SUCCESSFULLY!")
-        print(f"   - {len(created_contractors)} Contractors Active")
-        print(f"   - {workers_created} New Workers Onboarded")
-        print(f"   - Safety Incidents Logged")
+            # --- 2. WORKERS ---
+            print("2️⃣  Mobilizing Labor Force...")
+            workers_count = 0
+            
+            for contractor in created_contractors:
+                # Add 5-8 workers per contractor
+                for _ in range(random.randint(5, 8)):
+                    full_name = f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}"
+                    
+                    # Generate ID Proof (CRITICAL FIX: This was missing before)
+                    id_proof = f"GP-{contractor.vendor_code.split('-')[1]}-{random.randint(1000, 9999)}"
+                    
+                    # Determine Trade/Skill based on Contractor Profile
+                    # (Simple logic: OEM -> Skilled, LOCAL -> Semi/Unskilled)
+                    if contractor.contractor_type == "OEM":
+                        skill = "SKILLED"
+                        trade = random.choice(["ELECTRICIAN", "FITTER", "WELDER"])
+                    else:
+                        skill = random.choice(["SEMI_SKILLED", "UNSKILLED"])
+                        trade = random.choice(["HELPER", "RIGGER", "FITTER"])
+
+                    # Check existence
+                    exists = db.execute(select(Worker).where(Worker.id_proof_number == id_proof)).scalars().first()
+                    
+                    if not exists:
+                        worker = Worker(
+                            full_name=full_name,
+                            contractor_id=contractor.id,
+                            id_proof_number=id_proof,      # <-- THE FIX
+                            skill_category=skill,          # Enum: SKILLED/UNSKILLED
+                            trade=trade,                   # Enum: FITTER/HELPER...
+                            is_blacklisted=False,
+                            medical_valid_upto=date.today() + timedelta(days=random.randint(30, 300)),
+                            safety_training_valid_upto=date.today() + timedelta(days=random.randint(60, 365))
+                        )
+                        db.add(worker)
+                        workers_count += 1
+            
+            db.flush() 
+
+            # --- 3. INCIDENTS ---
+            print("3️⃣  Logging Safety Incidents...")
+            incidents_count = 0
+            
+            if machines:
+                for i, (title, severity, desc) in enumerate(INCIDENT_SCENARIOS):
+                    # Generate Unique Code
+                    inc_code = f"INC-2026-{random.randint(100, 999)}"
+                    
+                    exists = db.execute(select(Incident).where(Incident.incident_code == inc_code)).scalars().first()
+                    
+                    if not exists:
+                        machine = random.choice(machines)
+                        contractor = random.choice(created_contractors)
+                        
+                        incident = Incident(
+                            incident_code=inc_code,          # Mandatory field
+                            title=title,
+                            description=desc,
+                            severity=severity,               # Enum: MINOR/MAJOR...
+                            status="CLOSED",                 # Enum
+                            machine_id=machine.id,
+                            contractor_id=contractor.id,
+                            reported_by_id=admin.id if admin else None,
+                            location_details=f"Bay {random.randint(1, 6)}", # Correct field name
+                            occurred_at=datetime.now() - timedelta(days=random.randint(1, 60)) # Correct field name
+                        )
+                        db.add(incident)
+                        incidents_count += 1
+
+            db.commit()
+            print(f"\n✅ SUCCESS! Database Populated:")
+            print(f"   - {len(created_contractors)} Contractors")
+            print(f"   - {workers_count} Workers (With ID Proofs)")
+            print(f"   - {incidents_count} Incidents")
+
+        except Exception as e:
+            print(f"\n❌ ERROR during seeding: {e}")
+            db.rollback()
+            raise e
 
 if __name__ == "__main__":
-    try:
-        seed_authentic_data()
-    except Exception as e:
-        print(f"❌ Error: {e}")
+    seed_authentic_data()
