@@ -1,37 +1,32 @@
 # app/models.py
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 from uuid import UUID, uuid4
-# --- FIX: Import 'datetime' module directly to avoid name collision ---
 import datetime
-# --- END FIX ---
 
 from sqlmodel import Field, Relationship, SQLModel 
 from sqlalchemy import Column, Date, Time
-from app.modules.machine.machine_models import Machine, MaintenancePlan
-from app.modules.contractor.models import Contractor, Worker
-from app.modules.incident.models import Incident, CAPA
+
+# --- FIX: Import models for type-checking only to prevent circular imports ---
+if TYPE_CHECKING:
+    from app.modules.machine.machine_models import Machine, MaintenancePlan
+    from app.modules.contractor.models import Contractor, Worker
+    from app.modules.incident.models import Incident
 
 
 # --- Role Model ---
-# Represents a user role within the system, supporting hierarchy.
 class RoleBase(SQLModel):
     name: str = Field(index=True, unique=True, max_length=100)
     description: Optional[str] = Field(default=None, max_length=255)
-    # Self-referencing Foreign Key for hierarchy
     parent_id: Optional[UUID] = Field(default=None, foreign_key="role.id", index=True)
 
 
 class Role(RoleBase, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
-
-    # Relationship to parent role (one-to-many with self)
     parent: Optional["Role"] = Relationship(
         back_populates="children",
         sa_relationship_kwargs={"remote_side": "Role.id"}
     )
     children: List["Role"] = Relationship(back_populates="parent")
-
-    # Relationship to users (one role to many users)
     users: List["User"] = Relationship(back_populates="role")
 
 
@@ -54,12 +49,10 @@ class RoleUpdate(SQLModel):
 
 
 # --- User Model ---
-# Represents a system user.
 class UserBase(SQLModel):
     email: str = Field(index=True, unique=True, max_length=255)
     full_name: Optional[str] = Field(default=None, max_length=100)
     is_active: bool = Field(default=True)
-    # Foreign Key to the Role table
     role_id: UUID = Field(foreign_key="role.id", index=True)
 
 
@@ -67,29 +60,27 @@ class User(UserBase, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     hashed_password: str = Field(index=True) 
 
-    # Relationship to role (many users to one role)
-    role: Role = Relationship(back_populates="users")
+    role: "Role" = Relationship(back_populates="users")
 
-    # --- MODIFICATION: Add relationships for Permits ---
+    # Permit Relationships
     initiated_permits: List["Permit"] = Relationship(
         back_populates="permittee",
-        sa_relationship_kwargs={
-            "foreign_keys": "[Permit.permittee_id]",
-        }
+        sa_relationship_kwargs={"foreign_keys": "[Permit.permittee_id]"}
     )
     authorized_permits: List["Permit"] = Relationship(
         back_populates="authorizer",
-        sa_relationship_kwargs={
-            "foreign_keys": "[Permit.authorizer_id]",
-        }
+        sa_relationship_kwargs={"foreign_keys": "[Permit.authorizer_id]"}
     )
     approved_permits: List["Permit"] = Relationship(
         back_populates="approver",
-        sa_relationship_kwargs={
-            "foreign_keys": "[Permit.approver_id]",
-        }
+        sa_relationship_kwargs={"foreign_keys": "[Permit.approver_id]"}
     )
-    # --- END MODIFICATION ---
+    
+    # Incident Relationship
+    reported_incidents: List["Incident"] = Relationship(
+        back_populates="reported_by",
+        sa_relationship_kwargs={"foreign_keys": "[Incident.reported_by_id]"}
+    )
 
 
 class UserCreate(UserBase):
@@ -109,120 +100,86 @@ class UserUpdate(SQLModel):
     password: Optional[str] = None
 
 
-# --- NEW: PermitPPE Model ---
-# Stores the list of PPE items associated with a permit
+# --- Permit Sub-Models ---
 class PermitPPE(SQLModel, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     permit_id: UUID = Field(foreign_key="permit.id", index=True)
-    
     name: str
-    # --- FIX: Use datetime.date ---
     issued_on: Optional[datetime.date] = Field(default=None, sa_column=Column(Date))
-    # --- END FIX ---
     checked: Optional[bool] = Field(default=False)
-    
     permit: "Permit" = Relationship(back_populates="ppes")
 
 
-# --- NEW: PermitAttendee Model ---
-# Stores the list of attendees associated with a permit
 class PermitAttendee(SQLModel, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     permit_id: UUID = Field(foreign_key="permit.id", index=True)
-    
     name: str
     phone: str
-    
     permit: "Permit" = Relationship(back_populates="attendees")
 
 
-# --- MODULE 4 INTEGRATION: PermitWorkerLink Model ---
-# Links permits to specific workers for safety validation
 class PermitWorkerLink(SQLModel, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     permit_id: UUID = Field(foreign_key="permit.id", index=True)
     worker_id: UUID = Field(foreign_key="worker.id", index=True)
-    role: str = Field(max_length=100)  # Role description (e.g., "Welder", "Helper")
-    
+    role: str = Field(max_length=100)
     permit: "Permit" = Relationship(back_populates="worker_links")
     worker: "Worker" = Relationship(back_populates="permit_links")
-# --- END MODULE 4 INTEGRATION ---
 
 
-# --- NEW: Permit Model ---
-# Represents a work permit and its lifecycle, with all fields from the forms.
+# --- Permit Model ---
 class PermitBase(SQLModel):
-    # --- Core Workflow Fields ---
-    permit_type: str = Field(index=True, max_length=50) # "Height" or "Electrical"
+    permit_type: str = Field(index=True, max_length=50)
     status: str = Field(default="Pending Authorization", index=True, max_length=50)
     
-    # --- Top Section Fields ---
     permit_no: Optional[str] = Field(default=None, max_length=100, index=True)
-    # --- FIX: Use datetime.date ---
     date: Optional[datetime.date] = Field(default=None, sa_column=Column(Date))
-    # --- END FIX ---
     person_responsible: Optional[str] = Field(default=None, max_length=255)
     work_location: Optional[str] = Field(default=None, max_length=255)
     work_description: Optional[str] = Field(default=None, max_length=500)
     
-    # --- Schedule Section ---
-    # --- FIX: Use datetime.date ---
     start_date: Optional[datetime.date] = Field(default=None, sa_column=Column(Date))
-    # --- FIX: Use datetime.time ---
     start_time: Optional[datetime.time] = Field(default=None, sa_column=Column(Time))
-    # --- FIX: Use datetime.date ---
     finish_date: Optional[datetime.date] = Field(default=None, sa_column=Column(Date))
-    # --- FIX: Use datetime.time ---
     finish_time: Optional[datetime.time] = Field(default=None, sa_column=Column(Time))
 
-    # --- Fall Protection Section ---
     fall_system_description: Optional[str] = Field(default=None)
-    fall_does_not_arrest: Optional[str] = Field(default=None) # "yes" or "no"
+    fall_does_not_arrest: Optional[str] = Field(default=None)
     certified_crane_near_ladder: Optional[bool] = Field(default=False)
 
-    # --- Work Context Section ---
     on_crane_describe: Optional[str] = Field(default=None)
     other_describe: Optional[str] = Field(default=None)
     hazard_assessed: Optional[bool] = Field(default=False)
     work_can_proceed: Optional[bool] = Field(default=False)
 
-    # --- Method of Access Section (Flattened) ---
     method_access_fixed_ladder: Optional[bool] = Field(default=False)
     method_access_elevated_platform: Optional[bool] = Field(default=False)
     method_access_scissor_lift: Optional[bool] = Field(default=False)
     method_access_boom_lifter: Optional[bool] = Field(default=False)
     method_access_catwalk: Optional[bool] = Field(default=False)
-    fixed_ladder_other_person_at_foot: Optional[str] = Field(default=None) # Hazard control
-    fixed_ladder_adjustable_lanyard: Optional[str] = Field(default=None) # Key control
+    fixed_ladder_other_person_at_foot: Optional[str] = Field(default=None)
+    fixed_ladder_adjustable_lanyard: Optional[str] = Field(default=None)
 
-    # --- Isolation Section ---
-    electrical_isolation_obtained: Optional[str] = Field(default=None) # "yes" or "no"
-    isolation_from: Optional[str] = Field(default=None) # Storing as string to capture date/time text
+    electrical_isolation_obtained: Optional[str] = Field(default=None)
+    isolation_from: Optional[str] = Field(default=None)
     isolation_to: Optional[str] = Field(default=None)
     other_block_required: Optional[bool] = Field(default=False)
     other_block_describe: Optional[str] = Field(default=None)
 
-    # --- Authorisation Section (from form) ---
     authorizer_name: Optional[str] = Field(default=None)
-    # --- FIX: Use datetime.date ---
     authorizer_signature_date: Optional[datetime.date] = Field(default=None, sa_column=Column(Date))
     
-    # --- Timestamps & System Signatures ---
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
     
-    # 1. Permittee (Initiator) - System Link
     permittee_id: UUID = Field(foreign_key="user.id", index=True)
     
-    # 2. Authorizer (SSE-Office) - System Link
     authorizer_id: Optional[UUID] = Field(default=None, foreign_key="user.id", index=True)
     authorized_at: Optional[datetime.datetime] = Field(default=None)
     
-    # 3. Approver (Safety Officer) - System Link
     approver_id: Optional[UUID] = Field(default=None, foreign_key="user.id", index=True)
     approved_at: Optional[datetime.datetime] = Field(default=None)
     approver_remarks: Optional[str] = Field(default=None, max_length=500)
     
-    # --- NEW FIELDS (Phases 3 & 4) ---
     actual_start_time: Optional[datetime.datetime] = Field(default=None)
     actual_end_time: Optional[datetime.datetime] = Field(default=None)
     extension_requested: Optional[bool] = Field(default=False, index=True)
@@ -231,33 +188,26 @@ class PermitBase(SQLModel):
     
     machine_id: Optional[UUID] = Field(default=None, foreign_key="machine.id", index=True)
     maintenance_plan_id: Optional[UUID] = Field(default=None, foreign_key="maintenanceplan.id")
-    is_critical: bool = Field(default=False) # Logic: True if any SOP task is critical
+    is_critical: bool = Field(default=False)
     
-    # --- MODULE 4 INTEGRATION: Contractor Management ---
     contractor_id: Optional[UUID] = Field(default=None, foreign_key="contractor.id", index=True)
-    # --- END MODULE 4 INTEGRATION ---
-    
-    # --- END NEW FIELDS ---
-
 
 class Permit(PermitBase, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
 
-    # --- Relationships ---
-    permittee: User = Relationship(
+    permittee: "User" = Relationship(
         back_populates="initiated_permits",
         sa_relationship_kwargs={"foreign_keys": "[Permit.permittee_id]"}
     )
-    authorizer: Optional[User] = Relationship(
+    authorizer: Optional["User"] = Relationship(
         back_populates="authorized_permits",
         sa_relationship_kwargs={"foreign_keys": "[Permit.authorizer_id]"}
     )
-    approver: Optional[User] = Relationship(
+    approver: Optional["User"] = Relationship(
         back_populates="approved_permits",
         sa_relationship_kwargs={"foreign_keys": "[Permit.approver_id]"}
     )
     
-    # --- NEW Relationships to related tables ---
     ppes: List["PermitPPE"] = Relationship(back_populates="permit")
     attendees: List["PermitAttendee"] = Relationship(back_populates="permit")
     
@@ -267,24 +217,9 @@ class Permit(PermitBase, table=True):
     maintenance_plan: Optional["MaintenancePlan"] = Relationship(
         sa_relationship_kwargs={"primaryjoin": "Permit.maintenance_plan_id==MaintenancePlan.id", "lazy": "selectin"}
     )
-    
-    # --- MODULE 4 INTEGRATION: Contractor Management ---
     contractor: Optional["Contractor"] = Relationship(
         sa_relationship_kwargs={"primaryjoin": "Permit.contractor_id==Contractor.id", "lazy": "selectin"}
     )
-    worker_links: List["PermitWorkerLink"] = Relationship(back_populates="permit")
-    # --- END MODULE 4 INTEGRATION ---
     
-    # --- MODULE 5 INTEGRATION: Incident Management ---
+    worker_links: List["PermitWorkerLink"] = Relationship(back_populates="permit")
     incidents: List["Incident"] = Relationship(back_populates="permit")
-    # --- END MODULE 5 INTEGRATION ---
-# --- END NEW ---
-
-# --- Machines & Plants Module ---
-from app.modules.machine.machine_models import (
-    Shop, 
-    MachineType, 
-    Machine, 
-    MaintenancePlan, 
-    MaintenanceTask
-)

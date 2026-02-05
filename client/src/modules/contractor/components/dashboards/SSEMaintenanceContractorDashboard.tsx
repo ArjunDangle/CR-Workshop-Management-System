@@ -1,8 +1,8 @@
-// client/src/modules/contractor/components/dashboards/SSEMaintenanceContractorDashboard.tsx
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button'; // The missing import
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Users, Building, Search, Filter, Eye, Wrench } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';

@@ -1,11 +1,12 @@
-import React from 'react'; // --- Removed Suspense
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/modules/auth/authStore';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary'; // Import ErrorBoundary
 
 // --- Import our REAL widgets ---
 import CreatePermitWidget from '../widgets/CreatePermitWidget';
-import PermitListWidget from '../widgets/PermitListWidget'; // --- FIX: Added import
+import PermitListWidget from '../widgets/PermitListWidget';
 // ---
 
 // Loading component for the list widgets
@@ -22,7 +23,11 @@ const WidgetLoading = () => (
 const SSEMaintenancePermitDashboard = () => {
   const { user } = useAuthStore();
 
-  // We must ensure the user object is loaded before rendering lists
+  // Define a generic reset handler
+  const handleRetry = () => {
+    window.location.reload(); 
+  };
+
   if (!user) {
     return <WidgetLoading />;
   }
@@ -35,37 +40,47 @@ const SSEMaintenancePermitDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Row 1: Create + Active */}
-        <CreatePermitWidget />
+        <ErrorBoundary fallbackTitle="Create Widget Error">
+            <CreatePermitWidget />
+        </ErrorBoundary>
         
-        {/* --- FIX: Removed Suspense wrapper --- */}
-        <PermitListWidget
-          title="My Active & Approved Permits"
-          queryKey={`active_permits_${user.id}`}
-          statusFilter={['Active', 'Approved']}
-          filterByCurrentUser={true}
-          noPermitsMessage="You have no active or approved permits."
-        />
+        <ErrorBoundary fallbackTitle="Active List Error" onReset={handleRetry}>
+            <PermitListWidget
+            title="My Active & Approved Permits"
+            queryKey={`active_permits_${user.id}`}
+            statusFilter={['Active', 'Approved']}
+            filterByCurrentUser={true}
+            noPermitsMessage="You have no active or approved permits."
+            />
+        </ErrorBoundary>
         
         {/* Row 2: Pending */}
-        <PermitListWidget
-          title="My Pending Permits"
-          queryKey={`pending_permits_${user.id}`}
-          statusFilter={['Pending Authorization', 'Pending Approval']}
-          filterByCurrentUser={true}
-          noPermitsMessage="You have no permits awaiting approval."
-          className="lg:col-span-2"
-        />
+        <div className="lg:col-span-2">
+            <ErrorBoundary fallbackTitle="Pending List Error" onReset={handleRetry}>
+                <PermitListWidget
+                title="My Pending Permits"
+                queryKey={`pending_permits_${user.id}`}
+                statusFilter={['Pending Authorization', 'Pending Approval']}
+                filterByCurrentUser={true}
+                noPermitsMessage="You have no permits awaiting approval."
+                className="w-full" // Ensure full width inside the wrapper
+                />
+            </ErrorBoundary>
+        </div>
         
         {/* Row 3: History */}
-        <PermitListWidget
-          title="My Permit History"
-          queryKey={`history_permits_${user.id}`}
-          statusFilter={['Closed', 'Expired', 'Rejected']}
-          filterByCurrentUser={true}
-          noPermitsMessage="You have no permit history."
-          className="lg:col-span-2"
-        />
-        {/* --- END FIX --- */}
+        <div className="lg:col-span-2">
+            <ErrorBoundary fallbackTitle="History Load Error" onReset={handleRetry}>
+                <PermitListWidget
+                title="My Permit History"
+                queryKey={`history_permits_${user.id}`}
+                statusFilter={['Closed', 'Expired', 'Rejected']}
+                filterByCurrentUser={true}
+                noPermitsMessage="You have no permit history."
+                className="w-full"
+                />
+            </ErrorBoundary>
+        </div>
       </div>
     </div>
   );

@@ -1,19 +1,17 @@
-// client/src/modules/incident/pages/IncidentPage.tsx
 import React from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuthStore } from '@/modules/auth/authStore';
+import { getUserRoleVariant } from '@/lib/utils'; // Import helper
 import { InvestigationBoard } from '../components/dashboards/InvestigationBoard';
 import { SSEMaintenanceIncidentDashboard } from '../components/dashboards/SSEMaintenanceIncidentDashboard';
 import { SSEOfficeIncidentDashboard } from '../components/dashboards/SSEOfficeIncidentDashboard';
 
 const IncidentPage: React.FC = () => {
   const { user } = useAuthStore();
+  const roleKey = getUserRoleVariant(user);
 
-  // Polymorphic dashboard based on user role
   const renderDashboard = () => {
-    const userRole = user?.role?.id;
-
-    switch (userRole) {
+    switch (roleKey) {
       case 'safety-officer':
         return <InvestigationBoard />;
       
@@ -24,14 +22,13 @@ const IncidentPage: React.FC = () => {
         return <SSEOfficeIncidentDashboard />;
       
       default:
-        // Default view for unauthenticated or other roles
         return (
           <div className="text-center py-12">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              Incident Management
+              Access Restricted
             </h2>
             <p className="text-gray-600">
-              Please log in with appropriate role to access incident management features.
+              Your role ({user?.role?.name}) does not have access to this module.
             </p>
           </div>
         );

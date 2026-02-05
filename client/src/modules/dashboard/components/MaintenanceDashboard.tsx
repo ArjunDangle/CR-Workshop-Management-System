@@ -29,7 +29,7 @@ const maintenanceServices = [
     { title: 'Machine & Plant', Icon: Wrench, bgColorClass: 'bg-[hsl(var(--service-card-1-bg))]', href: '/machines' },
     { title: 'Permit Management', Icon: HardHat, bgColorClass: 'bg-[hsl(var(--service-card-2-bg))]', href: '/permits' },
     { title: 'Incident Management', Icon: AlertTriangle, bgColorClass: 'bg-[hsl(var(--service-card-3-bg))]', href: '/incidents' },
-    { title: 'Contractors', Icon: ClipboardCheck, bgColorClass: 'bg-[hsl(var(--service-card-4-bg))]', href: '/contracts' },
+    { title: 'Contractors', Icon: ClipboardCheck, bgColorClass: 'bg-[hsl(var(--service-card-4-bg))]', href: '/contractors' }, // FIX: Was '/contracts'
     { title: 'Projects', Icon: FolderKanban, bgColorClass: 'bg-[hsl(var(--service-card-5-bg))]', href: '/projects' },
     { title: 'Power Systems', Icon: Zap, bgColorClass: 'bg-[hsl(var(--service-card-6-bg))]', href: '/power' },
     { title: 'Compliance', Icon: ShieldCheck, bgColorClass: 'bg-[hsl(var(--service-card-7-bg))]', href: '/compliance' },

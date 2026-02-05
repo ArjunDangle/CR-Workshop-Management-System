@@ -26,16 +26,6 @@ class ContractorService:
     def validate_contractor_for_permit(db: Session, contractor_id: UUID) -> bool:
         """
         Safety Firewall: Validates if a contractor is eligible for work permits.
-        
-        Args:
-            db: Database session
-            contractor_id: UUID of the contractor to validate
-            
-        Returns:
-            True if contractor is eligible
-            
-        Raises:
-            HTTPException: If contractor is not eligible for permit work
         """
         contractor = db.get(Contractor, contractor_id)
         if not contractor:
@@ -44,14 +34,12 @@ class ContractorService:
                 detail=f"Contractor with ID {contractor_id} not found"
             )
         
-        # Check 1: Status must be ACTIVE
         if contractor.status in [ContractorStatus.BLACKLISTED, ContractorStatus.SUSPENDED]:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Contractor {contractor.company_name} is {contractor.status.value} and cannot work on permits"
             )
         
-        # Check 2: Empanelment must be valid
         today = date.today()
         if contractor.empanelment_valid_upto < today:
             raise HTTPException(
@@ -59,7 +47,6 @@ class ContractorService:
                 detail=f"Contractor {contractor.company_name} empanelment expired on {contractor.empanelment_valid_upto}"
             )
         
-        # Check 3: Insurance must be valid (if provided)
         if contractor.insurance_valid_upto and contractor.insurance_valid_upto < today:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -72,16 +59,6 @@ class ContractorService:
     def validate_worker_for_permit(db: Session, worker_id: UUID) -> bool:
         """
         Safety Firewall: Validates if a worker is eligible for work permits.
-        
-        Args:
-            db: Database session
-            worker_id: UUID of the worker to validate
-            
-        Returns:
-            True if worker is eligible
-            
-        Raises:
-            HTTPException: If worker is not eligible for permit work
         """
         worker = db.get(Worker, worker_id)
         if not worker:
@@ -90,14 +67,12 @@ class ContractorService:
                 detail=f"Worker with ID {worker_id} not found"
             )
         
-        # Check 1: Must not be blacklisted
         if worker.is_blacklisted:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Worker {worker.full_name} is blacklisted and cannot work on permits"
             )
         
-        # Check 2: Medical validity
         today = date.today()
         if worker.medical_valid_upto < today:
             raise HTTPException(
@@ -105,7 +80,6 @@ class ContractorService:
                 detail=f"Worker {worker.full_name} medical fitness expired on {worker.medical_valid_upto}"
             )
         
-        # Check 3: Safety training validity
         if worker.safety_training_valid_upto < today:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -143,20 +117,18 @@ class ContractorService:
         """
         Creates a new contractor.
         """
-        # Check if vendor_code already exists
-        existing = db.exec(
+        existing = db.execute(
             select(Contractor).where(Contractor.vendor_code == contractor_data.vendor_code)
-        ).first()
+        ).scalars().first()
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Contractor with vendor code {contractor_data.vendor_code} already exists"
             )
         
-        # Check if company_name already exists
-        existing = db.exec(
+        existing = db.execute(
             select(Contractor).where(Contractor.company_name == contractor_data.company_name)
-        ).first()
+        ).scalars().first()
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -168,7 +140,6 @@ class ContractorService:
         db.commit()
         db.refresh(contractor)
         
-        # Log creation
         ContractorService.log_audit_event(
             db, contractor.id, "CONTRACTOR_CREATED", 
             new_value=f"Created {contractor.company_name}"
@@ -184,7 +155,8 @@ class ContractorService:
         query = select(Contractor)
         if status:
             query = query.where(Contractor.status == status)
-        return db.exec(query.order_by(Contractor.company_name)).all()
+        # --- FIX: Changed db.exec to db.execute ---
+        return db.execute(query.order_by(Contractor.company_name)).scalars().all()
     
     @staticmethod
     def get_contractor_by_id(db: Session, contractor_id: UUID) -> Contractor:
@@ -206,7 +178,6 @@ class ContractorService:
         """
         contractor = ContractorService.get_contractor_by_id(db, contractor_id)
         
-        # Track changes for audit
         changes = []
         for field, value in contractor_data.model_dump(exclude_unset=True).items():
             if value is not None and getattr(contractor, field) != value:
@@ -218,7 +189,6 @@ class ContractorService:
             db.commit()
             db.refresh(contractor)
             
-            # Log changes
             ContractorService.log_audit_event(
                 db, contractor_id, "CONTRACTOR_UPDATED",
                 old_value="; ".join(changes),
@@ -244,7 +214,6 @@ class ContractorService:
         db.commit()
         db.refresh(contractor)
         
-        # Log status change
         ContractorService.log_audit_event(
             db, contractor_id, "STATUS_CHANGED",
             old_value=f"Status: {old_status}",
@@ -262,7 +231,6 @@ class WorkerService:
         """
         Creates a new worker.
         """
-        # Verify contractor exists
         contractor = db.get(Contractor, worker_data.contractor_id)
         if not contractor:
             raise HTTPException(
@@ -270,10 +238,9 @@ class WorkerService:
                 detail=f"Contractor with ID {worker_data.contractor_id} not found"
             )
         
-        # Check if ID proof number already exists
-        existing = db.exec(
+        existing = db.execute(
             select(Worker).where(Worker.id_proof_number == worker_data.id_proof_number)
-        ).first()
+        ).scalars().first()
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -292,10 +259,11 @@ class WorkerService:
         """
         Gets all workers for a specific contractor.
         """
-        return db.exec(
+        # --- FIX: Changed db.exec to db.execute ---
+        return db.execute(
             select(Worker).where(Worker.contractor_id == contractor_id)
             .order_by(Worker.full_name)
-        ).all()
+        ).scalars().all()
     
     @staticmethod
     def get_worker_by_id(db: Session, worker_id: UUID) -> Worker:
@@ -338,6 +306,5 @@ class WorkerService:
             return WorkerValidationResult(is_eligible=False, reason=e.detail)
 
 
-# Create singleton instances for convenience
 contractor_service = ContractorService()
 worker_service = WorkerService()

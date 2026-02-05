@@ -8,14 +8,14 @@ import { Wrench, HardHat, AlertTriangle, ClipboardCheck, FolderKanban, Zap, Shie
 
 // Define service cards specific to Safety dashboard
 const safetyServices = [
-   { title: 'Machine & Plant Management', Icon: Wrench, bgColorClass: 'bg-[hsl(var(--service-card-1-bg))]', href: '/machines' }, // Blue
-    { title: 'Permit Management', Icon: HardHat, bgColorClass: 'bg-[hsl(var(--service-card-2-bg))]', href: '/permits' },          // Red
-    { title: 'Incident Management', Icon: AlertTriangle, bgColorClass: 'bg-[hsl(var(--service-card-3-bg))]', href: '/incidents' }, // Lime Green
-    { title: 'Contract Management', Icon: ClipboardCheck, bgColorClass: 'bg-[hsl(var(--service-card-4-bg))]', href: '/contracts' }, // Orange
-    { title: 'Project Management', Icon: FolderKanban, bgColorClass: 'bg-gradient-to-br from-yellow-400 to-amber-500', href: '/projects' }, // Example Gradient
-    { title: 'Power Management', Icon: Zap, bgColorClass: 'bg-gradient-to-br from-cyan-400 to-sky-500', href: '/power' },       // Example Gradient
-    { title: 'Compliance', Icon: ShieldCheck, bgColorClass: 'bg-gradient-to-br from-indigo-400 to-purple-500', href: '/compliance' },// Example Gradient
-    { title: 'Mapping', Icon: MapPinned, bgColorClass: 'bg-gradient-to-br from-pink-400 to-rose-500', href: '/mapping' },      // Example Gradient
+   { title: 'Machine & Plant Management', Icon: Wrench, bgColorClass: 'bg-[hsl(var(--service-card-1-bg))]', href: '/machines' },
+    { title: 'Permit Management', Icon: HardHat, bgColorClass: 'bg-[hsl(var(--service-card-2-bg))]', href: '/permits' },
+    { title: 'Incident Management', Icon: AlertTriangle, bgColorClass: 'bg-[hsl(var(--service-card-3-bg))]', href: '/incidents' },
+    { title: 'Contract Management', Icon: ClipboardCheck, bgColorClass: 'bg-[hsl(var(--service-card-4-bg))]', href: '/contractors' }, // FIX: Was '/contracts'
+    { title: 'Project Management', Icon: FolderKanban, bgColorClass: 'bg-gradient-to-br from-yellow-400 to-amber-500', href: '/projects' },
+    { title: 'Power Management', Icon: Zap, bgColorClass: 'bg-gradient-to-br from-cyan-400 to-sky-500', href: '/power' },
+    { title: 'Compliance', Icon: ShieldCheck, bgColorClass: 'bg-gradient-to-br from-indigo-400 to-purple-500', href: '/compliance' },
+    { title: 'Mapping', Icon: MapPinned, bgColorClass: 'bg-gradient-to-br from-pink-400 to-rose-500', href: '/mapping' },
 ];
 
 
@@ -23,11 +23,9 @@ const SafetyDashboard = () => {
   return (
     <div className="space-y-8">
       <div className="text-left">
-        {/* --- THIS IS THE FIX --- */}
         <h1 className="text-3xl font-semibold tracking-tight text-gray-700">
           Welcome, Safety Officer!
         </h1>
-        {/* --- END FIX --- */}
       </div>
 
        <h2 className="text-xl font-medium text-gray-600">Safety Services</h2>
@@ -50,4 +48,3 @@ const SafetyDashboard = () => {
 };
 
 export default SafetyDashboard;
-
