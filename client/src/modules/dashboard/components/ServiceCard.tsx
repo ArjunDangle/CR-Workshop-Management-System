@@ -1,34 +1,39 @@
-// src/modules/dashboard/components/ServiceCard.tsx
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { LucideIcon } from 'lucide-react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import { Link } from 'react-router-dom';
 
 interface ServiceCardProps {
   title: string;
+  description: string;
   Icon: LucideIcon;
-  bgColorClass: string; // Tailwind class like 'bg-[hsl(var(--service-card-1-bg))]' or 'bg-gradient-...'
-  href: string; // Destination URL
+  bgColorClass: string; 
+  href: string;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ title, Icon, bgColorClass, href }) => {
+const ServiceCard: React.FC<ServiceCardProps> = ({ title, description, Icon, bgColorClass, href }) => {
   return (
-    // Wrap the card in a Link component for navigation
-    <Link to={href} className="block group transition-transform duration-200 ease-in-out hover:-translate-y-1">
+    <Link to={href} className="block group transition-all duration-300 ease-in-out hover:-translate-y-2">
       <Card className={cn(
-          "rounded-lg shadow-sm overflow-hidden h-32 md:h-36", // Fixed height, rounded corners
-          bgColorClass // Apply background color/gradient passed as prop
+          "relative border-0 shadow-sm overflow-hidden h-[280px] rounded-[2.5rem] transition-all group-hover:shadow-2xl", 
+          bgColorClass
       )}>
-        <CardContent className="p-4 flex flex-col justify-between h-full text-white relative"> {/* Ensure text is white and use flexbox */}
-            {/* Icon positioned top-left */}
-            <Icon className="h-7 w-7 md:h-8 md:w-8 text-white opacity-80 mb-2" strokeWidth={1.5}/>
-            {/* Title positioned bottom-left */}
-            <h3 className="text-sm md:text-base font-semibold tracking-tight mt-auto leading-tight line-clamp-2 text-left"> {/* Text left aligned */}
-                {title}
-            </h3>
-            {/* Optional: Add a subtle overlay or pattern if needed */}
-            {/* <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors duration-200"></div> */}
+        <CardContent className="p-8 flex flex-col justify-between h-full text-white">
+            {/* Top Left Icon Container */}
+            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-inner">
+                <Icon className="h-7 w-7 text-white" strokeWidth={1.5} />
+            </div>
+
+            {/* Bottom Left Text Container */}
+            <div className="space-y-2">
+                <h3 className="text-2xl font-bold tracking-tight leading-tight text-left">
+                    {title}
+                </h3>
+                <p className="text-sm font-medium text-white/80 leading-relaxed text-left line-clamp-2">
+                    {description}
+                </p>
+            </div>
         </CardContent>
       </Card>
     </Link>

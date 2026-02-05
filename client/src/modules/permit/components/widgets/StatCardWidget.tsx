@@ -7,26 +7,26 @@ interface StatCardWidgetProps {
   title: string;
   value: string | number;
   icon: LucideIcon;
-  className?: string;
+  colorClass: string; // e.g., "text-blue-500 bg-blue-50"
 }
 
 export const StatCardWidget: React.FC<StatCardWidgetProps> = ({
   title,
   value,
   icon: Icon,
-  className,
+  colorClass,
 }) => {
   return (
-    // This is the "normal" white shadcn/ui card
-    <Card className={cn('p-4', className)}>
-      <CardContent className="p-0">
-        <Icon className={cn('h-6 w-6 mb-2 text-muted-foreground')} />
-        <div className="text-3xl font-bold">{value}</div>
-        <div className="text-sm text-muted-foreground">{title}</div>
+    <Card className="bg-white rounded-3xl shadow-sm border-gray-100 hover:shadow-lg transition-shadow duration-300">
+      <CardContent className="p-6">
+        <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-4", colorClass)}>
+          <Icon className="w-6 h-6" />
+        </div>
+        <div className="text-4xl font-bold text-gray-900 tracking-tight">{value}</div>
+        <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-1">{title}</div>
       </CardContent>
     </Card>
   );
 };
 
 export default StatCardWidget;
-
