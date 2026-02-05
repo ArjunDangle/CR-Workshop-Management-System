@@ -25,6 +25,10 @@ export const permitCreateSchema = z.object({
   work_location: z.string().min(1, "Work location is required"),
   work_description: z.string().min(1, "Work description is required"),
   
+  // Contractor and Worker fields
+  contractor_id: z.string().min(1, "Contractor is required"),
+  worker_ids: z.array(z.string()).min(1, "At least one worker is required"),
+  
   start_date: z.string().optional().nullable(),
   start_time: z.string().optional().nullable(), // Time string
   finish_date: z.string().optional().nullable(),
@@ -147,6 +151,13 @@ export interface Permit {
   extension_reason: string | null;
   requested_new_end_time: string | null; // ISO datetime string
   // --- END NEW FIELDS ---
+  
+  // --- Contractor and Worker Fields (Module 4) ---
+  contractor_id: string | null;
+  contractor_name: string | null;
+  worker_ids: string[];
+  workers: any[]; // TODO: Define proper Worker interface
+  // --- END CONTRACTOR FIELDS ---
   
   ppes: PermitPPE[];
   attendees: PermitAttendee[];

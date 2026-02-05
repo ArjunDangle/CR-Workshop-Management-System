@@ -6,16 +6,22 @@ from uuid import UUID
 
 from sqlalchemy.orm import selectinload
 
-def get_all_machines(db: Session) -> List[Machine]:
+def get_all_machines(db: Session):
     """Retrieve all assets with their shop details attached."""
     # Use join to get shop names for grouping
     statement = select(Machine).options(selectinload(Machine.shop))
     results = db.execute(statement).scalars().all()
     
-    # Map the shop name to the flat schema for the frontend
+    # FIX: Convert model to dict to inject 'shop_name'
+    # SQLModel instances are strict and don't allow setting new attributes dynamically
+    machines_data = []
     for m in results:
-        m.shop_name = m.shop.name
-    return results
+        machine_dict = m.model_dump()
+        # Manually fetch the relationship data since model_dump might exclude it
+        machine_dict["shop_name"] = m.shop.name if m.shop else None
+        machines_data.append(machine_dict)
+
+    return machines_data
 
 def get_machine_by_asset_id(db: Session, asset_id: str) -> Machine | None:
     statement = select(Machine).where(Machine.asset_id == asset_id)
@@ -42,18 +48,24 @@ def get_machine_checklist(db: Session, machine_id: UUID) -> List[MaintenanceTask
     task_statement = select(MaintenanceTask).where(MaintenanceTask.plan_id == plan.id)
     return db.execute(task_statement).scalars().all()
 
-def lock_machine_status(db: Session, machine_id: UUID):
+def lock_machine_status(db: Session, machine_id: UUID, commit: bool = True):
     """
     LOTO ENFORCEMENT: Hard-locks the machine status in the DB.
-    Triggered when a Permit becomes ACTIVE.
+    Triggered when a Permit becomes ACTIVE or during Kill Switch.
+    
+    Args:
+        db: Database session
+        machine_id: UUID of the machine to lock
+        commit: Whether to commit the transaction (default True for backward compatibility)
     """
     machine = db.get(Machine, machine_id)
     if machine:
         print(f"🔒 LOTO TRIGGER: Locking Machine {machine.asset_id} (Under Maintenance)")
         machine.status = "UNDER_MAINTENANCE"
         db.add(machine)
-        db.commit()
-        db.refresh(machine)
+        if commit:
+            db.commit()
+            db.refresh(machine)
 
 def unlock_machine_status(db: Session, machine_id: UUID):
     """

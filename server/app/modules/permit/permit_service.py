@@ -14,6 +14,10 @@ from typing import List
 import datetime
 from datetime import timezone
 from fastapi import HTTPException, status
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 # Models
 from app.models import User, Permit, PermitPPE, PermitAttendee
@@ -24,6 +28,10 @@ from app.modules.permit import permit_repo, permit_schemas
 
 # --- PHASE 2 INTEGRATION: Machine Service ---
 from app.modules.machine import machine_service
+
+# --- MODULE 4 INTEGRATION: Contractor Service ---
+from app.modules.contractor.service import contractor_service
+# --- END MODULE 4 INTEGRATION ---
 
 
 # --- Helper to determine permit type from user role ---
@@ -51,11 +59,23 @@ def create_permit(db: Session, permit_data: permit_schemas.PermitCreate, permitt
     1. Links the Permit to a specific Machine and Maintenance Plan (if provided).
     2. Automatically flags the permit as 'is_critical' if the selected 
        Maintenance Plan contains any critical tasks.
+       
+    MODULE 4 SAFETY FIREWALL:
+    3. Validates contractor eligibility if contractor_id is provided.
+    4. Validates all workers for eligibility if worker_ids are provided.
     """
     # 1. Determine permit type from the user's role.
     permit_type = _get_permit_type_for_user(permittee)
 
-    # 2. Criticality Logic (Phase 2)
+    # 2. MODULE 4 SAFETY FIREWALL: Validate Contractor
+    if permit_data.contractor_id:
+        contractor_service.validate_contractor_for_permit(db, permit_data.contractor_id)
+    
+    # 3. MODULE 4 SAFETY FIREWALL: Validate Workers (Atomic Check)
+    for worker_id in permit_data.worker_ids:
+        contractor_service.validate_worker_for_permit(db, worker_id)
+    
+    # 4. Criticality Logic (Phase 2)
     # If a maintenance plan is selected, check if it contains any "Critical" tasks.
     is_critical = False
     if permit_data.maintenance_plan_id:
@@ -67,10 +87,10 @@ def create_permit(db: Session, permit_data: permit_schemas.PermitCreate, permitt
         if db.execute(statement).first():
             is_critical = True
 
-    # 3. Create the main Permit object from the flat fields of the request data.
+    # 5. Create the main Permit object from the flat fields of the request data.
     # We explicitly map Phase 2 fields here.
     new_permit = Permit.model_validate(
-        permit_data.model_dump(exclude={"ppes", "attendees"}),
+        permit_data.model_dump(exclude={"ppes", "attendees", "worker_ids"}),
         update={
             "permit_type": permit_type,
             "permittee_id": permittee.id,
@@ -78,7 +98,9 @@ def create_permit(db: Session, permit_data: permit_schemas.PermitCreate, permitt
             # Phase 2 Fields
             "machine_id": permit_data.machine_id,
             "maintenance_plan_id": permit_data.maintenance_plan_id,
-            "is_critical": is_critical
+            "is_critical": is_critical,
+            # Module 4 Integration
+            "contractor_id": permit_data.contractor_id
         }
     )
 
@@ -86,9 +108,22 @@ def create_permit(db: Session, permit_data: permit_schemas.PermitCreate, permitt
     new_permit.ppes = [PermitPPE(**p.model_dump()) for p in permit_data.ppes]
     new_permit.attendees = [PermitAttendee(**a.model_dump()) for a in permit_data.attendees]
 
-    # 5. Save via Repository
+    # 5. Save via Repository first to get the permit ID
     try:
-        return permit_repo.create_permit(db=db, permit=new_permit)
+        saved_permit = permit_repo.create_permit(db=db, permit=new_permit)
+        
+        # 6. MODULE 4 INTEGRATION: Create Worker Links after permit is saved
+        from app.models import PermitWorkerLink
+        for worker_id in permit_data.worker_ids:
+            worker_link = PermitWorkerLink(
+                permit_id=saved_permit.id,
+                worker_id=worker_id,
+                role="Assigned Worker"  # Default role, can be customized later
+            )
+            db.add(worker_link)
+        
+        db.commit()
+        return saved_permit
     except Exception as e:
         # Rollback in case of a database error
         db.rollback()
@@ -319,8 +354,18 @@ def request_permit_extension(db: Session, permit_id: UUID, extension_data: permi
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Requested new end time must be later than the current permit finish date/time."
                 )
-    except Exception:
-        pass 
+    except HTTPException as e:
+        # Don't catch HTTP exceptions! Re-raise them so the Frontend gets the 400 error.
+        raise e
+        
+    except Exception as e:
+        # For unexpected errors (bugs), Log it and Fail Safe.
+        logger.error(f"CRITICAL: Safety check failed unexpectedly: {str(e)}", exc_info=True)
+        # In a safety system, if you aren't sure, you BLOCK the work.
+        raise HTTPException(
+            status_code=500, 
+            detail="Internal Safety Check Error. Permit creation blocked."
+        )
 
     # 5. Update permit
     permit.extension_requested = True
@@ -368,3 +413,43 @@ def approve_permit_extension(db: Session, permit_id: UUID, authorizer: User) -> 
     
     updated_permit = permit_repo.update_permit(db=db, permit=permit)
     return updated_permit
+
+# --- MODULE 5 INTEGRATION: Kill Switch Support ---
+def suspend_permit(db: Session, permit_id: UUID, reason: str = "Severe Incident", commit: bool = False) -> Permit:
+    """
+    Suspends a permit (typically called by Kill Switch for MAJOR/FATAL incidents).
+    
+    Args:
+        db: Database session
+        permit_id: UUID of the permit to suspend
+        reason: Reason for suspension (for logging/audit)
+        commit: Whether to commit the transaction (default False for atomic operations)
+    
+    Returns:
+        Updated Permit object
+    
+    Raises:
+        HTTPException: If permit not found or cannot be suspended
+    """
+    permit = get_permit_by_id(db=db, permit_id=permit_id)
+    
+    # Check if permit is in a suspendable state
+    if permit.status not in ["Active", "Approved"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot suspend permit with status '{permit.status}'. Only 'Active' or 'Approved' permits can be suspended."
+        )
+    
+    # Update status to SUSPENDED
+    permit.status = "Suspended"
+    
+    # Update via repository (does not commit)
+    updated_permit = permit_repo.update_permit(db=db, permit=permit)
+    
+    # Only commit if explicitly requested (for standalone calls)
+    if commit:
+        db.commit()
+        db.refresh(updated_permit)
+    
+    return updated_permit
+# --- END MODULE 5 INTEGRATION ---

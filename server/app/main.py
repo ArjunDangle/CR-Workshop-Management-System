@@ -7,6 +7,12 @@ from app.modules.auth.auth_router import router as auth_router
 # --- Import the new permit router ---
 from app.modules.permit.permit_router import router as permit_router
 from app.modules.machine.machine_router import router as machine_router
+# --- MODULE 4 INTEGRATION: Contractor Management ---
+from app.modules.contractor.router import router as contractor_router
+# --- END MODULE 4 INTEGRATION ---
+# --- MODULE 5 INTEGRATION: Incident Management ---
+from app.modules.incident.router import router as incident_router
+# --- END MODULE 5 INTEGRATION ---
 
 # ---
 # --- Import settings ---
@@ -50,6 +56,13 @@ app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 app.include_router(permit_router, prefix="/permits", tags=["Permit Management"])
 # ---
 app.include_router(machine_router, prefix="/machines", tags=["Machine Management"])
+
+# --- MODULE 4 INTEGRATION: Contractor Management ---
+app.include_router(contractor_router)
+# --- END MODULE 4 INTEGRATION ---
+# --- MODULE 5 INTEGRATION: Incident Management ---
+app.include_router(incident_router)
+# --- END MODULE 5 INTEGRATION ---
 
 @app.get("/health", tags=["Health Check"])
 async def health_check():

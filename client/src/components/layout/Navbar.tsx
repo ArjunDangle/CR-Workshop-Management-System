@@ -16,6 +16,7 @@ import {
 // Ensure correct path to your auth store
 import { useAuthStore } from '@/modules/auth/authStore';
 import { cn } from '@/lib/utils'; // Import cn
+import { IncidentReportButton } from '@/modules/incident/components/IncidentReportButton';
 
 interface NavbarProps {
     onToggleSidebar: () => void; // Prop for mobile sidebar toggle
@@ -78,6 +79,9 @@ const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
 
       {/* Right Side: Icons & User Menu */}
       <div className="flex items-center space-x-2 sm:space-x-4">
+        {/* Incident Report Button */}
+        <IncidentReportButton variant="emergency" />
+        
         {/* Notification Bell */}
         <Button variant="ghost" size="icon" className="text-[hsl(var(--navbar-muted-foreground))] hover:text-[hsl(var(--navbar-foreground))] relative">
           <Bell className="h-5 w-5" />

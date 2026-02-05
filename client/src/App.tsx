@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React, { Suspense, lazy } from 'react';
-import { Loader2 } from 'lucide-react'; // <-- ADDED THIS IMPORT
+import { Loader2 } from 'lucide-react';
 
 // Auth/Public Pages
 import LandingPage from "./modules/auth/LandingPage";
@@ -20,24 +20,26 @@ import NotFound from "./pages/NotFound";
 // Import the Protected Route component
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// --- NEW: Lazy load the Permit module pages ---
+// --- Lazy load the Permit module pages ---
 const PermitPage = lazy(() => import('./modules/permit/pages/PermitPage'));
 const CreatePermitPage = lazy(() => import('./modules/permit/pages/CreatePermitPage'));
 const PermitDetailPage = lazy(() => import('./modules/permit/pages/PermitDetailPage'));
-// ---
 
 // Import Machine Page
 const MachinePage = lazy(() => import('./modules/machine/pages/MachinePage'));
 
+// --- Lazy load the Incident module pages ---
+const IncidentPage = lazy(() => import('./modules/incident/pages/IncidentPage'));
+const IncidentDetailPage = lazy(() => import('./modules/incident/pages/IncidentDetailPage'));
+
 const queryClient = new QueryClient();
 
-// --- NEW: Create a simple loading fallback for lazy-loaded pages ---
+// --- Loading fallback ---
 const PageLoader = () => (
   <div className="flex min-h-screen items-center justify-center">
     <Loader2 className="h-12 w-12 animate-spin text-primary" />
   </div>
 );
-// ---
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -45,24 +47,27 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Suspense fallback={<PageLoader />}> {/* Wrap all routes in Suspense */}
+        <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* --- Public Routes --- */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
 
             {/* --- Protected Routes --- */}
-            <Route element={<ProtectedRoute />}> {/* Wrap protected routes */}
+            <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<DashboardPage />} />
               
-              {/* --- NEW: Permit Module Routes --- */}
+              {/* Permit Module Routes */}
               <Route path="/permits" element={<PermitPage />} />
               <Route path="/permits/new" element={<CreatePermitPage />} />
               <Route path="/permits/:id" element={<PermitDetailPage />} />
-              {/* --- END NEW --- */}
 
-              {/* Add other protected routes here later */}
-              {/* Example: <Route path="/machines" element={<MachinePage />} /> */}
+              {/* Machine Module Route - ENABLED */}
+              <Route path="/machines" element={<MachinePage />} />
+
+              {/* Incident Module Routes */}
+              <Route path="/incidents" element={<IncidentPage />} />
+              <Route path="/incidents/:id" element={<IncidentDetailPage />} />
             </Route>
 
             {/* --- Catch-all Not Found Route --- */}
@@ -75,4 +80,3 @@ const App = () => (
 );
 
 export default App;
-

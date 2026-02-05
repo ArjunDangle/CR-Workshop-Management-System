@@ -19,7 +19,8 @@ def create_db_and_tables():
     """
     # Import all models here before calling create_all
     # This is important so that SQLModel knows about them!
-    from app import models # <-- UNCOMMENT THIS LINE (assuming models.py is in app/)
+    from app import models # <-- Import base models
+    from app.modules.contractor import models as contractor_models # <-- Import contractor models
     print("Creating database tables...")
     SQLModel.metadata.create_all(engine) # <-- UNCOMMENT THIS LINE
     print("Database tables created (if they didn't exist).")

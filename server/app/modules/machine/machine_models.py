@@ -34,6 +34,7 @@ class Machine(SQLModel, table=True):
 
     shop: Shop = Relationship(back_populates="machines")
     type: MachineType = Relationship(back_populates="machines")
+    incidents: List["Incident"] = Relationship(back_populates="machine")
 
 # --- 4. MaintenancePlan ---
 class MaintenancePlan(SQLModel, table=True):

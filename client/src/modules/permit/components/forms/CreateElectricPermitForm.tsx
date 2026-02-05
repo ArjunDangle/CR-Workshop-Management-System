@@ -14,6 +14,11 @@ import { permitCreateSchema, PermitCreateData } from '../../permitTypes';
 import MachineSelect from '@/modules/machine/components/MachineSelect';
 import { getMachineChecklist, MaintenanceTask } from '@/modules/machine/machineApi';
 
+// --- New Contractor Integration ---
+import ContractorSelect from '@/modules/contractor/components/ContractorSelect';
+import WorkerMultiSelect from '@/modules/contractor/components/WorkerMultiSelect';
+import { Contractor, Worker } from '@/modules/contractor/api';
+
 // --- Shadcn UI Components ---
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +44,11 @@ const CreateElectricPermitForm = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
+  
+  // --- Contractor State ---
+  const [selectedContractor, setSelectedContractor] = useState<Contractor | null>(null);
+  const [selectedWorkerIds, setSelectedWorkerIds] = useState<string[]>([]);
+  const [selectedWorkers, setSelectedWorkers] = useState<Worker[]>([]);
 
   // --- Form Hook ---
   const {
@@ -50,6 +60,8 @@ const CreateElectricPermitForm = () => {
   } = useForm<PermitCreateData & { machine_id?: string }>({
     resolver: zodResolver(permitCreateSchema),
     defaultValues: {
+      contractor_id: '',
+      worker_ids: [],
       ppes: [
         { name: 'Full body harness (fall arresting type)', checked: false, issued_on: '' },
         { name: 'Safety Shoes', checked: false, issued_on: '' },
@@ -101,10 +113,12 @@ const CreateElectricPermitForm = () => {
 
   // --- Submit Handler ---
   const onSubmit = (data: any) => {
-    // Inject the machine_id into the payload
+    // Inject the machine_id and contractor data into the payload
     const cleanData = {
       ...data,
       machine_id: selectedMachineId, // Add the machine link
+      contractor_id: selectedContractor?.id,
+      worker_ids: selectedWorkerIds,
       date: data.date || null,
       start_date: data.start_date || null,
       start_time: data.start_time || null,
@@ -166,6 +180,48 @@ const CreateElectricPermitForm = () => {
                 <Input id="work_description" {...register('work_description')} className="mt-1" placeholder="Describe the repair/maintenance work..." />
                 {getError('work_description')}
               </div>
+            </div>
+          </section>
+
+          {/* Contractor Selection Section */}
+          <section className="space-y-4">
+            <h3 className="font-semibold text-lg text-gray-700 border-b pb-2">2. Contractor & Worker Assignment</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <Label className="mb-2 block">Select Contractor *</Label>
+                <ContractorSelect
+                  value={selectedContractor?.id}
+                  onChange={(id, contractor) => {
+                    setSelectedContractor(contractor);
+                    setValue('contractor_id', contractor.id);
+                    // Reset worker selection when contractor changes
+                    setSelectedWorkerIds([]);
+                    setSelectedWorkers([]);
+                    setValue('worker_ids', []);
+                  }}
+                  showSafetyStatus={true}
+                  placeholder="Select a contractor for this work..."
+                />
+                {getError('contractor_id')}
+              </div>
+            </div>
+
+            {/* Worker Selection */}
+            <div className="mt-4">
+              <Label className="mb-2 block">Assign Workers *</Label>
+              <WorkerMultiSelect
+                contractorId={selectedContractor?.id}
+                selectedWorkerIds={selectedWorkerIds}
+                onChange={(workerIds, workers) => {
+                  setSelectedWorkerIds(workerIds);
+                  setSelectedWorkers(workers);
+                  setValue('worker_ids', workerIds);
+                }}
+              />
+              {selectedWorkerIds.length === 0 && selectedContractor && (
+                <p className="text-sm text-destructive mt-1">At least one worker must be selected</p>
+              )}
             </div>
           </section>
 
@@ -253,7 +309,7 @@ const CreateElectricPermitForm = () => {
 
           {/* Schedule */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">Schedule</h3>
+            <h3 className="font-semibold text-lg text-gray-700">3. Schedule</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div>
                 <Label htmlFor="start_date">Start Date</Label>
@@ -278,7 +334,7 @@ const CreateElectricPermitForm = () => {
 
           {/* Fall protection system */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">Indicate Fall Protection System</h3>
+            <h3 className="font-semibold text-lg text-gray-700">4. Indicate Fall Protection System</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
                 <Label htmlFor="fall_system_description">Type of system / Description</Label>
@@ -318,7 +374,7 @@ const CreateElectricPermitForm = () => {
           
           {/* Work Context */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">Work Context</h3>
+            <h3 className="font-semibold text-lg text-gray-700">5. Work Context</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="on_crane_describe">On a crane: Describe</Label>
@@ -345,7 +401,7 @@ const CreateElectricPermitForm = () => {
 
           {/* PPEs */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">Required PPEs (Verified from SOP)</h3>
+            <h3 className="font-semibold text-lg text-gray-700">6. Required PPEs (Verified from SOP)</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {ppeFields.map((field, index) => (
                 <div key={field.id} className="p-4 border rounded-lg space-y-3">
@@ -375,7 +431,7 @@ const CreateElectricPermitForm = () => {
 
           {/* Isolation and block required */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">LOTO: Isolation and Block</h3>
+            <h3 className="font-semibold text-lg text-gray-700">7. LOTO: Isolation and Block</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="p-4 border rounded-lg space-y-3 bg-red-50 border-red-200">
                 <div className="flex items-center gap-2">
@@ -425,9 +481,9 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
 
-          {/* Signatures & attendees */}
+          {/* Signatures & Attendees */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">Authorization / Signatures</h3>
+            <h3 className="font-semibold text-lg text-gray-700">8. Authorization / Signatures</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="authorizer_name">Name of person authorising for work</Label>

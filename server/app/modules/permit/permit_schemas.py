@@ -13,6 +13,17 @@ import datetime
 # Import the public-facing User and Role schemas
 from app.modules.auth.auth_schemas import UserPublic
 
+# --- MODULE 4 INTEGRATION: Simple Contractor Schema for Permit ---
+class SimpleContractorRead(BaseModel):
+    """Simplified contractor schema for use in permit responses."""
+    id: UUID
+    company_name: str
+    vendor_code: str
+    status: str
+    
+    model_config = { "from_attributes": True }
+# --- END MODULE 4 INTEGRATION ---
+
 # --- Schemas for PermitPPE (One-to-Many) ---
 
 class PermitPPEBase(BaseModel):
@@ -104,6 +115,11 @@ class PermitCreate(BaseModel):
     
     # --- Attendees Section (Nested List) ---
     attendees: List[PermitAttendeeCreate] = Field(default=[])
+    
+    # --- MODULE 4 INTEGRATION: Contractor Management ---
+    contractor_id: Optional[UUID] = Field(None, description="Contractor ID for this permit")
+    worker_ids: List[UUID] = Field(default=[], description="List of worker IDs assigned to this permit")
+    # --- END MODULE 4 INTEGRATION ---
 
 
 # --- Main Permit Read Schema ---
@@ -187,6 +203,11 @@ class PermitRead(BaseModel):
     # --- NEW: Nested Lists for Related Data ---
     ppes: List[PermitPPERead] = []
     attendees: List[PermitAttendeeRead] = []
+    
+    # --- MODULE 4 INTEGRATION: Contractor Management ---
+    contractor_id: Optional[UUID] = None
+    contractor: Optional[SimpleContractorRead] = None
+    # --- END MODULE 4 INTEGRATION ---
 
     model_config = { "from_attributes": True }
 
