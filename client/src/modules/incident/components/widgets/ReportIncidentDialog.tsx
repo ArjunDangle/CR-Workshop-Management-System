@@ -51,7 +51,7 @@ import {
   IncidentSeverity,
   IncidentCategory,
   IncidentCreate,
-} from '../api';
+} from '../../api';
 import { getPermits, Permit } from '@/modules/permit/permitApi';
 import { getAllMachines, Machine } from '@/modules/machine/machineApi';
 import { getWorkers, Worker } from '@/modules/contractor/api';

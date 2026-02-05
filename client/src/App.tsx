@@ -32,6 +32,9 @@ const MachinePage = lazy(() => import('./modules/machine/pages/MachinePage'));
 const IncidentPage = lazy(() => import('./modules/incident/pages/IncidentPage'));
 const IncidentDetailPage = lazy(() => import('./modules/incident/pages/IncidentDetailPage'));
 
+// --- Lazy load the Contractor module page ---
+const ContractorPage = lazy(() => import('./modules/contractor/pages/ContractorPage'));
+
 const queryClient = new QueryClient();
 
 // --- Loading fallback ---
@@ -65,9 +68,12 @@ const App = () => (
               {/* Machine Module Route - ENABLED */}
               <Route path="/machines" element={<MachinePage />} />
 
-              {/* Incident Module Routes */}
+{/* Incident Module Routes */}
               <Route path="/incidents" element={<IncidentPage />} />
               <Route path="/incidents/:id" element={<IncidentDetailPage />} />
+
+              {/* Contractor Module Route */}
+              <Route path="/contractors" element={<ContractorPage />} />
             </Route>
 
             {/* --- Catch-all Not Found Route --- */}

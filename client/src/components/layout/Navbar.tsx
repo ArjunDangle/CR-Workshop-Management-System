@@ -16,7 +16,7 @@ import {
 // Ensure correct path to your auth store
 import { useAuthStore } from '@/modules/auth/authStore';
 import { cn } from '@/lib/utils'; // Import cn
-import { IncidentReportButton } from '@/modules/incident/components/IncidentReportButton';
+import { IncidentReportButton } from '@/modules/incident/components/widgets/IncidentReportButton';
 
 interface NavbarProps {
     onToggleSidebar: () => void; // Prop for mobile sidebar toggle

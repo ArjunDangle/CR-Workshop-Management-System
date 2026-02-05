@@ -1,7 +1,7 @@
 // client/src/modules/incident/pages/IncidentDetailPage.tsx
 import React from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import IncidentDetail from '../components/IncidentDetail';
+import IncidentDetail from '../components/widgets/IncidentDetail';
 
 const IncidentDetailPage: React.FC = () => {
   return (

@@ -1,10 +1,12 @@
+// client/src/modules/contractor/pages/ContractorPage.tsx
 import React from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuthStore } from '@/modules/auth/authStore';
-import { SSEMaintenanceMachineDashboard } from '../components/dashboards/SSEMaintenanceMachineDashboard';
-import { SafetyOfficerMachineDashboard } from '../components/dashboards/SafetyOfficerMachineDashboard';
+import { SSEOfficeContractorDashboard } from '../components/dashboards/SSEOfficeContractorDashboard';
+import { SafetyOfficerContractorDashboard } from '../components/dashboards/SafetyOfficerContractorDashboard';
+import { SSEMaintenanceContractorDashboard } from '../components/dashboards/SSEMaintenanceContractorDashboard';
 
-const MachinePage: React.FC = () => {
+const ContractorPage: React.FC = () => {
   const { user } = useAuthStore();
 
   // Polymorphic dashboard based on user role
@@ -12,25 +14,24 @@ const MachinePage: React.FC = () => {
     const userRole = user?.role?.id;
 
     switch (userRole) {
-      case 'sse-maintenance':
-        return <SSEMaintenanceMachineDashboard />;
+      case 'sse-office':
+        return <SSEOfficeContractorDashboard />;
       
       case 'safety-officer':
-        return <SafetyOfficerMachineDashboard />;
+        return <SafetyOfficerContractorDashboard />;
       
-      case 'sse-office':
-        // SSE-Office gets a view-only version similar to maintenance
-        return <SSEMaintenanceMachineDashboard />;
+      case 'sse-maintenance':
+        return <SSEMaintenanceContractorDashboard />;
       
       default:
         // Default view for unauthenticated or other roles
         return (
           <div className="text-center py-12">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              Machine Management
+              Contractor Management
             </h2>
             <p className="text-gray-600">
-              Please log in with appropriate role to access machine management features.
+              Please log in with appropriate role to access contractor management features.
             </p>
           </div>
         );
@@ -44,4 +45,4 @@ const MachinePage: React.FC = () => {
   );
 };
 
-export default MachinePage;
+export default ContractorPage;

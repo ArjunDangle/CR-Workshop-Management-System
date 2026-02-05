@@ -12,7 +12,11 @@ export interface Machine {
   last_maintenance_date: string | null;
   shop_id: string;
   type_id: string;
-  shop_name?: string; 
+  shop_name?: string;
+  safety_lock_status?: 'NONE' | 'SAFETY_LOCK' | 'RED_TAG';
+  safety_lock_reason?: string;
+  safety_lock_by?: string;
+  safety_lock_date?: string;
 }
 
 export interface MaintenanceTask {

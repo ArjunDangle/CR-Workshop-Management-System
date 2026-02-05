@@ -25,7 +25,7 @@ import {
   Incident,
   IncidentStatus,
   IncidentSeverity,
-} from '../api';
+} from '../../api';
 
 interface IncidentCardProps {
   incident: Incident;

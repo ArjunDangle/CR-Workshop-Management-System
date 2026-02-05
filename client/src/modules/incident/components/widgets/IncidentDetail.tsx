@@ -34,7 +34,7 @@ import {
   Incident,
   CAPA,
   CAPAStatus,
-} from '../api';
+} from '../../api';
 
 interface TimelineEvent {
   time: string;
