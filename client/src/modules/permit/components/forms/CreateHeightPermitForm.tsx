@@ -1,20 +1,21 @@
 // FILE: client/src/modules/permit/components/forms/CreateHeightPermitForm.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Loader2, Plus, Trash2, ShieldAlert, CheckSquare } from 'lucide-react';
+import { Loader2, Plus, Trash2, ShieldAlert, CheckSquare, Link as LinkIcon } from 'lucide-react';
 
 // --- Our API and Types ---
 import { createPermit } from '../../permitApi';
 import { permitCreateSchema, PermitCreateData } from '../../permitTypes';
+import { linkResolutionPermit } from '@/modules/incident/api';
 import { useAuthStore } from '@/modules/auth/authStore';
 
-// --- NEW: Modules Integration (Smart Components) ---
+// --- Modules Integration ---
 import MachineSelect from '@/modules/machine/components/MachineSelect';
-import { getMachineChecklist } from '@/modules/machine/machineApi';
+import { getMachineChecklist, machineApi } from '@/modules/machine/machineApi';
 import ContractorSelect from '@/modules/contractor/components/ContractorSelect';
 import WorkerMultiSelect from '@/modules/contractor/components/WorkerMultiSelect';
 import { Contractor } from '@/modules/contractor/api';
@@ -44,8 +45,14 @@ const CreateHeightPermitForm = () => {
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
 
-  // --- NEW: State for Smart Selectors ---
-  const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
+  // --- NEW: Context Aware Routing ---
+  const [searchParams] = useSearchParams();
+  const incidentId = searchParams.get('incidentId');
+  const contextMachineId = searchParams.get('machineId');
+  const contextTitle = searchParams.get('title');
+
+  // --- State for Smart Selectors ---
+  const [selectedMachineId, setSelectedMachineId] = useState<string | null>(contextMachineId || null);
   const [selectedContractor, setSelectedContractor] = useState<Contractor | null>(null);
   const [selectedWorkerIds, setSelectedWorkerIds] = useState<string[]>([]);
 
@@ -59,17 +66,14 @@ const CreateHeightPermitForm = () => {
   } = useForm<PermitCreateData>({
     resolver: zodResolver(permitCreateSchema),
     defaultValues: {
-      // Auto-fill responsible person from Auth Store if available, else default
       person_responsible: user?.role?.name.includes('MW') ? 'SSE (MW)' : 'SSW (Substation)',
-      
-      // Set defaults for arrays
-      ppes: [
+      work_description: contextTitle ? `Resolving Incident: ${contextTitle}` : '',
+      ppes:[
         { name: 'Full body harness (fall arresting type)', checked: false, issued_on: '' },
         { name: 'Safety Shoes', checked: false, issued_on: '' },
         { name: 'Safety Helmet', checked: false, issued_on: '' },
       ],
       attendees: Array(5).fill({ name: '', phone: '' }),
-      // Set defaults for booleans
       certified_crane_near_ladder: false,
       hazard_assessed: false,
       work_can_proceed: false,
@@ -82,24 +86,19 @@ const CreateHeightPermitForm = () => {
     },
   });
 
-  // --- Field Array Hooks for dynamic lists ---
-  const { fields: ppeFields } = useFieldArray({
-    control,
-    name: 'ppes',
-  });
+  useEffect(() => {
+    if (contextMachineId) {
+      machineApi.getById(contextMachineId).then((m) => {
+         setValue('work_location', `${m.shop_name || 'Workshop'} - ${m.name}`);
+      }).catch(console.error);
+    }
+  }, [contextMachineId, setValue]);
 
-  const {
-    fields: attendeeFields,
-    append: appendAttendee,
-    remove: removeAttendee,
-  } = useFieldArray({
-    control,
-    name: 'attendees',
-  });
+  const { fields: ppeFields } = useFieldArray({ control, name: 'ppes' });
+  const { fields: attendeeFields, append: appendAttendee, remove: removeAttendee } = useFieldArray({ control, name: 'attendees' });
 
-  // --- NEW: Fetch SOP Checklist (Machine Module Integration) ---
   const { data: checklist, isLoading: isLoadingChecklist } = useQuery({
-    queryKey: ['checklist', selectedMachineId],
+    queryKey:['checklist', selectedMachineId],
     queryFn: () => getMachineChecklist(selectedMachineId!),
     enabled: !!selectedMachineId,
   });
@@ -108,13 +107,22 @@ const CreateHeightPermitForm = () => {
 
   // --- API Mutation ---
   const mutation = useMutation({
-    mutationFn: createPermit,
+    mutationFn: async (cleanData: any) => {
+      const permit = await createPermit(cleanData);
+      if (incidentId) {
+         await linkResolutionPermit(incidentId, permit.id);
+      }
+      return permit;
+    },
     onSuccess: (data) => {
       toast.success(`Permit #${data.permit_no || 'Created'} Successfully`, {
-        description: 'Forwarded to SSE-Office for authorization.',
+        description: incidentId ? 'Forwarded to SSE-Office & linked to Incident.' : 'Forwarded to SSE-Office for authorization.',
       });
       queryClient.invalidateQueries({ queryKey: ['permits'] });
-      navigate('/dashboard'); 
+      if (incidentId) queryClient.invalidateQueries({ queryKey: ['incident', incidentId] }); 
+
+      if (incidentId) navigate(`/incidents/${incidentId}`);
+      else navigate('/dashboard'); 
     },
     onError: (error: any) => {
       toast.error('Failed to Create Permit', {
@@ -123,16 +131,12 @@ const CreateHeightPermitForm = () => {
     },
   });
 
-  // --- Submit Handler ---
   const onSubmit = (data: PermitCreateData) => {
     const cleanData = {
       ...data,
-      // --- NEW: Inject Smart IDs ---
       machine_id: selectedMachineId,
       contractor_id: selectedContractor?.id,
-      worker_ids: selectedWorkerIds, // These are validated workers
-      
-      // Original Cleanups
+      worker_ids: selectedWorkerIds, 
       date: data.date || null,
       start_date: data.start_date || null,
       start_time: data.start_time || null,
@@ -161,13 +165,23 @@ const CreateHeightPermitForm = () => {
               Fill the form below to create a Work at Height permit
             </p>
           </div>
-          {/* NEW: User Info Badge */}
           <div className="text-right text-sm text-gray-600 bg-gray-50 p-2 rounded">
              <div className="font-bold">Issuing Authority</div>
              <div>{user?.full_name}</div>
              <div className="text-xs text-gray-400">{user?.role?.name}</div>
           </div>
         </div>
+
+        {/* NEW: Context Banner */}
+        {incidentId && (
+            <Alert className="mt-4 bg-blue-50 border-blue-200">
+                <LinkIcon className="h-4 w-4 text-blue-600" />
+                <AlertTitle className="text-blue-800 font-bold">Drafting Repair Permit for Incident</AlertTitle>
+                <AlertDescription className="text-blue-700 text-sm">
+                    This permit will be automatically linked to resolving Incident <strong>{contextTitle}</strong>. Please complete the contractor assignment and verify all height safety checks below.
+                </AlertDescription>
+            </Alert>
+        )}
       </CardHeader>
       
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -179,27 +193,24 @@ const CreateHeightPermitForm = () => {
             </Alert>
           )}
 
-          {/* --- NEW SECTION: Asset & Contractor Identification (Smart) --- */}
+          {/* --- SECTION: Asset & Contractor Identification (Smart) --- */}
           <section className="space-y-6 bg-blue-50/50 p-6 rounded-lg border border-blue-100">
             <h3 className="font-semibold text-lg text-blue-900 border-b border-blue-200 pb-2">
               Asset & Workforce Verification (System)
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Machine Selection */}
               <div>
                 <Label className="mb-2 block font-semibold text-gray-700">Select Machine / Plant Asset *</Label>
                 <MachineSelect 
                   value={selectedMachineId} 
                   onSelect={(id, machine) => {
                     setSelectedMachineId(id);
-                    // Auto-fill the original work_location field
                     setValue('work_location', `${machine.shop_name} - ${machine.name}`);
                   }} 
                 />
               </div>
 
-              {/* Contractor Selection */}
               <div>
                 <Label className="mb-2 block font-semibold text-gray-700">Select Contractor *</Label>
                 <ContractorSelect 
@@ -207,14 +218,13 @@ const CreateHeightPermitForm = () => {
                   onChange={(id, contractor) => {
                     setSelectedContractor(contractor);
                     setValue('contractor_id', contractor.id);
-                    setSelectedWorkerIds([]); // Clear workers on contractor change
+                    setSelectedWorkerIds([]); 
                   }}
                   showSafetyStatus={true}
                 />
               </div>
             </div>
 
-            {/* Worker Selection (Multi) */}
             <div>
                <Label className="mb-2 block font-semibold text-gray-700">Assign Qualified Workers (DB Verified) *</Label>
                <WorkerMultiSelect 
@@ -231,7 +241,6 @@ const CreateHeightPermitForm = () => {
                </p>
             </div>
 
-            {/* SOP Checklist Visualization */}
             {selectedMachineId && (
               <div className="animate-in fade-in slide-in-from-top-2">
                 <Alert className={`${hasCriticalTasks ? 'border-red-500 bg-red-50' : 'border-blue-500 bg-white'}`}>
@@ -259,7 +268,7 @@ const CreateHeightPermitForm = () => {
 
           <Separator />
 
-          {/* --- ORIGINAL SECTION: Permit No / Date / Responsible --- */}
+          {/* --- SECTION: Permit No / Date / Responsible --- */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <Label htmlFor="permit_no">Permit No.</Label>
@@ -297,7 +306,7 @@ const CreateHeightPermitForm = () => {
             </div>
           </div>
 
-          {/* --- ORIGINAL SECTION: Work Details --- */}
+          {/* --- SECTION: Work Details --- */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Label htmlFor="work_location">Work Location</Label>
@@ -313,7 +322,7 @@ const CreateHeightPermitForm = () => {
           
           <Separator />
 
-          {/* --- ORIGINAL SECTION: Schedule --- */}
+          {/* --- SECTION: Schedule --- */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">Schedule</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -338,7 +347,7 @@ const CreateHeightPermitForm = () => {
 
           <Separator />
 
-          {/* --- ORIGINAL SECTION: Fall protection system --- */}
+          {/* --- SECTION: Fall protection system --- */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">Indicate Fall Protection System</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -378,7 +387,7 @@ const CreateHeightPermitForm = () => {
 
           <Separator />
           
-          {/* --- ORIGINAL SECTION: Work Context --- */}
+          {/* --- SECTION: Work Context --- */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">Work Context</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -405,7 +414,7 @@ const CreateHeightPermitForm = () => {
 
           <Separator />
 
-          {/* --- ORIGINAL SECTION: PPEs --- */}
+          {/* --- SECTION: PPEs --- */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">Indicate type of fall protection to be used (PPE's)</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -435,7 +444,7 @@ const CreateHeightPermitForm = () => {
 
           <Separator />
 
-          {/* --- ORIGINAL SECTION: Method of access --- */}
+          {/* --- SECTION: Method of access --- */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">Method of Access to Target Work Position</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -485,7 +494,7 @@ const CreateHeightPermitForm = () => {
 
           <Separator />
 
-          {/* --- ORIGINAL SECTION: Isolation and block required --- */}
+          {/* --- SECTION: Isolation and block required --- */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">Isolation and Block Required</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -534,7 +543,7 @@ const CreateHeightPermitForm = () => {
 
           <Separator />
 
-          {/* --- ORIGINAL SECTION: Declarations --- */}
+          {/* --- SECTION: Declarations --- */}
           <section className="space-y-4 bg-gray-50 p-6 rounded-lg">
             <h4 className="font-semibold text-gray-800">Declarations</h4>
             <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
@@ -546,7 +555,7 @@ const CreateHeightPermitForm = () => {
           
           <Separator />
 
-          {/* --- ORIGINAL SECTION: Signatures & attendees --- */}
+          {/* --- SECTION: Signatures & attendees --- */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">Permission to work</h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
@@ -568,7 +577,6 @@ const CreateHeightPermitForm = () => {
               </div>
             </div>
 
-            {/* --- MANUAL ATTENDEES TABLE (For Site Records) --- */}
             <h3 className="font-semibold text-lg text-gray-700 mt-6">Attendees Details (Toolbox Talk)</h3>
             <p className="text-sm text-gray-500 mb-2">List all staff present for the briefing.</p>
             <div className="border rounded-md">
@@ -619,7 +627,7 @@ const CreateHeightPermitForm = () => {
 
           <Separator />
           
-          {/* --- ORIGINAL SECTION: Perimeter Authorization --- */}
+          {/* --- SECTION: Perimeter Authorization --- */}
           <section>
             <h3 className="font-semibold text-lg text-gray-700">Perimeter Authorization (User Shop)</h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
@@ -630,29 +638,17 @@ const CreateHeightPermitForm = () => {
 
         </CardContent>
         <CardFooter className="bg-gray-50 border-t p-6 flex justify-end gap-4">
-  <Button 
-    type="button" 
-    variant="outline" 
-    onClick={() => navigate('/dashboard')}
-  >
-    Cancel
-  </Button>
-  
-  <Button 
-    type="submit" 
-    className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white min-w-[200px]" 
-    disabled={mutation.isPending} 
-  >
-    {mutation.isPending ? (
-      <>
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-        Submitting...
-      </>
-    ) : (
-      'Create Permit Request'
-    )}
-  </Button>
-</CardFooter>
+          <Button type="button" variant="outline" onClick={() => incidentId ? navigate(`/incidents/${incidentId}`) : navigate('/dashboard')}>
+            Cancel
+          </Button>
+          <Button type="submit" className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white min-w-[200px]" disabled={mutation.isPending}>
+            {mutation.isPending ? (
+              <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
+            ) : (
+              incidentId ? 'Create Repair Permit & Link' : 'Create Permit Request'
+            )}
+          </Button>
+        </CardFooter>
       </form>
     </Card>
   );

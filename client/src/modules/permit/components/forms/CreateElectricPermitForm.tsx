@@ -1,20 +1,21 @@
 // FILE: client/src/modules/permit/components/forms/CreateElectricPermitForm.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Loader2, Plus, Trash2, AlertTriangle, CheckSquare, ShieldAlert, Zap, Lock } from 'lucide-react';
+import { Loader2, Plus, Trash2, AlertTriangle, CheckSquare, ShieldAlert, Zap, Lock, Link as LinkIcon } from 'lucide-react';
 
 // --- Our API and Types ---
 import { createPermit } from '../../permitApi';
 import { permitCreateSchema, PermitCreateData } from '../../permitTypes';
 import { useAuthStore } from '@/modules/auth/authStore';
+import { linkResolutionPermit } from '@/modules/incident/api';
 
 // --- Smart Machine Integration ---
 import MachineSelect from '@/modules/machine/components/MachineSelect';
-import { getMachineChecklist } from '@/modules/machine/machineApi';
+import { getMachineChecklist, machineApi } from '@/modules/machine/machineApi';
 
 // --- Smart Contractor Integration ---
 import ContractorSelect from '@/modules/contractor/components/ContractorSelect';
@@ -43,11 +44,8 @@ import {
 } from '@/components/ui/table';
 
 // --- TYPE EXTENSION: Fixes TS Errors for Electrical Fields ---
-// We extend the base PermitCreateData to include the specific electrical fields
-// that might not be in the shared global type yet.
 type ElectricPermitFormData = PermitCreateData & {
   machine_id?: string;
-  // Electrical Specifics
   circuit_identification: string;
   voltage_level: string;
   earthing_applied: boolean;
@@ -61,13 +59,18 @@ const CreateElectricPermitForm = () => {
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
 
+  // --- NEW: Context Aware Routing ---
+  const [searchParams] = useSearchParams();
+  const incidentId = searchParams.get('incidentId');
+  const contextMachineId = searchParams.get('machineId');
+  const contextTitle = searchParams.get('title');
+
   // --- Smart State ---
-  const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
-  const [selectedContractor, setSelectedContractor] = useState<Contractor | null>(null);
+  const[selectedMachineId, setSelectedMachineId] = useState<string | null>(contextMachineId || null);
+  const[selectedContractor, setSelectedContractor] = useState<Contractor | null>(null);
   const [selectedWorkerIds, setSelectedWorkerIds] = useState<string[]>([]);
 
   // --- Form Hook ---
-  // We use the Extended Type <ElectricPermitFormData> here to satisfy TypeScript
   const {
     register,
     handleSubmit,
@@ -75,13 +78,15 @@ const CreateElectricPermitForm = () => {
     setValue,
     formState: { errors },
   } = useForm<ElectricPermitFormData>({
-    resolver: zodResolver(permitCreateSchema), // Note: Ensure your Zod schema allows unknown keys or these fields are added to it
+    resolver: zodResolver(permitCreateSchema), 
     defaultValues: {
       person_responsible: user?.role?.name.includes('Substation') ? 'SSW (Substation)' : 'SSE (MW)',
       permit_no: 'AUTO-GENERATED',
       contractor_id: '',
-      worker_ids: [],
-      ppes: [
+      worker_ids:[],
+      // PRE-FILL from Incident Title
+      work_description: contextTitle ? `Resolving Incident: ${contextTitle}` : '',
+      ppes:[
         { name: 'Electrical Insulating Gloves (Class 0/1)', checked: false, issued_on: '' },
         { name: 'Arc Flash Face Shield / Visor', checked: false, issued_on: '' },
         { name: 'Safety Shoes (Non-conductive)', checked: false, issued_on: '' },
@@ -95,7 +100,7 @@ const CreateElectricPermitForm = () => {
       work_can_proceed: false,
       other_block_required: false,
       
-      // Electrical Specifics (Defaults now match the Type)
+      // Electrical Specifics 
       electrical_isolation_obtained: 'no',
       earthing_applied: false,
       test_before_touch: false,
@@ -106,9 +111,18 @@ const CreateElectricPermitForm = () => {
     },
   });
 
+  // Automatically fetch the machine to pre-fill the location if context provided
+  useEffect(() => {
+    if (contextMachineId) {
+      machineApi.getById(contextMachineId).then((m) => {
+         setValue('work_location', `${m.shop_name || 'Workshop'} - ${m.name}`);
+      }).catch(console.error);
+    }
+  }, [contextMachineId, setValue]);
+
   // --- Fetch SOP Checklist Logic ---
   const { data: checklist, isLoading: isLoadingChecklist } = useQuery({
-    queryKey: ['checklist', selectedMachineId],
+    queryKey:['checklist', selectedMachineId],
     queryFn: () => getMachineChecklist(selectedMachineId!),
     enabled: !!selectedMachineId,
   });
@@ -121,13 +135,23 @@ const CreateElectricPermitForm = () => {
 
   // --- API Mutation ---
   const mutation = useMutation({
-    mutationFn: createPermit,
+    mutationFn: async (cleanData: any) => {
+      const permit = await createPermit(cleanData);
+      if (incidentId) {
+         // Link back to the incident
+         await linkResolutionPermit(incidentId, permit.id);
+      }
+      return permit;
+    },
     onSuccess: (data) => {
       toast.success(`Permit #${data.permit_no || 'Created'} Successfully`, {
-        description: 'Forwarded for authorization & LOTO verification.',
+        description: incidentId ? 'Permit forwarded for auth & linked to Incident.' : 'Forwarded for authorization & LOTO verification.',
       });
       queryClient.invalidateQueries({ queryKey: ['permits'] });
-      navigate('/dashboard');
+      if (incidentId) queryClient.invalidateQueries({ queryKey:['incident', incidentId] }); 
+      
+      if (incidentId) navigate(`/incidents/${incidentId}`);
+      else navigate('/dashboard');
     },
     onError: (error: any) => {
       toast.error('Failed to Create Permit', {
@@ -179,6 +203,17 @@ const CreateElectricPermitForm = () => {
              <div className="text-xs text-gray-400">{user?.role?.name}</div>
           </div>
         </div>
+
+        {/* NEW: Context Banner */}
+        {incidentId && (
+            <Alert className="mt-4 bg-blue-50 border-blue-200">
+                <LinkIcon className="h-4 w-4 text-blue-600" />
+                <AlertTitle className="text-blue-800 font-bold">Drafting Repair Permit for Incident</AlertTitle>
+                <AlertDescription className="text-blue-700 text-sm">
+                    This permit will be automatically linked to resolving Incident <strong>{contextTitle}</strong>. Please complete the contractor assignment and LOTO verification below.
+                </AlertDescription>
+            </Alert>
+        )}
       </CardHeader>
       
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -315,7 +350,7 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
 
-          {/* 4. FALL PROTECTION (PRESERVED FROM ORIGINAL) */}
+          {/* 4. FALL PROTECTION */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">4. Fall Protection System</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -345,7 +380,7 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
           
-          {/* 5. WORK CONTEXT (PRESERVED FROM ORIGINAL) */}
+          {/* 5. WORK CONTEXT */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">5. Work Context</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -384,14 +419,14 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
 
-          {/* 7. LOTO & ISOLATION (AUGMENTED with Electrical Specifics) */}
+          {/* 7. LOTO & ISOLATION */}
           <section className="space-y-6">
             <h3 className="font-semibold text-lg text-gray-800 border-b pb-2 flex items-center gap-2">
               <Lock className="h-5 w-5 text-red-600" />
               7. LOTO: Isolation and Block
             </h3>
             
-            {/* NEW: Critical Electrical Details */}
+            {/* Critical Electrical Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-red-50 border border-red-100 rounded-lg">
                 <div>
                    <Label className="font-bold text-gray-800">Circuit Identification / Feeder</Label>
@@ -459,7 +494,7 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
 
-          {/* 8. DECLARATIONS (Added for Completeness) */}
+          {/* 8. DECLARATIONS */}
           <section className="bg-gray-50 p-6 rounded-lg border border-gray-100">
              <h4 className="font-bold text-gray-800 mb-2">Declarations</h4>
              <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
@@ -518,7 +553,7 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
           
-          {/* 10. PERIMETER (Added for Completeness) */}
+          {/* 10. PERIMETER */}
           <section className="bg-gray-50 p-4 rounded border">
              <h4 className="font-bold text-gray-700">Perimeter & Area Safety</h4>
              <ul className="list-disc list-inside text-sm text-gray-600 mt-2">
@@ -529,12 +564,12 @@ const CreateElectricPermitForm = () => {
 
         </CardContent>
         <CardFooter className="bg-gray-50 border-t p-6 flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => navigate('/dashboard')}>Cancel</Button>
+          <Button type="button" variant="outline" onClick={() => incidentId ? navigate(`/incidents/${incidentId}`) : navigate('/dashboard')}>Cancel</Button>
           <Button type="submit" className="w-full md:w-auto h-12 text-lg bg-blue-600 hover:bg-blue-700 text-white min-w-[250px]" disabled={mutation.isPending || !selectedMachineId}>
             {mutation.isPending ? (
               <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Processing Permit...</>
             ) : (
-              'Create Permit & Trigger LOTO'
+              incidentId ? 'Create Repair Permit & Link' : 'Create Permit & Trigger LOTO'
             )}
           </Button>
         </CardFooter>

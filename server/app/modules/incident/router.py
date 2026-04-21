@@ -1,3 +1,4 @@
+# FILE: server/app/modules/incident/router.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 from uuid import UUID
@@ -13,7 +14,10 @@ from .schemas import (
     IncidentRead,
     CAPACreate,
     CAPARead,
-    IncidentStats
+    IncidentStats,
+    IncidentWitnessCreate,
+    IncidentWitnessRead,
+    IncidentReviewUpdate
 )
 
 router = APIRouter(prefix="/incidents", tags=["Incidents"])
@@ -25,7 +29,6 @@ def create_incident_endpoint(
     current_user: User = Depends(get_current_active_user)
 ):
     service = IncidentService(db)
-    # Automatically set the reporter to the logged-in user
     incident_data.reported_by_id = current_user.id
     return service.create_incident(incident_data)
 
@@ -45,7 +48,7 @@ def get_incident_by_id_endpoint(incident_id: UUID, db: Session = Depends(get_db)
 @router.patch("/{incident_id}/status", response_model=IncidentRead)
 def update_incident_status_endpoint(
     incident_id: UUID,
-    status_update: dict, # Expects {"status": "CLOSED"}
+    status_update: dict,
     db: Session = Depends(get_db)
 ):
     service = IncidentService(db)
@@ -53,6 +56,45 @@ def update_incident_status_endpoint(
     if not new_status or not hasattr(IncidentStatus, new_status):
         raise HTTPException(status_code=400, detail="Invalid status provided")
     return service.update_incident_status(incident_id, IncidentStatus(new_status))
+
+# --- NEW: Fault-to-Fix Link Endpoint ---
+@router.post("/{incident_id}/link-resolution-permit", response_model=IncidentRead)
+def link_resolution_permit_endpoint(
+    incident_id: UUID,
+    payload: dict, # {"permit_id": "uuid..."}
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    permit_id = payload.get("permit_id")
+    if not permit_id:
+        raise HTTPException(status_code=400, detail="permit_id is required")
+    service = IncidentService(db)
+    return service.link_resolution_permit(incident_id, UUID(permit_id))
+
+# --- NEW: Chain of Custody Review Endpoint ---
+@router.post("/{incident_id}/review", response_model=IncidentRead)
+def review_incident_endpoint(
+    incident_id: UUID,
+    review_data: IncidentReviewUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    # Enforce Auth: Only Safety Officer or SSE-Office can review
+    if current_user.role.name not in["Safety Officer", "SSE-Office", "CWM"]:
+         raise HTTPException(status_code=403, detail="Unauthorized to review incidents")
+         
+    service = IncidentService(db)
+    return service.review_incident(incident_id, current_user.id, review_data)
+
+# --- NEW: Add Witness Endpoint ---
+@router.post("/{incident_id}/witnesses", response_model=IncidentWitnessRead, status_code=status.HTTP_201_CREATED)
+def add_incident_witness_endpoint(
+    incident_id: UUID,
+    witness_data: IncidentWitnessCreate,
+    db: Session = Depends(get_db)
+):
+    service = IncidentService(db)
+    return service.add_witness(incident_id, witness_data)
 
 @router.post("/{incident_id}/capas", response_model=CAPARead)
 def create_capa_endpoint(
@@ -71,7 +113,7 @@ def get_capas_for_incident_endpoint(incident_id: UUID, db: Session = Depends(get
 @router.patch("/capas/{capa_id}/status", response_model=CAPARead)
 def update_capa_status_endpoint(
     capa_id: UUID,
-    status_update: dict, # Expects {"status": "COMPLETED"}
+    status_update: dict,
     db: Session = Depends(get_db)
 ):
     service = IncidentService(db)

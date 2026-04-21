@@ -1,4 +1,4 @@
-# server/app/models.py
+# FILE: server/app/models.py
 from typing import List, Optional, TYPE_CHECKING
 from uuid import UUID, uuid4
 import datetime
@@ -34,7 +34,7 @@ class RoleRead(RoleBase):
     id: UUID
 
 class RoleReadWithChildren(RoleRead):
-     children: List["RoleRead"] = []
+     children: List["RoleRead"] =[]
 
 class RoleUpdate(SQLModel):
     name: Optional[str] = None
@@ -55,28 +55,27 @@ class User(UserBase, table=True):
 
     role: "Role" = Relationship(back_populates="users")
 
-    # Permit Relationships
     initiated_permits: List["Permit"] = Relationship(
         back_populates="permittee",
-        sa_relationship_kwargs={"foreign_keys": "[Permit.permittee_id]"}
+        sa_relationship_kwargs={"primaryjoin": "User.id==Permit.permittee_id"}
     )
     authorized_permits: List["Permit"] = Relationship(
         back_populates="authorizer",
-        sa_relationship_kwargs={"foreign_keys": "[Permit.authorizer_id]"}
+        sa_relationship_kwargs={"primaryjoin": "User.id==Permit.authorizer_id"}
     )
     approved_permits: List["Permit"] = Relationship(
         back_populates="approver",
-        sa_relationship_kwargs={"foreign_keys": "[Permit.approver_id]"}
+        sa_relationship_kwargs={"primaryjoin": "User.id==Permit.approver_id"}
     )
     inspected_permits: List["Permit"] = Relationship(
         back_populates="inspector",
-        sa_relationship_kwargs={"foreign_keys": "[Permit.inspector_id]"}
+        sa_relationship_kwargs={"primaryjoin": "User.id==Permit.inspector_id"}
     )
     
-    # Incident Relationship
+    # Incident Relationship Fixed
     reported_incidents: List["Incident"] = Relationship(
         back_populates="reported_by",
-        sa_relationship_kwargs={"foreign_keys": "[Incident.reported_by_id]"}
+        sa_relationship_kwargs={"primaryjoin": "User.id==Incident.reported_by_id"}
     )
 
 class UserCreate(UserBase):
@@ -182,7 +181,6 @@ class PermitBase(SQLModel):
     is_critical: bool = Field(default=False)
     contractor_id: Optional[UUID] = Field(default=None, foreign_key="contractor.id", index=True)
 
-    # --- NEW: FORMAL CLOSING LOOP & SIMOPS ---
     handback_declaration: Optional[str] = Field(default=None, max_length=1500)
     handback_time: Optional[datetime.datetime] = Field(default=None)
     
@@ -192,25 +190,24 @@ class PermitBase(SQLModel):
     
     simops_acknowledged: Optional[bool] = Field(default=False)
 
-
 class Permit(PermitBase, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
 
     permittee: "User" = Relationship(
         back_populates="initiated_permits",
-        sa_relationship_kwargs={"foreign_keys": "[Permit.permittee_id]"}
+        sa_relationship_kwargs={"primaryjoin": "Permit.permittee_id==User.id"}
     )
     authorizer: Optional["User"] = Relationship(
         back_populates="authorized_permits",
-        sa_relationship_kwargs={"foreign_keys": "[Permit.authorizer_id]"}
+        sa_relationship_kwargs={"primaryjoin": "Permit.authorizer_id==User.id"}
     )
     approver: Optional["User"] = Relationship(
         back_populates="approved_permits",
-        sa_relationship_kwargs={"foreign_keys": "[Permit.approver_id]"}
+        sa_relationship_kwargs={"primaryjoin": "Permit.approver_id==User.id"}
     )
     inspector: Optional["User"] = Relationship(
         back_populates="inspected_permits",
-        sa_relationship_kwargs={"foreign_keys": "[Permit.inspector_id]"}
+        sa_relationship_kwargs={"primaryjoin": "Permit.inspector_id==User.id"}
     )
     
     ppes: List["PermitPPE"] = Relationship(back_populates="permit")
@@ -225,6 +222,10 @@ class Permit(PermitBase, table=True):
     contractor: Optional["Contractor"] = Relationship(
         sa_relationship_kwargs={"primaryjoin": "Permit.contractor_id==Contractor.id", "lazy": "selectin"}
     )
-    
     worker_links: List["PermitWorkerLink"] = Relationship(back_populates="permit")
-    incidents: List["Incident"] = Relationship(back_populates="permit")
+    
+    # Incident Relationship Fixed
+    incidents: List["Incident"] = Relationship(
+        back_populates="permit",
+        sa_relationship_kwargs={"primaryjoin": "Permit.id==Incident.permit_id"}
+    )

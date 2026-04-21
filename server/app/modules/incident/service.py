@@ -1,12 +1,12 @@
 # FILE: server/app/modules/incident/service.py
 from typing import List, Optional
 from uuid import UUID
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
 from sqlmodel import Session, select
 from fastapi import HTTPException, status
 
-from .models import Incident, CAPA, IncidentSeverity, IncidentStatus, CAPAStatus
-from .schemas import IncidentCreate, CAPACreate
+from .models import Incident, CAPA, IncidentWitness, IncidentSeverity, IncidentStatus, CAPAStatus, ReviewStatus
+from .schemas import IncidentCreate, CAPACreate, IncidentWitnessCreate, IncidentReviewUpdate
 from app.modules.machine.machine_models import Machine
 import app.modules.machine.machine_service as machine_service
 import app.modules.permit.permit_service as permit_service
@@ -17,7 +17,6 @@ class IncidentService:
         self.db = db
 
     def _generate_incident_code(self) -> str:
-        """Generates a unique incident code like INC-YYYY-NNNN."""
         year = datetime.now().year
         count_this_year = self.db.execute(
             select(Incident).where(Incident.incident_code.like(f"INC-{year}-%"))
@@ -25,23 +24,21 @@ class IncidentService:
         return f"INC-{year}-{(count_this_year or 0) + 1:04d}"
 
     def create_incident(self, incident_data: IncidentCreate) -> Incident:
-        """Create a new incident and enforce kill switch if necessary."""
         try:
-            # FIX 1: Generate the code first
             new_code = self._generate_incident_code()
-            
-            # FIX 2: Convert schema to dict and inject the required incident_code 
-            # *before* validating it against the DB model
             incident_dict = incident_data.model_dump()
             incident_dict["incident_code"] = new_code
             
-            incident = Incident.model_validate(incident_dict)
+            # --- NEW: Calculate SLAs based on severity ---
+            # Major/Fatal must be investigated within 24h. Minor within 72h.
+            hours_to_investigate = 24 if incident_data.severity in[IncidentSeverity.MAJOR, IncidentSeverity.FATAL, IncidentSeverity.CRITICAL] else 72
+            incident_dict["investigation_due_at"] = datetime.now(timezone.utc) + timedelta(hours=hours_to_investigate)
             
-            # FIX 3: Use self.db instead of db
+            incident = Incident.model_validate(incident_dict)
             self.db.add(incident)
             self.db.flush()
 
-            if incident.severity in [IncidentSeverity.MAJOR, IncidentSeverity.FATAL]:
+            if incident.severity in[IncidentSeverity.MAJOR, IncidentSeverity.FATAL, IncidentSeverity.CRITICAL]:
                 self._enforce_kill_switch(incident)
 
             self.db.commit()
@@ -49,7 +46,6 @@ class IncidentService:
             return incident
             
         except Exception as e:
-            # FIX 4: Use self.db.rollback()
             self.db.rollback()
             raise e
 
@@ -67,13 +63,53 @@ class IncidentService:
             raise HTTPException(status_code=404, detail="Incident not found")
         
         incident.status = new_status
+        if new_status == IncidentStatus.CLOSED:
+            incident.resolved_at = datetime.now(timezone.utc)
+            
         self.db.commit()
         self.db.refresh(incident)
         return incident
 
+    # --- NEW: Link the permit that was generated to fix this fault ---
+    def link_resolution_permit(self, incident_id: UUID, permit_id: UUID) -> Incident:
+        incident = self.get_incident_by_id(incident_id)
+        if not incident:
+            raise HTTPException(status_code=404, detail="Incident not found")
+        
+        incident.resolution_permit_id = permit_id
+        self.db.commit()
+        self.db.refresh(incident)
+        return incident
+
+    # --- NEW: Chain of Custody Review ---
+    def review_incident(self, incident_id: UUID, reviewer_id: UUID, review_data: IncidentReviewUpdate) -> Incident:
+        incident = self.get_incident_by_id(incident_id)
+        if not incident:
+            raise HTTPException(status_code=404, detail="Incident not found")
+            
+        incident.reviewed_by_id = reviewer_id
+        incident.review_status = review_data.review_status
+        incident.review_remarks = review_data.review_remarks
+        
+        self.db.commit()
+        self.db.refresh(incident)
+        return incident
+
+    # --- NEW: Add Witness Statement ---
+    def add_witness(self, incident_id: UUID, witness_data: IncidentWitnessCreate) -> IncidentWitness:
+        incident = self.get_incident_by_id(incident_id)
+        if not incident:
+            raise HTTPException(status_code=404, detail="Incident not found")
+            
+        witness = IncidentWitness.model_validate(witness_data, update={"incident_id": incident_id})
+        self.db.add(witness)
+        self.db.commit()
+        self.db.refresh(witness)
+        return witness
+
     def _enforce_kill_switch(self, incident: Incident):
         print(f"🚨 KILL SWITCH ACTIVATED for Incident {incident.incident_code} 🚨")
-        # Logic to suspend permits and lock machines
+        incident.is_work_stopped = True
         if incident.machine_id:
             machine_service.lock_machine_status(self.db, incident.machine_id, commit=False)
             print(f"   -> Machine {incident.machine_id} locked.")
@@ -110,16 +146,13 @@ class IncidentService:
         return capa
 
     def get_incident_statistics(self) -> dict:
-        """Get incident statistics for dashboard."""
         today = date.today()
-        
         last_major_incident = self.db.execute(
             select(Incident).where(Incident.severity.in_([IncidentSeverity.MAJOR, IncidentSeverity.FATAL]))
             .order_by(Incident.occurred_at.desc())
         ).scalars().first()
         
         days_without_accident = (today - last_major_incident.occurred_at.date()).days if last_major_incident else 365
-
         all_incidents = self.get_all_incidents()
         all_capas = self.db.execute(select(CAPA)).scalars().all()
 

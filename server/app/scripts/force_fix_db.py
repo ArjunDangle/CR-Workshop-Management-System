@@ -1,3 +1,4 @@
+# FILE: server/app/scripts/force_fix_db.py
 import sys
 import os
 from sqlalchemy import text
@@ -8,42 +9,41 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 from app.core.database import engine
 
 def force_fix():
-    print("🚀 Starting Brute Force Database Fix...")
+    print("🚀 Starting Brute Force Database Fix for Incident Phase 1...")
     
     queries =[
-        # Incident table columns
-        "ALTER TABLE incident ADD COLUMN IF NOT EXISTS category VARCHAR DEFAULT 'GENERAL';",
-        "ALTER TABLE incident ADD COLUMN IF NOT EXISTS photos VARCHAR;",
+        # 1. Incident table updates (SLAs, Reviews, Linkages)
+        "ALTER TABLE incident ADD COLUMN IF NOT EXISTS resolution_permit_id UUID REFERENCES permit(id);",
+        "ALTER TABLE incident ADD COLUMN IF NOT EXISTS investigation_due_at TIMESTAMP;",
+        "ALTER TABLE incident ADD COLUMN IF NOT EXISTS resolved_at TIMESTAMP;",
+        "ALTER TABLE incident ADD COLUMN IF NOT EXISTS reviewed_by_id UUID REFERENCES \"user\"(id);",
+        "ALTER TABLE incident ADD COLUMN IF NOT EXISTS review_status VARCHAR DEFAULT 'PENDING_REVIEW';",
+        "ALTER TABLE incident ADD COLUMN IF NOT EXISTS review_remarks VARCHAR;",
         
-        # CAPA table
-        "ALTER TABLE capa ADD COLUMN IF NOT EXISTS status VARCHAR DEFAULT 'PENDING';",
-        "ALTER TABLE capa ADD COLUMN IF NOT EXISTS type VARCHAR DEFAULT 'CORRECTIVE';",
-        
-        # Permit Table Columns (Closing Loop & SIMOPS)
-        "ALTER TABLE permit ADD COLUMN IF NOT EXISTS handback_declaration VARCHAR;",
-        "ALTER TABLE permit ADD COLUMN IF NOT EXISTS handback_time TIMESTAMP;",
-        "ALTER TABLE permit ADD COLUMN IF NOT EXISTS inspection_remarks VARCHAR;",
-        "ALTER TABLE permit ADD COLUMN IF NOT EXISTS inspector_id UUID REFERENCES \"user\"(id);",
-        "ALTER TABLE permit ADD COLUMN IF NOT EXISTS inspection_time TIMESTAMP;",
-        "ALTER TABLE permit ADD COLUMN IF NOT EXISTS simops_acknowledged BOOLEAN DEFAULT FALSE;",
-
-        # --- NEW: Machine Passport & Zone Classification Fields ---
-        "ALTER TABLE machine ADD COLUMN IF NOT EXISTS workspace_zone VARCHAR DEFAULT 'General Workshop';",
-        "ALTER TABLE machine ADD COLUMN IF NOT EXISTS weight_capacity VARCHAR DEFAULT 'Standard';",
-        "ALTER TABLE machine ADD COLUMN IF NOT EXISTS power_source VARCHAR DEFAULT '415V 3-Phase AC';",
-        "ALTER TABLE machine ADD COLUMN IF NOT EXISTS competency_required VARCHAR DEFAULT 'SKILLED';"
+        # 2. Incident Witness Table Creation
+        """
+        CREATE TABLE IF NOT EXISTS incidentwitness (
+            id UUID PRIMARY KEY,
+            incident_id UUID NOT NULL REFERENCES incident(id),
+            worker_id UUID REFERENCES worker(id),
+            user_id UUID REFERENCES "user"(id),
+            witness_name VARCHAR NOT NULL,
+            statement TEXT NOT NULL,
+            recorded_at TIMESTAMP DEFAULT now()
+        );
+        """
     ]
     
     with engine.connect() as conn:
         for query in queries:
             try:
-                print(f"   - Executing: {query.strip()}")
+                print(f"   - Executing: {query.strip()[:60]}...")
                 conn.execute(text(query))
                 conn.commit()
             except Exception as e:
                 print(f"   ⚠️  Warning: {e}")
 
-    print("✅ Database successfully synchronized with code.")
+    print("✅ Database successfully synchronized with Phase 1 Incident Codebase.")
 
 if __name__ == "__main__":
     force_fix()
