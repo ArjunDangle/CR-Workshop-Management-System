@@ -1,81 +1,110 @@
-import os
-import json
+import pandas as pd
 import cloudinary
 import cloudinary.uploader
+import os
+import re
 
-# --- CONFIGURATION (REPLACE THESE) ---
-CLOUDINARY_CONFIG = {
-    "cloud_name": "dxvvzdpzk", 
-    "api_key": "569928554572799", 
-    "api_secret": "_HlfBvpbiQmpbclLvo5GRIh3_UQ"
+# --- 1. Cloudinary Configuration ---
+cloudinary.config(
+    cloud_name = "dxvvzdpzk",
+    api_key = "569928554572799",
+    api_secret = "_HlfBvpbiQmpbclLvo5GRIh3_UQ",
+    secure = True
+)
+
+# --- 2. Paths and Setup ---
+CSV_PATH = "/Users/arjundangle/Arjun/CR-Workshop-Management-System/server/app/scripts/matunga_cr_workshop_machines_dummy_data.csv"
+IMAGE_DIR = "/Users/arjundangle/Arjun/CR-Workshop-Management-System/server/data/machines"
+OUTPUT_CSV = CSV_PATH 
+
+# --- 3. Manual Alias Map for missing matches ---
+# Mapping problematic CSV types to existing image keywords
+ALIAS_MAP = {
+    "planer machine": "shaper",
+    "centre lathe": "lathe",
+    "bearing induction heater": "heater"
 }
 
-# --- PATHS ---
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "../../data/machines")
-INPUT_MAP = os.path.join(DATA_DIR, "machine_image_map.json")
-OUTPUT_MAP = os.path.join(DATA_DIR, "machine_cloudinary_url_map.json")
+def clean_string(s):
+    """Standardizes strings for comparison."""
+    return re.sub(r'[_+\-]', ' ', str(s)).lower().strip()
 
-def main():
-    # 1. Setup Cloudinary
-    cloudinary.config(
-        cloud_name=CLOUDINARY_CONFIG["cloud_name"],
-        api_key=CLOUDINARY_CONFIG["api_key"],
-        api_secret=CLOUDINARY_CONFIG["api_secret"]
-    )
-
-    # 2. Load Local Map
-    if not os.path.exists(INPUT_MAP):
-        print("Error: machine_image_map.json not found. Run the fetch script first.")
+def upload_machine_images():
+    if not os.path.exists(CSV_PATH):
+        print(f"❌ Error: CSV not found")
         return
-
-    with open(INPUT_MAP, "r") as f:
-        local_map = json.load(f)
-
-    print(f"--- Starting Upload for {len(local_map)} Machine Types ---")
     
-    cloud_map = {}
+    df = pd.read_csv(CSV_PATH)
+    print(f"Loaded {len(df)} machines from CSV.")
 
-    # 3. Upload Loop
-    for machine_name, files in local_map.items():
-        print(f"\nUploading: {machine_name}...")
-        cloud_urls = []
+    available_images = [f for f in os.listdir(IMAGE_DIR) if not f.startswith('.')]
+    
+    uploads_count = 0
+    url_cache = {}
+    stopwords = {'machine', 'system', 'fixture', 'jig', 'rig', 'unit'}
+
+    for index, row in df.iterrows():
+        machine_type = str(row['machine_type']).strip()
+        type_lower = machine_type.lower()
         
-        for filename in files:
-            file_path = os.path.join(DATA_DIR, filename)
-            
-            if not os.path.exists(file_path):
-                print(f"  [!] File not found: {filename}")
-                continue
+        if machine_type in url_cache:
+            df.at[index, 'image_url'] = url_cache[machine_type]
+            uploads_count += 1
+            continue
 
+        match = None
+        type_clean = clean_string(machine_type)
+        keywords = [w for w in type_clean.split() if w not in stopwords and len(w) > 3]
+
+        # STEP 1: Direct Phrase Match
+        for img_file in available_images:
+            if type_clean in clean_string(img_file):
+                match = img_file
+                break
+        
+        # STEP 2: Keyword Match
+        if not match:
+            for img_file in available_images:
+                img_clean = clean_string(img_file)
+                if any(kw in img_clean for kw in keywords):
+                    match = img_file
+                    break
+        
+        # STEP 3: Manual Alias Match (for Planer -> Shaper etc)
+        if not match and type_lower in ALIAS_MAP:
+            alias_kw = ALIAS_MAP[type_lower]
+            for img_file in available_images:
+                if alias_kw in clean_string(img_file):
+                    match = img_file
+                    break
+
+        if match:
+            img_path = os.path.join(IMAGE_DIR, match)
+            print(f"[{index+1}/{len(df)}] Match: '{machine_type}' -> '{match}'")
+            
             try:
-                # Upload to specific folder
-                # use_filename=True keeps the clean name (cnc_lathe_1)
-                response = cloudinary.uploader.upload(
-                    file_path,
-                    folder="cr_workshop/machines",
-                    use_filename=True,
-                    unique_filename=False,
-                    overwrite=True
+                public_id = f"type_{type_clean.replace(' ', '_')[:30]}"
+                upload_result = cloudinary.uploader.upload(
+                    img_path, 
+                    public_id = public_id,
+                    folder = "cr_workshop_machines",
+                    overwrite = True
                 )
                 
-                secure_url = response["secure_url"]
-                print(f"  [✓] Uploaded: {filename}")
-                cloud_urls.append(secure_url)
-                
+                secure_url = upload_result['secure_url']
+                df.at[index, 'image_url'] = secure_url
+                url_cache[machine_type] = secure_url
+                uploads_count += 1
+                print(f"   ✅ Success")
             except Exception as e:
-                print(f"  [X] Upload Failed: {e}")
+                print(f"   ❌ Cloudinary Error: {e}")
+        else:
+            print(f"[{index+1}/{len(df)}] ⚠️ No match for: {machine_type}")
 
-        if cloud_urls:
-            cloud_map[machine_name] = cloud_urls
-
-    # 4. Save the URL Map
-    with open(OUTPUT_MAP, "w") as f:
-        json.dump(cloud_map, f, indent=2)
-
-    print(f"\n--- Upload Complete! ---")
-    print(f"URL Map saved to: {OUTPUT_MAP}")
-    print("Next Step: Use these URLs to update the database.")
+    # Final Save
+    df.to_csv(OUTPUT_CSV, index=False)
+    print(f"\n--- Final Process Complete ---")
+    print(f"Total machine records with URLs: {uploads_count}/120")
 
 if __name__ == "__main__":
-    main()
+    upload_machine_images()

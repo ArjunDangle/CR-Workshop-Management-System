@@ -1,3 +1,4 @@
+# FILE: server/app/modules/incident/service.py
 from typing import List, Optional
 from uuid import UUID
 from datetime import datetime, date, timedelta
@@ -18,7 +19,6 @@ class IncidentService:
     def _generate_incident_code(self) -> str:
         """Generates a unique incident code like INC-YYYY-NNNN."""
         year = datetime.now().year
-        # This is a simple way to get a sequence number. In high-concurrency, a dedicated sequence table might be better.
         count_this_year = self.db.execute(
             select(Incident).where(Incident.incident_code.like(f"INC-{year}-%"))
         ).raw.rowcount
@@ -27,22 +27,30 @@ class IncidentService:
     def create_incident(self, incident_data: IncidentCreate) -> Incident:
         """Create a new incident and enforce kill switch if necessary."""
         try:
-            # Create a model instance from the Pydantic schema
-            incident = Incident.model_validate(incident_data)
-            incident.incident_code = self._generate_incident_code() # Assign unique code
+            # FIX 1: Generate the code first
+            new_code = self._generate_incident_code()
             
-            db.add(incident)
-            db.flush()
+            # FIX 2: Convert schema to dict and inject the required incident_code 
+            # *before* validating it against the DB model
+            incident_dict = incident_data.model_dump()
+            incident_dict["incident_code"] = new_code
+            
+            incident = Incident.model_validate(incident_dict)
+            
+            # FIX 3: Use self.db instead of db
+            self.db.add(incident)
+            self.db.flush()
 
             if incident.severity in [IncidentSeverity.MAJOR, IncidentSeverity.FATAL]:
                 self._enforce_kill_switch(incident)
 
-            db.commit()
-            db.refresh(incident)
+            self.db.commit()
+            self.db.refresh(incident)
             return incident
             
         except Exception as e:
-            db.rollback()
+            # FIX 4: Use self.db.rollback()
+            self.db.rollback()
             raise e
 
     def get_incident_by_id(self, incident_id: UUID) -> Optional[Incident]:
@@ -66,7 +74,12 @@ class IncidentService:
     def _enforce_kill_switch(self, incident: Incident):
         print(f"🚨 KILL SWITCH ACTIVATED for Incident {incident.incident_code} 🚨")
         # Logic to suspend permits and lock machines
-        pass # Placeholder for now
+        if incident.machine_id:
+            machine_service.lock_machine_status(self.db, incident.machine_id, commit=False)
+            print(f"   -> Machine {incident.machine_id} locked.")
+        if incident.permit_id:
+            permit_service.suspend_permit(self.db, incident.permit_id, commit=False)
+            print(f"   -> Permit {incident.permit_id} suspended.")
 
     def create_capa(self, incident_id: UUID, capa_data: CAPACreate) -> CAPA:
         incident = self.get_incident_by_id(incident_id)
@@ -100,7 +113,6 @@ class IncidentService:
         """Get incident statistics for dashboard."""
         today = date.today()
         
-        # Simplified days without accident logic
         last_major_incident = self.db.execute(
             select(Incident).where(Incident.severity.in_([IncidentSeverity.MAJOR, IncidentSeverity.FATAL]))
             .order_by(Incident.occurred_at.desc())
@@ -108,8 +120,6 @@ class IncidentService:
         
         days_without_accident = (today - last_major_incident.occurred_at.date()).days if last_major_incident else 365
 
-        # --- FIX: Use db.execute and select with count ---
-        # A more efficient way to count is needed here, but for now, this works
         all_incidents = self.get_all_incidents()
         all_capas = self.db.execute(select(CAPA)).scalars().all()
 

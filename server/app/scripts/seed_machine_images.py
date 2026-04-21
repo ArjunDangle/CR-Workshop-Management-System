@@ -1,74 +1,65 @@
-import os
-import os
-import json
 import sys
+import os
+import pandas as pd
 from sqlmodel import Session, select
 
-# --- SETUP PATH ---
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
+# --- Path Setup ---
+current_dir = os.path.dirname(os.path.abspath(__file__))
+server_dir = os.path.abspath(os.path.join(current_dir, "../../"))
+if server_dir not in sys.path:
+    sys.path.append(server_dir)
 
-# --- DB ---
 from app.core.database import engine
 
-# --- MODELS ---
-from app.modules.machine.machine_models import Machine
-from app.modules.contractor.models import Contractor
+# --- Register Models to prevent Mapper Errors ---
+import app.models 
 from app.modules.incident.models import Incident
-from app.models import Permit
+from app.modules.machine.machine_models import Machine, MaintenancePlan
+from app.modules.contractor.models import Contractor, Worker 
 
-# --- CONFIG ---
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-URL_MAP_PATH = os.path.join(BASE_DIR, "../../data/machines/machine_cloudinary_url_map.json")
+CSV_PATH = "/Users/arjundangle/Arjun/CR-Workshop-Management-System/server/app/scripts/matunga_cr_workshop_machines_dummy_data.csv"
 
-def seed_images():
-    if not os.path.exists(URL_MAP_PATH):
-        print(f"Error: Cloudinary Map not found at {URL_MAP_PATH}")
+def import_images_to_db():
+    if not os.path.exists(CSV_PATH):
+        print(f"❌ Error: CSV not found")
         return
-
-    with open(URL_MAP_PATH, "r") as f:
-        url_map = json.load(f)
-        # Normalize keys to lowercase for easier matching
-        url_map_lower = {k.lower(): v for k, v in url_map.items()}
-
-    print("--- Starting Database Update ---")
     
+    df = pd.read_csv(CSV_PATH)
+    df_with_urls = df[df['image_url'].notna()]
+    print(f"Found {len(df_with_urls)} image URLs to import.")
+
+    updated_count = 0
+    not_found_count = 0
+
     with Session(engine) as session:
-        machines = session.exec(select(Machine)).all()
-        print(f"Found {len(machines)} machines in database.")
-        
-        updated_count = 0
-        
-        for machine in machines:
-            # FIX: Use 'name' instead of 'machine_type'
-            # We strip whitespace and use the 'name' field from your DB model
-            m_name_original = machine.name
-            m_name_key = m_name_original.lower().strip() if m_name_original else ""
+        for _, row in df_with_urls.iterrows():
+            # Use the actual column from your CSV headers
+            csv_asset_id = str(row['asset_id']).strip()
             
-            # 1. Try Direct Match
-            if m_name_key in url_map_lower:
-                machine.image_url = url_map_lower[m_name_key][0]
-                session.add(machine)
+            # Match by the 'asset_id' field in the Machine model
+            statement = select(Machine).where(Machine.asset_id == csv_asset_id)
+            db_machine = session.exec(statement).first()
+
+            if db_machine:
+                db_machine.image_url = str(row['image_url']).strip()
+                session.add(db_machine)
                 updated_count += 1
-            
-            # 2. Try Partial Match (e.g., DB="CNC Lathe 01" matches Map="CNC Lathe")
             else:
-                found = False
-                for map_key, urls in url_map_lower.items():
-                    # If the Map Key (e.g., "cnc axle turning lathe") is inside the DB Name
-                    if map_key in m_name_key: 
-                        machine.image_url = urls[0]
-                        session.add(machine)
-                        updated_count += 1
-                        found = True
-                        break
-                
-                if not found:
-                    # Debug print to help you verify what's going wrong if count is 0
-                    # print(f"  [Skip] No map key found for DB Machine: '{m_name_original}'")
-                    pass
+                # Fallback: Try matching the 'name' field if asset_id is stored there
+                statement_alt = select(Machine).where(Machine.name == csv_asset_id)
+                db_machine_alt = session.exec(statement_alt).first()
+                if db_machine_alt:
+                    db_machine_alt.image_url = str(row['image_url']).strip()
+                    session.add(db_machine_alt)
+                    updated_count += 1
+                else:
+                    not_found_count += 1
 
         session.commit()
-        print(f"--- Success! Updated {updated_count} machines with images. ---")
+    
+    print(f"\n--- Import Complete ---")
+    print(f"✅ Successfully updated: {updated_count} machines")
+    print(f"⚠️  Not found in DB: {not_found_count}")
 
 if __name__ == "__main__":
-    seed_images()
+    import_images_to_db()

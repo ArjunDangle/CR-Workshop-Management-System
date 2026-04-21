@@ -1,7 +1,5 @@
-// client/src/modules/incident/api.ts
+// FILE: client/src/modules/incident/api.ts
 import api from '@/lib/api';
-
-// --- Types based on Backend Models ---
 
 export enum IncidentSeverity {
   MINOR = 'MINOR',
@@ -9,11 +7,16 @@ export enum IncidentSeverity {
   FATAL = 'FATAL',
 }
 
+// FIX: Synced with Backend Models
 export enum IncidentCategory {
+  ELECTRICAL = 'ELECTRICAL',
+  MECHANICAL = 'MECHANICAL',
+  CIVIL = 'CIVIL',
+  FIRE = 'FIRE',
+  CHEMICAL = 'CHEMICAL',
+  GENERAL = 'GENERAL',
   UNSAFE_ACT = 'UNSAFE_ACT',
   UNSAFE_CONDITION = 'UNSAFE_CONDITION',
-  EQUIPMENT_FAILURE = 'EQUIPMENT_FAILURE',
-  PROCEDURE_VIOLATION = 'PROCEDURE_VIOLATION',
 }
 
 export enum IncidentStatus {
@@ -51,7 +54,6 @@ export interface Incident {
   contractor_id?: string | null;
   created_at: string;
   updated_at: string;
-  // Relationships (optional, may not always be included)
   machine?: any;
   permit?: any;
   contractor?: any;
@@ -77,16 +79,15 @@ export interface IncidentCreate {
   description: string;
   severity: IncidentSeverity;
   category: IncidentCategory;
-  incident_date: string;
-  location: string;
-  reported_by: string;
-  contact_number: string;
+  occurred_at: string;       // CHANGED from incident_date
+  location_details: string;  // CHANGED from location
   machine_id?: string | null;
   permit_id?: string | null;
   contractor_id?: string | null;
-  victim_ids?: string[]; // Array of worker IDs who were victims
+  victim_ids?: string[];
 }
 
+// FIX: Restored the missing InvestigationCreate interface
 export interface InvestigationCreate {
   root_cause_man?: string;
   root_cause_machine?: string;
@@ -115,134 +116,72 @@ export interface IncidentStats {
   overdue_capas: number;
 }
 
-// --- API Functions ---
-
-/**
- * Creates a new incident (triggers kill switch if MAJOR/FATAL)
- */
 export const createIncident = async (data: IncidentCreate): Promise<Incident> => {
   try {
     const response = await api.post<Incident>('/incidents/', data);
     return response.data;
-  } catch (error: any) {
-    console.error("Failed to create incident:", error);
-    throw new Error(error.response?.data?.detail || "Failed to create incident");
-  }
+  } catch (error: any) { throw new Error(error.response?.data?.detail || "Failed to create incident"); }
 };
 
-/**
- * Fetches all incidents, optionally filtered by status or severity
- */
 export const getIncidents = async (params?: { status?: IncidentStatus; severity?: IncidentSeverity }): Promise<Incident[]> => {
   try {
     const response = await api.get<Incident[]>('/incidents/', { params });
     return response.data;
-  } catch (error: any) {
-    console.error("Failed to fetch incidents:", error);
-    throw new Error(error.response?.data?.detail || "Failed to fetch incidents");
-  }
+  } catch (error: any) { throw new Error(error.response?.data?.detail || "Failed to fetch incidents"); }
 };
 
-/**
- * Fetches a single incident by ID
- */
 export const getIncidentById = async (incidentId: string): Promise<Incident> => {
   try {
     const response = await api.get<Incident>(`/incidents/${incidentId}`);
     return response.data;
-  } catch (error: any) {
-    console.error(`Failed to fetch incident ${incidentId}:`, error);
-    throw new Error(error.response?.data?.detail || "Failed to fetch incident");
-  }
+  } catch (error: any) { throw new Error(error.response?.data?.detail || "Failed to fetch incident"); }
 };
 
-/**
- * Updates incident status
- */
 export const updateIncidentStatus = async (incidentId: string, status: IncidentStatus): Promise<Incident> => {
   try {
     const response = await api.patch(`/incidents/${incidentId}/status`, { status });
     return response.data.incident;
-  } catch (error: any) {
-    console.error(`Failed to update incident status ${incidentId}:`, error);
-    throw new Error(error.response?.data?.detail || "Failed to update incident status");
-  }
+  } catch (error: any) { throw new Error(error.response?.data?.detail || "Failed to update incident status"); }
 };
 
-/**
- * Submits investigation for an incident
- */
 export const submitInvestigation = async (incidentId: string, data: InvestigationCreate): Promise<Incident> => {
   try {
     const response = await api.post<Incident>(`/incidents/${incidentId}/investigation`, data);
     return response.data;
-  } catch (error: any) {
-    console.error(`Failed to submit investigation for incident ${incidentId}:`, error);
-    throw new Error(error.response?.data?.detail || "Failed to submit investigation");
-  }
+  } catch (error: any) { throw new Error(error.response?.data?.detail || "Failed to submit investigation"); }
 };
 
-/**
- * Creates a CAPA for an incident
- */
 export const createCAPA = async (incidentId: string, data: CAPACreate): Promise<CAPA> => {
   try {
     const response = await api.post<CAPA>(`/incidents/${incidentId}/capas`, data);
     return response.data;
-  } catch (error: any) {
-    console.error(`Failed to create CAPA for incident ${incidentId}:`, error);
-    throw new Error(error.response?.data?.detail || "Failed to create CAPA");
-  }
+  } catch (error: any) { throw new Error(error.response?.data?.detail || "Failed to create CAPA"); }
 };
 
-/**
- * Fetches all CAPAs for an incident
- */
 export const getCAPAsByIncidentId = async (incidentId: string): Promise<CAPA[]> => {
   try {
     const response = await api.get<CAPA[]>(`/incidents/${incidentId}/capas`);
     return response.data;
-  } catch (error: any) {
-    console.error(`Failed to fetch CAPAs for incident ${incidentId}:`, error);
-    throw new Error(error.response?.data?.detail || "Failed to fetch CAPAs");
-  }
+  } catch (error: any) { throw new Error(error.response?.data?.detail || "Failed to fetch CAPAs"); }
 };
 
-/**
- * Updates CAPA status
- */
 export const updateCAPAStatus = async (capaId: string, status: CAPAStatus): Promise<CAPA> => {
   try {
     const response = await api.patch(`/incidents/capas/${capaId}/status`, { status });
     return response.data.capa;
-  } catch (error: any) {
-    console.error(`Failed to update CAPA status ${capaId}:`, error);
-    throw new Error(error.response?.data?.detail || "Failed to update CAPA status");
-  }
+  } catch (error: any) { throw new Error(error.response?.data?.detail || "Failed to update CAPA status"); }
 };
 
-/**
- * Fetches incident statistics for dashboard
- */
 export const getIncidentStats = async (): Promise<IncidentStats> => {
   try {
     const response = await api.get<IncidentStats>('/incidents/stats/dashboard');
     return response.data;
-  } catch (error: any) {
-    console.error("Failed to fetch incident statistics:", error);
-    throw new Error(error.response?.data?.detail || "Failed to fetch statistics");
-  }
+  } catch (error: any) { throw new Error(error.response?.data?.detail || "Failed to fetch statistics"); }
 };
 
-/**
- * Manually triggers kill switch for an incident (Emergency use only)
- */
 export const triggerKillSwitch = async (incidentId: string): Promise<any> => {
   try {
     const response = await api.post(`/incidents/kill-switch/trigger/${incidentId}`);
     return response.data;
-  } catch (error: any) {
-    console.error(`Failed to trigger kill switch for incident ${incidentId}:`, error);
-    throw new Error(error.response?.data?.detail || "Failed to trigger kill switch");
-  }
+  } catch (error: any) { throw new Error(error.response?.data?.detail || "Failed to trigger kill switch"); }
 };

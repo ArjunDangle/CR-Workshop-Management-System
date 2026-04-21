@@ -1,4 +1,4 @@
-# app/models.py
+# server/app/models.py
 from typing import List, Optional, TYPE_CHECKING
 from uuid import UUID, uuid4
 import datetime
@@ -6,7 +6,6 @@ import datetime
 from sqlmodel import Field, Relationship, SQLModel 
 from sqlalchemy import Column, Date, Time
 
-# --- FIX: Import models for type-checking only to prevent circular imports ---
 if TYPE_CHECKING:
     from app.modules.machine.machine_models import Machine, MaintenancePlan
     from app.modules.contractor.models import Contractor, Worker
@@ -19,7 +18,6 @@ class RoleBase(SQLModel):
     description: Optional[str] = Field(default=None, max_length=255)
     parent_id: Optional[UUID] = Field(default=None, foreign_key="role.id", index=True)
 
-
 class Role(RoleBase, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     parent: Optional["Role"] = Relationship(
@@ -29,18 +27,14 @@ class Role(RoleBase, table=True):
     children: List["Role"] = Relationship(back_populates="parent")
     users: List["User"] = Relationship(back_populates="role")
 
-
 class RoleCreate(RoleBase):
     pass
-
 
 class RoleRead(RoleBase):
     id: UUID
 
-
 class RoleReadWithChildren(RoleRead):
      children: List["RoleRead"] = []
-
 
 class RoleUpdate(SQLModel):
     name: Optional[str] = None
@@ -54,7 +48,6 @@ class UserBase(SQLModel):
     full_name: Optional[str] = Field(default=None, max_length=100)
     is_active: bool = Field(default=True)
     role_id: UUID = Field(foreign_key="role.id", index=True)
-
 
 class User(UserBase, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
@@ -75,6 +68,10 @@ class User(UserBase, table=True):
         back_populates="approver",
         sa_relationship_kwargs={"foreign_keys": "[Permit.approver_id]"}
     )
+    inspected_permits: List["Permit"] = Relationship(
+        back_populates="inspector",
+        sa_relationship_kwargs={"foreign_keys": "[Permit.inspector_id]"}
+    )
     
     # Incident Relationship
     reported_incidents: List["Incident"] = Relationship(
@@ -82,15 +79,12 @@ class User(UserBase, table=True):
         sa_relationship_kwargs={"foreign_keys": "[Incident.reported_by_id]"}
     )
 
-
 class UserCreate(UserBase):
     password: str 
-
 
 class UserRead(UserBase):
     id: UUID
     role: RoleRead
-
 
 class UserUpdate(SQLModel):
     email: Optional[str] = None
@@ -109,14 +103,12 @@ class PermitPPE(SQLModel, table=True):
     checked: Optional[bool] = Field(default=False)
     permit: "Permit" = Relationship(back_populates="ppes")
 
-
 class PermitAttendee(SQLModel, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
     permit_id: UUID = Field(foreign_key="permit.id", index=True)
     name: str
     phone: str
     permit: "Permit" = Relationship(back_populates="attendees")
-
 
 class PermitWorkerLink(SQLModel, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
@@ -172,7 +164,6 @@ class PermitBase(SQLModel):
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
     
     permittee_id: UUID = Field(foreign_key="user.id", index=True)
-    
     authorizer_id: Optional[UUID] = Field(default=None, foreign_key="user.id", index=True)
     authorized_at: Optional[datetime.datetime] = Field(default=None)
     
@@ -189,8 +180,18 @@ class PermitBase(SQLModel):
     machine_id: Optional[UUID] = Field(default=None, foreign_key="machine.id", index=True)
     maintenance_plan_id: Optional[UUID] = Field(default=None, foreign_key="maintenanceplan.id")
     is_critical: bool = Field(default=False)
-    
     contractor_id: Optional[UUID] = Field(default=None, foreign_key="contractor.id", index=True)
+
+    # --- NEW: FORMAL CLOSING LOOP & SIMOPS ---
+    handback_declaration: Optional[str] = Field(default=None, max_length=1500)
+    handback_time: Optional[datetime.datetime] = Field(default=None)
+    
+    inspection_remarks: Optional[str] = Field(default=None, max_length=1500)
+    inspector_id: Optional[UUID] = Field(default=None, foreign_key="user.id", index=True)
+    inspection_time: Optional[datetime.datetime] = Field(default=None)
+    
+    simops_acknowledged: Optional[bool] = Field(default=False)
+
 
 class Permit(PermitBase, table=True):
     id: Optional[UUID] = Field(default_factory=uuid4, primary_key=True)
@@ -206,6 +207,10 @@ class Permit(PermitBase, table=True):
     approver: Optional["User"] = Relationship(
         back_populates="approved_permits",
         sa_relationship_kwargs={"foreign_keys": "[Permit.approver_id]"}
+    )
+    inspector: Optional["User"] = Relationship(
+        back_populates="inspected_permits",
+        sa_relationship_kwargs={"foreign_keys": "[Permit.inspector_id]"}
     )
     
     ppes: List["PermitPPE"] = Relationship(back_populates="permit")

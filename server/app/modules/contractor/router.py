@@ -20,6 +20,7 @@ from app.modules.contractor.service import (
     worker_service
 )
 
+
 router = APIRouter(prefix="/contractors", tags=["contractors"])
 
 
@@ -88,18 +89,36 @@ def create_worker(
     return worker_service.create_worker(db, worker_data)
 
 
-@router.get("/{contractor_id}/workers", response_model=List[WorkerRead])
+# FILE: server/app/modules/contractor/router.py
+
+@router.get("/{contractor_id}/workers", response_model=List[WorkerRead])  # FIX 1: Use WorkerRead directly
 def get_contractor_workers(
     contractor_id: UUID,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    # current_user dependency is missing from imports in the file you shared, 
+    # make sure 'get_current_active_user' and 'User' are imported if you use them.
+    # If not needed for this specific public endpoint, you can remove the dependency.
 ):
-    """List all workers for a specific contractor."""
-    workers = worker_service.get_workers_by_contractor(db, contractor_id)
-    # Add contractor_name to each worker for frontend convenience
+    """
+    Get all workers for a specific contractor.
+    """
+    # 1. Fetch Data
     contractor = contractor_service.get_contractor_by_id(db, contractor_id)
+    workers = worker_service.get_workers_by_contractor(db, contractor_id)
+
+    # 2. Process Data
+    results = []
     for worker in workers:
-        worker.contractor_name = contractor.company_name
-    return workers
+        # FIX 2: Use WorkerRead directly (remove worker_schemas.)
+        worker_data = WorkerRead.model_validate(worker)
+        
+        # Attach the contractor name manually
+        worker_data.contractor_name = contractor.company_name
+        
+        results.append(worker_data)
+
+    return results
+   
 
 
 # Worker-specific endpoints (standalone)

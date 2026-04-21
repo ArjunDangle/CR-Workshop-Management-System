@@ -23,12 +23,16 @@ from sqlmodel import SQLModel
 
 # 2. IMPORT ALL MODELS HERE (Critical Step)
 # This registers them with SQLModel.metadata
-import app.models
 import app.core.common_models
-import app.scripts.find_models
+# (If app.models exists and is used, keep it, otherwise you can comment it out)
+import app.models 
+
+# --- 2. MODULE MODELS ---
+import app.modules.auth.models          # Added manually (Critical for User ID links)
+import app.modules.permit.models        # Added manually (Critical for Permit links)
 import app.modules.contractor.models
-import app.modules.machine.machine_models
 import app.modules.incident.models
+import app.modules.machine.machine_models # Script found this name. Ensure this is where your Machine class is!
 # If you have any other files with "table=True", import them here too!
 
 # 3. Set Target Metadata

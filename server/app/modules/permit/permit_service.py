@@ -1,13 +1,4 @@
 # FILE: server/app/modules/permit/permit_service.py
-"""
-Service Layer for the Permit Management Module.
-Contains all business logic for permit operations, including creation, approval,
-activation, closure, and extension handling.
-
-PHASE 2 UPDATE:
-- Integrates with Machine Service for LOTO (Lock Out / Tag Out).
-- Automated Criticality Checks based on Maintenance Plans.
-"""
 from sqlmodel import Session, select
 from uuid import UUID
 from typing import List
@@ -18,438 +9,253 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
-# Models
-from app.models import User, Permit, PermitPPE, PermitAttendee
+from app.models import User, Permit, PermitPPE, PermitAttendee, PermitWorkerLink
 from app.modules.machine.machine_models import MaintenanceTask
-
-# Repositories and Schemas
 from app.modules.permit import permit_repo, permit_schemas
-
-# --- PHASE 2 INTEGRATION: Machine Service ---
 from app.modules.machine import machine_service
-
-# --- MODULE 4 INTEGRATION: Contractor Service ---
 from app.modules.contractor.service import contractor_service
-# --- END MODULE 4 INTEGRATION ---
 
-
-# --- Helper to determine permit type from user role ---
 def _get_permit_type_for_user(user: User) -> str:
-    """
-    Determines the permit type ("Height" or "Electrical") based on
-    the user's role name.
-    """
     if user.role.name == "SSE-Maintenance - MW":
         return "Height"
     elif user.role.name == "SSE-Maintenance - Substation":
         return "Electrical"
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"User role '{user.role.name}' is not authorized to create permits.")
+
+def check_permit_conflicts(db: Session, permit_id: UUID) -> permit_schemas.PermitConflictReport:
+    """Pre-Activation SIMOPS Conflict Check"""
+    permit = get_permit_by_id(db, permit_id)
     
-    # If the user is not a maintenance subclass, they cannot create a permit
-    raise HTTPException(
-        status_code=status.HTTP_403_FORBIDDEN,
-        detail=f"User role '{user.role.name}' is not authorized to create permits."
-    )
+    active_permits = db.execute(
+        select(Permit).where(
+            Permit.status.in_(["Active", "Approved", "Pending Closure"]),
+            Permit.id != permit_id
+        )
+    ).scalars().all()
+    
+    conflicts =[]
+    current_worker_links = db.execute(select(PermitWorkerLink).where(PermitWorkerLink.permit_id == permit_id)).scalars().all()
+    current_worker_ids =[link.worker_id for link in current_worker_links]
+    
+    for p in active_permits:
+        # 1. Machine Conflict
+        if permit.machine_id and p.machine_id == permit.machine_id:
+            conflicts.append(permit_schemas.PermitConflictItem(
+                permit_id=p.id, permit_no=p.permit_no or str(p.id)[:8],
+                conflict_type="MACHINE", description=f"Shared Machine/Asset: {p.machine.asset_id if p.machine else 'Unknown'}"
+            ))
+            
+        # 2. Location / Zone Conflict
+        if permit.work_location and p.work_location == permit.work_location:
+            conflicts.append(permit_schemas.PermitConflictItem(
+                permit_id=p.id, permit_no=p.permit_no or str(p.id)[:8],
+                conflict_type="LOCATION", description=f"Overlapping Zone: {p.work_location}"
+            ))
+            
+        # 3. Workforce Overlap Check
+        if current_worker_ids:
+            overlapping_workers = db.execute(
+                select(PermitWorkerLink).where(
+                    PermitWorkerLink.permit_id == p.id,
+                    PermitWorkerLink.worker_id.in_(current_worker_ids)
+                )
+            ).scalars().all()
+            
+            for ow in overlapping_workers:
+                worker_name = ow.worker.full_name if ow.worker else str(ow.worker_id)
+                conflicts.append(permit_schemas.PermitConflictItem(
+                    permit_id=p.id, permit_no=p.permit_no or str(p.id)[:8],
+                    conflict_type="WORKER", description=f"Fatigue/Shared Worker Risk: {worker_name}"
+                ))
+                
+    return permit_schemas.PermitConflictReport(has_conflicts=len(conflicts) > 0, conflicts=conflicts)
 
 def create_permit(db: Session, permit_data: permit_schemas.PermitCreate, permittee: User) -> Permit:
-    """
-    Creates a new permit, associated PPEs, and attendees.
-    
-    PHASE 2 LOGIC:
-    1. Links the Permit to a specific Machine and Maintenance Plan (if provided).
-    2. Automatically flags the permit as 'is_critical' if the selected 
-       Maintenance Plan contains any critical tasks.
-       
-    MODULE 4 SAFETY FIREWALL:
-    3. Validates contractor eligibility if contractor_id is provided.
-    4. Validates all workers for eligibility if worker_ids are provided.
-    """
-    # 1. Determine permit type from the user's role.
     permit_type = _get_permit_type_for_user(permittee)
 
-    # 2. MODULE 4 SAFETY FIREWALL: Validate Contractor
     if permit_data.contractor_id:
         contractor_service.validate_contractor_for_permit(db, permit_data.contractor_id)
     
-    # 3. MODULE 4 SAFETY FIREWALL: Validate Workers (Atomic Check)
     for worker_id in permit_data.worker_ids:
         contractor_service.validate_worker_for_permit(db, worker_id)
     
-    # 4. Criticality Logic (Phase 2)
-    # If a maintenance plan is selected, check if it contains any "Critical" tasks.
     is_critical = False
     if permit_data.maintenance_plan_id:
-        statement = select(MaintenanceTask).where(
-            MaintenanceTask.plan_id == permit_data.maintenance_plan_id,
-            MaintenanceTask.is_critical == True
-        )
-        # If even one critical task exists, the whole permit is Critical.
+        statement = select(MaintenanceTask).where(MaintenanceTask.plan_id == permit_data.maintenance_plan_id, MaintenanceTask.is_critical == True)
         if db.execute(statement).first():
             is_critical = True
 
-    # 5. Create the main Permit object from the flat fields of the request data.
-    # We explicitly map Phase 2 fields here.
     new_permit = Permit.model_validate(
         permit_data.model_dump(exclude={"ppes", "attendees", "worker_ids"}),
         update={
             "permit_type": permit_type,
             "permittee_id": permittee.id,
             "status": "Pending Authorization",
-            # Phase 2 Fields
             "machine_id": permit_data.machine_id,
             "maintenance_plan_id": permit_data.maintenance_plan_id,
             "is_critical": is_critical,
-            # Module 4 Integration
             "contractor_id": permit_data.contractor_id
         }
     )
 
-    # 4. Instantiate the child SQLModel objects
-    new_permit.ppes = [PermitPPE(**p.model_dump()) for p in permit_data.ppes]
-    new_permit.attendees = [PermitAttendee(**a.model_dump()) for a in permit_data.attendees]
+    new_permit.ppes =[PermitPPE(**p.model_dump()) for p in permit_data.ppes]
+    new_permit.attendees =[PermitAttendee(**a.model_dump()) for a in permit_data.attendees]
 
-    # 5. Save via Repository first to get the permit ID
     try:
         saved_permit = permit_repo.create_permit(db=db, permit=new_permit)
-        
-        # 6. MODULE 4 INTEGRATION: Create Worker Links after permit is saved
-        from app.models import PermitWorkerLink
         for worker_id in permit_data.worker_ids:
-            worker_link = PermitWorkerLink(
-                permit_id=saved_permit.id,
-                worker_id=worker_id,
-                role="Assigned Worker"  # Default role, can be customized later
-            )
+            worker_link = PermitWorkerLink(permit_id=saved_permit.id, worker_id=worker_id, role="Assigned Worker")
             db.add(worker_link)
-        
         db.commit()
         return saved_permit
     except Exception as e:
-        # Rollback in case of a database error
         db.rollback()
-        print(f"Error creating permit in repo: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to create permit in database: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=str(e))
 
 def get_permit_by_id(db: Session, permit_id: UUID) -> Permit:
-    """
-    Fetches a single permit by its ID.
-    Raises 404 if not found.
-    """
     permit = permit_repo.get_permit_by_id(db=db, permit_id=permit_id)
     if not permit:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Permit with ID {permit_id} not found."
-        )
+        raise HTTPException(status_code=404, detail="Permit not found.")
+    
+    # Eager load inspector if available
+    if permit.inspector_id and not permit.inspector:
+        permit.inspector = db.get(User, permit.inspector_id)
     return permit
 
 def get_permits_for_user(db: Session, user: User) -> List[Permit]:
-    """
-    Fetches a list of permits relevant to the current user's role.
-    """
     role_name = user.role.name
-    # print(f"Fetching permits for user {user.email} with role {role_name}")
-
     if role_name.startswith("SSE-Maintenance"):
-        # Permittee: Sees all permits they initiated
         return permit_repo.get_permits_by_permittee_id(db=db, user_id=user.id)
     
     elif role_name == "SSE-Office":
-        # Authorizer: Sees permits awaiting their authorization
-        # and permits awaiting extension approval
         pending_permits = permit_repo.get_permits_by_status(db=db, status="Pending Authorization")
-        
-        # Also include permits that are active and requesting extension
-        extended_permits = permit_repo.get_permits_by_status(db=db, status="Active")
-        extended_permits = [p for p in extended_permits if p.extension_requested]
-        
+        extended_permits =[p for p in permit_repo.get_permits_by_status(db=db, status="Active") if p.extension_requested]
         return pending_permits + extended_permits
     
     elif role_name == "Safety Officer":
-        # Approver: Sees permits awaiting their final approval
-        return permit_repo.get_permits_by_status(db=db, status="Pending Approval")
+        pending = permit_repo.get_permits_by_status(db=db, status="Pending Approval")
+        closing = permit_repo.get_permits_by_status(db=db, status="Pending Closure")
+        return pending + closing
     
-    return []
+    return[]
 
 def authorize_permit(db: Session, permit_id: UUID, authorizer: User) -> Permit:
-    """
-    Authorizes a permit (SSE-Office action).
-    Moves status from 'Pending Authorization' to 'Pending Approval'.
-    """
     if authorizer.role.name != "SSE-Office":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only 'SSE-Office' users can authorize permits."
-        )
+        raise HTTPException(status_code=403, detail="Only 'SSE-Office' users can authorize permits.")
     
     permit = get_permit_by_id(db=db, permit_id=permit_id) 
-    
     if permit.status != "Pending Authorization":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Permit must be 'Pending Authorization'. Current status: {permit.status}"
-        )
+        raise HTTPException(status_code=400, detail="Invalid status")
     
     permit.status = "Pending Approval"
     permit.authorizer_id = authorizer.id
     permit.authorized_at = datetime.datetime.now(timezone.utc)
-    
-    updated_permit = permit_repo.update_permit(db=db, permit=permit)
-    return updated_permit
+    return permit_repo.update_permit(db=db, permit=permit)
 
 def approve_permit(db: Session, permit_id: UUID, permit_data: permit_schemas.PermitApprove, approver: User) -> Permit:
-    """
-    Approves a permit (Safety Officer action).
-    Moves status from 'Pending Approval' to 'Approved'.
-    """
     if approver.role.name != "Safety Officer":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only 'Safety Officer' users can approve permits."
-        )
+        raise HTTPException(status_code=403, detail="Only 'Safety Officer' users can approve permits.")
     
     permit = get_permit_by_id(db=db, permit_id=permit_id)
-    
     if permit.status != "Pending Approval":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Permit must be 'Pending Approval'. Current status: {permit.status}"
-        )
+        raise HTTPException(status_code=400, detail="Invalid status")
+    
+    conflict_report = check_permit_conflicts(db, permit_id)
+    if conflict_report.has_conflicts and not permit_data.simops_acknowledged:
+        raise HTTPException(status_code=400, detail="SIMOPS conflicts detected. Acknowledge them to approve.")
     
     permit.status = "Approved"
     permit.approver_id = approver.id
     permit.approved_at = datetime.datetime.now(timezone.utc)
     permit.approver_remarks = permit_data.approver_remarks
-    
-    updated_permit = permit_repo.update_permit(db=db, permit=permit)
-    return updated_permit
-
-# --- ACTIONS & EXTENSIONS (PHASE 2 UPDATED) ---
+    permit.simops_acknowledged = permit_data.simops_acknowledged
+    return permit_repo.update_permit(db=db, permit=permit)
 
 def activate_permit(db: Session, permit_id: UUID, user: User) -> Permit:
-    """
-    Activates a permit (Permittee action).
-    
-    PHASE 2 LOGIC (LOTO TRIGGER):
-    1. Sets permit status to 'Active'.
-    2. If permit is linked to a Machine, calls machine_service to LOCK it
-       (Status -> UNDER_MAINTENANCE).
-    """
     permit = get_permit_by_id(db=db, permit_id=permit_id)
+    if permit.permittee_id != user.id: raise HTTPException(status_code=403, detail="Unauthorized")
+    if permit.status != "Approved": raise HTTPException(status_code=400, detail="Invalid status")
+    if permit.extension_requested: raise HTTPException(status_code=400, detail="Pending extension")
 
-    # 1. Check permissions: Only the original permittee can activate.
-    if permit.permittee_id != user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the user who initiated the permit can activate it."
-        )
-    
-    # 2. Check status: Must be 'Approved'.
-    if permit.status != "Approved":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Permit must be 'Approved' to be activated. Current status: {permit.status}"
-        )
-        
-    # 3. Check for extension request
-    if permit.extension_requested:
-         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot activate a permit that has a pending extension request."
-        )
-
-    # 4. Update permit: Set status and record the start time.
     permit.status = "Active"
     permit.actual_start_time = datetime.datetime.now(timezone.utc)
-    
     updated_permit = permit_repo.update_permit(db=db, permit=permit)
     
-    # --- LOTO ENFORCEMENT ---
     if updated_permit.machine_id:
         machine_service.lock_machine_status(db, updated_permit.machine_id)
-    
     return updated_permit
 
-def close_permit(db: Session, permit_id: UUID, user: User) -> Permit:
-    """
-    Closes a permit (Permittee action).
-    
-    PHASE 2 LOGIC (LOTO RELEASE):
-    1. Sets permit status to 'Closed'.
-    2. If permit is linked to a Machine, calls machine_service to UNLOCK it
-       (Status -> OPERATIONAL).
-    """
+def submit_handback(db: Session, permit_id: UUID, handback_data: permit_schemas.PermitHandback, user: User) -> Permit:
+    """Phase 1 of Closure: Permit holder submits declaration."""
     permit = get_permit_by_id(db=db, permit_id=permit_id)
+    if permit.permittee_id != user.id: raise HTTPException(status_code=403, detail="Unauthorized")
+    if permit.status != "Active": raise HTTPException(status_code=400, detail="Permit must be Active")
+    if permit.extension_requested: raise HTTPException(status_code=400, detail="Pending extension")
 
-    # 1. Check permissions: Only the original permittee can close.
-    if permit.permittee_id != user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the user who initiated the permit can close it."
-        )
-
-    # 2. Check status: Must be 'Active'.
-    if permit.status != "Active":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Permit must be 'Active' to be closed. Current status: {permit.status}"
-        )
-        
-    # 3. Check for pending extension request
-    if permit.extension_requested:
-         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot close a permit that has a pending extension request."
-        )
-
-    # 4. Update permit: Set status and record the end time.
-    permit.status = "Closed"
+    permit.status = "Pending Closure"
     permit.actual_end_time = datetime.datetime.now(timezone.utc)
+    permit.handback_declaration = handback_data.handback_declaration
+    permit.handback_time = datetime.datetime.now(timezone.utc)
+    return permit_repo.update_permit(db=db, permit=permit)
+
+def verify_closure(db: Session, permit_id: UUID, verify_data: permit_schemas.PermitVerifyClosure, user: User) -> Permit:
+    """Phase 2 of Closure: Safety Officer inspects and releases LOTO."""
+    permit = get_permit_by_id(db=db, permit_id=permit_id)
+    if user.role.name != "Safety Officer": raise HTTPException(status_code=403, detail="Unauthorized")
+    if permit.status != "Pending Closure": raise HTTPException(status_code=400, detail="Must be Pending Closure")
+
+    permit.status = "Closed"
+    permit.inspection_remarks = verify_data.inspection_remarks
+    permit.inspector_id = user.id
+    permit.inspection_time = datetime.datetime.now(timezone.utc)
     
     updated_permit = permit_repo.update_permit(db=db, permit=permit)
-    
-    # --- LOTO RELEASE ---
     if updated_permit.machine_id:
         machine_service.unlock_machine_status(db, updated_permit.machine_id)
-
     return updated_permit
 
 def request_permit_extension(db: Session, permit_id: UUID, extension_data: permit_schemas.PermitExtensionRequest, user: User) -> Permit:
-    """
-    Requests an extension for an 'Active' permit (Permittee action).
-    Sets the extension flags and requested new end time.
-    """
     permit = get_permit_by_id(db=db, permit_id=permit_id)
-
-    # 1. Check permissions
-    if permit.permittee_id != user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only the user who initiated the permit can request an extension."
-        )
-
-    # 2. Check status
-    if permit.status != "Active":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Permit must be 'Active' to request an extension. Current status: {permit.status}"
-        )
+    if permit.permittee_id != user.id: raise HTTPException(status_code=403, detail="Unauthorized")
+    if permit.status != "Active": raise HTTPException(status_code=400, detail="Invalid status")
+    if permit.extension_requested: raise HTTPException(status_code=400, detail="Already requested")
         
-    # 3. Check if already requested
-    if permit.extension_requested:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="An extension has already been requested for this permit."
-        )
-        
-    # 4. Check new end time logic
     try:
         if permit.finish_date and permit.finish_time:
             current_finish_datetime = datetime.datetime.combine(permit.finish_date, permit.finish_time, tzinfo=timezone.utc)
             if extension_data.requested_new_end_time.astimezone(timezone.utc) <= current_finish_datetime:
-                 raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Requested new end time must be later than the current permit finish date/time."
-                )
+                 raise HTTPException(status_code=400, detail="Requested new end time must be later.")
     except HTTPException as e:
-        # Don't catch HTTP exceptions! Re-raise them so the Frontend gets the 400 error.
         raise e
-        
     except Exception as e:
-        # For unexpected errors (bugs), Log it and Fail Safe.
-        logger.error(f"CRITICAL: Safety check failed unexpectedly: {str(e)}", exc_info=True)
-        # In a safety system, if you aren't sure, you BLOCK the work.
-        raise HTTPException(
-            status_code=500, 
-            detail="Internal Safety Check Error. Permit creation blocked."
-        )
+        logger.error(f"CRITICAL: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Error")
 
-    # 5. Update permit
     permit.extension_requested = True
     permit.extension_reason = extension_data.extension_reason
     permit.requested_new_end_time = extension_data.requested_new_end_time
-    
-    updated_permit = permit_repo.update_permit(db=db, permit=permit)
-    return updated_permit
+    return permit_repo.update_permit(db=db, permit=permit)
 
 def approve_permit_extension(db: Session, permit_id: UUID, authorizer: User) -> Permit:
-    """
-    Approves an extension request (SSE-Office action).
-    Updates the permit's finish time and clears the extension flags.
-    """
     permit = get_permit_by_id(db=db, permit_id=permit_id)
-
-    # 1. Check permissions
-    if authorizer.role.name != "SSE-Office":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only 'SSE-Office' users can approve permit extensions."
-        )
-
-    # 2. Check status
-    if permit.status != "Active" or not permit.extension_requested:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Permit must be 'Active' and have a pending extension request to be approved."
-        )
+    if authorizer.role.name != "SSE-Office": raise HTTPException(status_code=403, detail="Unauthorized")
+    if permit.status != "Active" or not permit.extension_requested: raise HTTPException(status_code=400, detail="Invalid status")
         
-    if not permit.requested_new_end_time:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot approve extension: requested new end time is missing."
-        )
-
-    # 3. Update permit dates
     permit.finish_date = permit.requested_new_end_time.date()
     permit.finish_time = permit.requested_new_end_time.time()
-    
-    # Clear extension flags
     permit.extension_requested = False
     permit.extension_reason = None
     permit.requested_new_end_time = None
-    
-    updated_permit = permit_repo.update_permit(db=db, permit=permit)
-    return updated_permit
+    return permit_repo.update_permit(db=db, permit=permit)
 
 # --- MODULE 5 INTEGRATION: Kill Switch Support ---
 def suspend_permit(db: Session, permit_id: UUID, reason: str = "Severe Incident", commit: bool = False) -> Permit:
-    """
-    Suspends a permit (typically called by Kill Switch for MAJOR/FATAL incidents).
-    
-    Args:
-        db: Database session
-        permit_id: UUID of the permit to suspend
-        reason: Reason for suspension (for logging/audit)
-        commit: Whether to commit the transaction (default False for atomic operations)
-    
-    Returns:
-        Updated Permit object
-    
-    Raises:
-        HTTPException: If permit not found or cannot be suspended
-    """
     permit = get_permit_by_id(db=db, permit_id=permit_id)
-    
-    # Check if permit is in a suspendable state
-    if permit.status not in ["Active", "Approved"]:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Cannot suspend permit with status '{permit.status}'. Only 'Active' or 'Approved' permits can be suspended."
-        )
-    
-    # Update status to SUSPENDED
+    if permit.status not in["Active", "Approved"]:
+        raise HTTPException(status_code=400, detail=f"Cannot suspend status '{permit.status}'")
     permit.status = "Suspended"
-    
-    # Update via repository (does not commit)
     updated_permit = permit_repo.update_permit(db=db, permit=permit)
-    
-    # Only commit if explicitly requested (for standalone calls)
     if commit:
         db.commit()
         db.refresh(updated_permit)
-    
     return updated_permit
-# --- END MODULE 5 INTEGRATION ---

@@ -5,16 +5,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Loader2, Plus, Trash2, AlertTriangle, CheckSquare, ShieldAlert } from 'lucide-react';
+import { Loader2, Plus, Trash2, AlertTriangle, CheckSquare, ShieldAlert, Zap, Lock } from 'lucide-react';
 
 // --- Our API and Types ---
 import { createPermit } from '../../permitApi';
 import { permitCreateSchema, PermitCreateData } from '../../permitTypes';
-// --- New Machine Integration ---
-import MachineSelect from '@/modules/machine/components/MachineSelect';
-import { getMachineChecklist, MaintenanceTask } from '@/modules/machine/machineApi';
+import { useAuthStore } from '@/modules/auth/authStore';
 
-// --- New Contractor Integration ---
+// --- Smart Machine Integration ---
+import MachineSelect from '@/modules/machine/components/MachineSelect';
+import { getMachineChecklist } from '@/modules/machine/machineApi';
+
+// --- Smart Contractor Integration ---
 import ContractorSelect from '@/modules/contractor/components/ContractorSelect';
 import WorkerMultiSelect from '@/modules/contractor/components/WorkerMultiSelect';
 import { Contractor, Worker } from '@/modules/contractor/api';
@@ -26,7 +28,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -40,43 +42,67 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+// --- TYPE EXTENSION: Fixes TS Errors for Electrical Fields ---
+// We extend the base PermitCreateData to include the specific electrical fields
+// that might not be in the shared global type yet.
+type ElectricPermitFormData = PermitCreateData & {
+  machine_id?: string;
+  // Electrical Specifics
+  circuit_identification: string;
+  voltage_level: string;
+  earthing_applied: boolean;
+  test_before_touch: boolean;
+  loto_applied: boolean;
+  lock_box_number: string;
+};
+
 const CreateElectricPermitForm = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+
+  // --- Smart State ---
   const [selectedMachineId, setSelectedMachineId] = useState<string | null>(null);
-  
-  // --- Contractor State ---
   const [selectedContractor, setSelectedContractor] = useState<Contractor | null>(null);
   const [selectedWorkerIds, setSelectedWorkerIds] = useState<string[]>([]);
-  const [selectedWorkers, setSelectedWorkers] = useState<Worker[]>([]);
 
   // --- Form Hook ---
+  // We use the Extended Type <ElectricPermitFormData> here to satisfy TypeScript
   const {
     register,
     handleSubmit,
     control,
     setValue,
     formState: { errors },
-  } = useForm<PermitCreateData & { machine_id?: string }>({
-    resolver: zodResolver(permitCreateSchema),
+  } = useForm<ElectricPermitFormData>({
+    resolver: zodResolver(permitCreateSchema), // Note: Ensure your Zod schema allows unknown keys or these fields are added to it
     defaultValues: {
+      person_responsible: user?.role?.name.includes('Substation') ? 'SSW (Substation)' : 'SSE (MW)',
+      permit_no: 'AUTO-GENERATED',
       contractor_id: '',
       worker_ids: [],
       ppes: [
-        { name: 'Full body harness (fall arresting type)', checked: false, issued_on: '' },
-        { name: 'Safety Shoes', checked: false, issued_on: '' },
-        { name: 'Safety Helmet', checked: false, issued_on: '' },
+        { name: 'Electrical Insulating Gloves (Class 0/1)', checked: false, issued_on: '' },
+        { name: 'Arc Flash Face Shield / Visor', checked: false, issued_on: '' },
+        { name: 'Safety Shoes (Non-conductive)', checked: false, issued_on: '' },
+        { name: 'Insulated Tools', checked: false, issued_on: '' },
       ],
-      attendees: Array(5).fill({ name: '', phone: '' }),
+      attendees: Array(3).fill({ name: '', phone: '' }),
+      
+      // Booleans
       certified_crane_near_ladder: false,
       hazard_assessed: false,
       work_can_proceed: false,
-      method_access_fixed_ladder: false,
-      method_access_elevated_platform: false,
-      method_access_scissor_lift: false,
-      method_access_boom_lifter: false,
-      method_access_catwalk: false,
       other_block_required: false,
+      
+      // Electrical Specifics (Defaults now match the Type)
+      electrical_isolation_obtained: 'no',
+      earthing_applied: false,
+      test_before_touch: false,
+      loto_applied: false,
+      lock_box_number: '',
+      circuit_identification: '',
+      voltage_level: '',
     },
   });
 
@@ -87,7 +113,6 @@ const CreateElectricPermitForm = () => {
     enabled: !!selectedMachineId,
   });
 
-  // Check if any task is critical
   const hasCriticalTasks = checklist?.some(task => task.is_critical);
 
   // --- Field Array Hooks ---
@@ -98,13 +123,13 @@ const CreateElectricPermitForm = () => {
   const mutation = useMutation({
     mutationFn: createPermit,
     onSuccess: (data) => {
-      toast.success(`Permit #${data.permit_no || data.id} Created!`, {
-        description: 'Forwarded to SSE-Office for authorization.',
+      toast.success(`Permit #${data.permit_no || 'Created'} Successfully`, {
+        description: 'Forwarded for authorization & LOTO verification.',
       });
       queryClient.invalidateQueries({ queryKey: ['permits'] });
       navigate('/dashboard');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error('Failed to Create Permit', {
         description: error.message || 'An unknown error occurred.',
       });
@@ -112,11 +137,10 @@ const CreateElectricPermitForm = () => {
   });
 
   // --- Submit Handler ---
-  const onSubmit = (data: any) => {
-    // Inject the machine_id and contractor data into the payload
+  const onSubmit = (data: ElectricPermitFormData) => {
     const cleanData = {
       ...data,
-      machine_id: selectedMachineId, // Add the machine link
+      machine_id: selectedMachineId,
       contractor_id: selectedContractor?.id,
       worker_ids: selectedWorkerIds,
       date: data.date || null,
@@ -130,25 +154,35 @@ const CreateElectricPermitForm = () => {
     mutation.mutate(cleanData);
   };
 
-  const getError = (fieldName: any) => {
-    const error = errors[fieldName as keyof PermitCreateData];
+  const getError = (fieldName: keyof ElectricPermitFormData) => {
+    const error = errors[fieldName];
     return error ? <p className="text-sm text-destructive mt-1">{String(error.message)}</p> : null;
   };
 
   return (
-    <Card className="max-w-5xl mx-auto">
+    <Card className="max-w-6xl mx-auto shadow-md">
       <CardHeader>
-        <CardTitle className="text-3xl font-extrabold text-gray-800">
-          Create Electrical Permit
-        </CardTitle>
-        <p className="text-gray-500 mt-2">
-          Select a machine to load safety protocols and create a permit.
-        </p>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="text-3xl font-extrabold text-gray-800 flex items-center gap-3">
+              <Zap className="h-8 w-8 text-yellow-500 fill-yellow-500" />
+              Create Electrical Permit
+            </CardTitle>
+            <p className="text-gray-500 mt-2">
+              Standard E-101 Format • Work on Live/Isolated Circuits
+            </p>
+          </div>
+          {/* Header Badge */}
+          <div className="text-right text-sm text-gray-600 bg-gray-50 p-2 rounded">
+             <div className="font-bold">Issuing Authority</div>
+             <div>{user?.full_name}</div>
+             <div className="text-xs text-gray-400">{user?.role?.name}</div>
+          </div>
+        </div>
       </CardHeader>
       
       <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent className="space-y-8">
-          {/* Global Error */}
+        <CardContent className="space-y-8 pt-6 px-8">
           {mutation.isError && (
             <Alert variant="destructive">
               <AlertTitle>Error</AlertTitle>
@@ -156,36 +190,61 @@ const CreateElectricPermitForm = () => {
             </Alert>
           )}
 
-          {/* Machine Selection Section (Replaces old text input) */}
-          <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700 border-b pb-2">1. Asset Identification</h3>
+          {/* 1. ASSET IDENTIFICATION (Smart) */}
+          <section className="space-y-6 bg-yellow-50/40 p-6 rounded-lg border border-yellow-100">
+            <h3 className="font-semibold text-lg text-yellow-900 border-b border-yellow-200 pb-2">
+              1. Asset & Identification
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="machine_select" className="mb-2 block">Select Machine / Plant Asset</Label>
+                <Label htmlFor="machine_select" className="mb-2 block font-semibold">Select Equipment / Panel *</Label>
                 <MachineSelect 
                   value={selectedMachineId}
                   onSelect={(id, machine) => {
                     setSelectedMachineId(id);
-                    // Auto-fill the old "work_location" field for backward compatibility/display
-                    setValue('work_location', `${machine.shop_id} - ${machine.name}`);
+                    setValue('work_location', `${machine.shop_name} - ${machine.name}`);
                   }}
                 />
-                {/* Hidden input to satisfy Zod schema if strictly required, or handled in onSubmit */}
                 <input type="hidden" {...register('work_location')} />
                 {getError('work_location')}
               </div>
               
               <div>
-                <Label htmlFor="work_description">Work Description</Label>
+                <Label htmlFor="work_description" className="mb-2 block font-semibold">Work Description *</Label>
                 <Input id="work_description" {...register('work_description')} className="mt-1" placeholder="Describe the repair/maintenance work..." />
                 {getError('work_description')}
               </div>
             </div>
+
+            {/* SOP Checklist Visualization */}
+            {selectedMachineId && (
+              <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                <Alert className={`mt-4 ${hasCriticalTasks ? 'border-red-500 bg-red-50' : 'border-yellow-500 bg-white'}`}>
+                  {hasCriticalTasks ? <ShieldAlert className="h-4 w-4 text-red-600" /> : <CheckSquare className="h-4 w-4 text-yellow-600" />}
+                  <AlertTitle className={`text-sm font-bold ${hasCriticalTasks ? 'text-red-700' : 'text-yellow-700'}`}>
+                    {hasCriticalTasks ? 'CRITICAL ELECTRICAL CHECKS' : 'Electrical SOPs Loaded'}
+                  </AlertTitle>
+                  <ScrollArea className="h-24 w-full mt-2">
+                     {isLoadingChecklist ? <Loader2 className="animate-spin h-4 w-4"/> : (
+                       <div className="space-y-2">
+                         {checklist?.map(t => (
+                           <div key={t.id} className="text-xs text-gray-700 flex gap-2 items-center">
+                             <span className="w-1.5 h-1.5 rounded-full bg-gray-400"/>
+                             {t.description}
+                             {t.is_critical && <Badge variant="destructive" className="text-[10px] px-1 h-5">HIGH VOLTAGE</Badge>}
+                           </div>
+                         ))}
+                       </div>
+                     )}
+                  </ScrollArea>
+                </Alert>
+              </div>
+            )}
           </section>
 
-          {/* Contractor Selection Section */}
+          {/* 2. CONTRACTOR & WORKER (Smart) */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700 border-b pb-2">2. Contractor & Worker Assignment</h3>
+            <h3 className="font-semibold text-lg text-gray-700 border-b pb-2">2. Contractor & Workforce</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -195,110 +254,46 @@ const CreateElectricPermitForm = () => {
                   onChange={(id, contractor) => {
                     setSelectedContractor(contractor);
                     setValue('contractor_id', contractor.id);
-                    // Reset worker selection when contractor changes
-                    setSelectedWorkerIds([]);
-                    setSelectedWorkers([]);
-                    setValue('worker_ids', []);
+                    setSelectedWorkerIds([]); // Safety Reset
                   }}
                   showSafetyStatus={true}
-                  placeholder="Select a contractor for this work..."
                 />
                 {getError('contractor_id')}
               </div>
-            </div>
-
-            {/* Worker Selection */}
-            <div className="mt-4">
-              <Label className="mb-2 block">Assign Workers *</Label>
-              <WorkerMultiSelect
-                contractorId={selectedContractor?.id}
-                selectedWorkerIds={selectedWorkerIds}
-                onChange={(workerIds, workers) => {
-                  setSelectedWorkerIds(workerIds);
-                  setSelectedWorkers(workers);
-                  setValue('worker_ids', workerIds);
-                }}
-              />
-              {selectedWorkerIds.length === 0 && selectedContractor && (
-                <p className="text-sm text-destructive mt-1">At least one worker must be selected</p>
-              )}
+              
+              <div>
+                <Label className="mb-2 block">Assign Competent Electricians *</Label>
+                <WorkerMultiSelect
+                  contractorId={selectedContractor?.id}
+                  selectedWorkerIds={selectedWorkerIds}
+                  onChange={(ids) => {
+                    setSelectedWorkerIds(ids);
+                    setValue('worker_ids', ids);
+                  }}
+                  disabled={!selectedContractor}
+                />
+                {selectedWorkerIds.length === 0 && selectedContractor && (
+                  <p className="text-xs text-red-500 mt-1">At least one worker must be selected</p>
+                )}
+              </div>
             </div>
           </section>
 
-          {/* SOP Checklist Visualization */}
-          {selectedMachineId && (
-            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-              <Alert className={`border-l-4 ${hasCriticalTasks ? 'border-l-red-600 bg-red-50' : 'border-l-blue-500 bg-blue-50'}`}>
-                {hasCriticalTasks ? <ShieldAlert className="h-5 w-5 text-red-600" /> : <CheckSquare className="h-5 w-5 text-blue-600" />}
-                <AlertTitle className={`text-lg font-bold ${hasCriticalTasks ? 'text-red-700' : 'text-blue-700'}`}>
-                  {hasCriticalTasks ? 'CRITICAL SAFETY CHECKS REQUIRED' : 'Standard Operating Procedures (SOP)'}
-                </AlertTitle>
-                <AlertDescription className="text-gray-700 mt-2">
-                  The following safety tasks are mandatory for this machine type.
-                </AlertDescription>
-                
-                <ScrollArea className="h-[200px] w-full rounded-md border bg-white p-4 mt-4">
-                  {isLoadingChecklist ? (
-                    <div className="flex items-center justify-center h-full text-muted-foreground">
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading SOPs...
-                    </div>
-                  ) : checklist && checklist.length > 0 ? (
-                    <div className="space-y-3">
-                      {checklist.map((task) => (
-                        <div key={task.id} className="flex items-start space-x-3 pb-3 border-b last:border-0">
-                          <Checkbox id={`sop-${task.id}`} disabled checked={true} />
-                          <div className="grid gap-1.5 leading-none">
-                            <label
-                              htmlFor={`sop-${task.id}`}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              {task.description}
-                            </label>
-                            <div className="flex gap-2">
-                              {task.is_critical && <Badge variant="destructive" className="text-[10px] px-1 py-0 h-5">CRITICAL</Badge>}
-                              {task.requires_ppe && <Badge variant="secondary" className="text-[10px] px-1 py-0 h-5">PPE REQUIRED</Badge>}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">No specific SOPs found for this machine type.</p>
-                  )}
-                </ScrollArea>
-              </Alert>
-            </div>
-          )}
+          <Separator />
 
-          {/* Standard Form Sections */}
+          {/* PERMIT DETAILS */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div><Label>Permit No.</Label><Input {...register('permit_no')} placeholder="Auto-Generated" /></div>
+            <div><Label>Date</Label><Input type="date" {...register('date')} /></div>
             <div>
-              <Label htmlFor="permit_no">Permit No. (Auto/Manual)</Label>
-              <Input id="permit_no" {...register('permit_no')} className="mt-1" />
-            </div>
-            <div>
-              <Label htmlFor="date">Date</Label>
-              <Input type="date" id="date" {...register('date')} className="mt-1" />
-            </div>
-            <div>
-              <Label>Person responsible</Label>
+              <Label>Responsible Person</Label>
               <Controller
                 name="person_responsible"
                 control={control}
                 render={({ field }) => (
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    value={field.value || ''}
-                    className="mt-2 flex space-x-4 items-center"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="SSE (MW)" id="r1" />
-                      <Label htmlFor="r1">SSE (MW)</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="SSW (Substation)" id="r2" />
-                      <Label htmlFor="r2">SSW (Substation)</Label>
-                    </div>
+                  <RadioGroup onValueChange={field.onChange} value={field.value} className="mt-2 flex gap-4">
+                    <div className="flex items-center gap-2"><RadioGroupItem value="SSE (MW)" id="r1"/><Label htmlFor="r1">SSE (MW)</Label></div>
+                    <div className="flex items-center gap-2"><RadioGroupItem value="SSW (Substation)" id="r2"/><Label htmlFor="r2">Substation</Label></div>
                   </RadioGroup>
                 )}
               />
@@ -307,64 +302,42 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
 
-          {/* Schedule */}
+          {/* 3. SCHEDULE */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">3. Schedule</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div>
-                <Label htmlFor="start_date">Start Date</Label>
-                <Input type="date" id="start_date" {...register('start_date')} className="mt-1" />
-              </div>
-              <div>
-                <Label htmlFor="start_time">Start Time</Label>
-                <Input type="time" id="start_time" {...register('start_time')} className="mt-1" />
-              </div>
-              <div>
-                <Label htmlFor="finish_date">Finish Date</Label>
-                <Input type="date" id="finish_date" {...register('finish_date')} className="mt-1" />
-              </div>
-              <div>
-                <Label htmlFor="finish_time">Finish Time</Label>
-                <Input type="time" id="finish_time" {...register('finish_time')} className="mt-1" />
-              </div>
+              <div><Label>Start Date</Label><Input type="date" {...register('start_date')} /></div>
+              <div><Label>Start Time</Label><Input type="time" {...register('start_time')} /></div>
+              <div><Label>Finish Date</Label><Input type="date" {...register('finish_date')} /></div>
+              <div><Label>Finish Time</Label><Input type="time" {...register('finish_time')} /></div>
             </div>
           </section>
 
           <Separator />
 
-          {/* Fall protection system */}
+          {/* 4. FALL PROTECTION (PRESERVED FROM ORIGINAL) */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">4. Indicate Fall Protection System</h3>
+            <h3 className="font-semibold text-lg text-gray-700">4. Fall Protection System</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
                 <Label htmlFor="fall_system_description">Type of system / Description</Label>
-                <Input id="fall_system_description" {...register('fall_system_description')} className="mt-1" />
+                <Input id="fall_system_description" {...register('fall_system_description')} />
               </div>
               <div className="space-y-2">
-                <Label>Does not arrest fall (catches after fall)</Label>
+                <Label>Does not arrest fall?</Label>
                 <Controller
                   name="fall_does_not_arrest"
                   control={control}
                   render={({ field }) => (
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      value={field.value || ''}
-                      className="flex space-x-4 items-center"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="arrest_yes" />
-                        <Label htmlFor="arrest_yes">Yes</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="arrest_no" />
-                        <Label htmlFor="arrest_no">No</Label>
-                      </div>
+                    <RadioGroup onValueChange={field.onChange} value={field.value || 'no'} className="flex gap-4">
+                      <div className="flex items-center gap-2"><RadioGroupItem value="yes" id="fa_y"/><Label htmlFor="fa_y">Yes</Label></div>
+                      <div className="flex items-center gap-2"><RadioGroupItem value="no" id="fa_n"/><Label htmlFor="fa_n">No</Label></div>
                     </RadioGroup>
                   )}
                 />
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               <Checkbox id="certified_crane_near_ladder" {...register('certified_crane_near_ladder')} />
               <Label htmlFor="certified_crane_near_ladder">Certified that crane is placed near Fixed ladder</Label>
             </div>
@@ -372,25 +345,19 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
           
-          {/* Work Context */}
+          {/* 5. WORK CONTEXT (PRESERVED FROM ORIGINAL) */}
           <section className="space-y-4">
             <h3 className="font-semibold text-lg text-gray-700">5. Work Context</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="on_crane_describe">On a crane: Describe</Label>
-                <Input id="on_crane_describe" {...register('on_crane_describe')} className="mt-1" />
-              </div>
-              <div>
-                <Label htmlFor="other_describe">On other: Describe</Label>
-                <Input id="other_describe" {...register('other_describe')} className="mt-1" />
-              </div>
+              <div><Label>On a crane: Describe</Label><Input {...register('on_crane_describe')} /></div>
+              <div><Label>On other: Describe</Label><Input {...register('other_describe')} /></div>
             </div>
-            <div className="flex space-x-6">
-              <div className="flex items-center space-x-2">
+            <div className="flex gap-6">
+              <div className="flex items-center gap-2">
                 <Checkbox id="hazard_assessed" {...register('hazard_assessed')} />
                 <Label htmlFor="hazard_assessed">Hazard assessed</Label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2">
                 <Checkbox id="work_can_proceed" {...register('work_can_proceed')} />
                 <Label htmlFor="work_can_proceed">Work can Proceed</Label>
               </div>
@@ -399,28 +366,16 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
 
-          {/* PPEs */}
+          {/* 6. PPEs */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">6. Required PPEs (Verified from SOP)</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <h3 className="font-semibold text-lg text-gray-700">6. Required PPEs</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {ppeFields.map((field, index) => (
-                <div key={field.id} className="p-4 border rounded-lg space-y-3">
+                <div key={field.id} className="p-4 border rounded-lg bg-white flex justify-between items-center shadow-sm">
                   <Label className="font-medium">{field.name}</Label>
-                  <div>
-                    <Label htmlFor={`ppes.${index}.issued_on`} className="text-xs text-gray-500">Issued On Date</Label>
-                    <Input
-                      type="date"
-                      id={`ppes.${index}.issued_on`}
-                      {...register(`ppes.${index}.issued_on`)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`ppes.${index}.checked`}
-                      {...register(`ppes.${index}.checked`)}
-                    />
-                    <Label htmlFor={`ppes.${index}.checked`}>Checked / inspected</Label>
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col"><Label className="text-[10px] text-gray-500">Issued On</Label><Input type="date" {...register(`ppes.${index}.issued_on`)} className="h-8 w-32"/></div>
+                    <div className="flex items-center gap-2"><Checkbox {...register(`ppes.${index}.checked`)} /><Label>Safe</Label></div>
                   </div>
                 </div>
               ))}
@@ -429,125 +384,155 @@ const CreateElectricPermitForm = () => {
 
           <Separator />
 
-          {/* Isolation and block required */}
-          <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">7. LOTO: Isolation and Block</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-4 border rounded-lg space-y-3 bg-red-50 border-red-200">
+          {/* 7. LOTO & ISOLATION (AUGMENTED with Electrical Specifics) */}
+          <section className="space-y-6">
+            <h3 className="font-semibold text-lg text-gray-800 border-b pb-2 flex items-center gap-2">
+              <Lock className="h-5 w-5 text-red-600" />
+              7. LOTO: Isolation and Block
+            </h3>
+            
+            {/* NEW: Critical Electrical Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-red-50 border border-red-100 rounded-lg">
+                <div>
+                   <Label className="font-bold text-gray-800">Circuit Identification / Feeder</Label>
+                   <Input {...register('circuit_identification')} placeholder="e.g. Feeder-1A, Panel 4" className="mt-1 bg-white" />
+                   {getError('circuit_identification')}
+                </div>
+                <div>
+                   <Label className="font-bold text-gray-800">Voltage Level</Label>
+                   <Input {...register('voltage_level')} placeholder="e.g. 11kV, 415V" className="mt-1 bg-white" />
+                   {getError('voltage_level')}
+                </div>
+                <div className="flex gap-6 col-span-2">
+                   <div className="flex items-center gap-2">
+                      <Checkbox id="tbt" {...register('test_before_touch')} />
+                      <Label htmlFor="tbt" className="font-semibold">Test Before Touch (Dead Verified)</Label>
+                   </div>
+                   <div className="flex items-center gap-2">
+                      <Checkbox id="earth" {...register('earthing_applied')} />
+                      <Label htmlFor="earth" className="font-semibold">Temporary Earthing Applied</Label>
+                   </div>
+                </div>
+            </div>
+
+            {/* Original Isolation Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-4 border rounded-lg space-y-3">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-red-600" />
-                  <Label className="font-bold text-red-700">Electrical Isolation Required?</Label>
+                  <AlertTriangle className="h-4 w-4 text-orange-600" />
+                  <Label className="font-bold text-orange-700">Electrical Isolation Obtained?</Label>
                 </div>
                 <Controller
                   name="electrical_isolation_obtained"
                   control={control}
                   render={({ field }) => (
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      value={field.value || ''}
-                      className="flex space-x-4 items-center"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="iso_yes" />
-                        <Label htmlFor="iso_yes">Yes</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="iso_no" />
-                        <Label htmlFor="iso_no">No</Label>
-                      </div>
+                    <RadioGroup onValueChange={field.onChange} value={field.value} className="flex gap-4">
+                      <div className="flex items-center gap-2"><RadioGroupItem value="yes" id="iso_y"/><Label htmlFor="iso_y">Yes</Label></div>
+                      <div className="flex items-center gap-2"><RadioGroupItem value="no" id="iso_n"/><Label htmlFor="iso_n">No</Label></div>
                     </RadioGroup>
                   )}
                 />
-                <Label className="text-xs text-gray-500">If Yes, indicate Isolation Time</Label>
                 <div className="flex gap-2">
-                  <Input type="text" placeholder="From" {...register('isolation_from')} />
-                  <Input type="text" placeholder="To" {...register('isolation_to')} />
+                   <Input placeholder="Time From" {...register('isolation_from')} />
+                   <Input placeholder="Time To" {...register('isolation_to')} />
                 </div>
               </div>
-              <div className="p-4 border rounded-lg md:col-span-2 space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label>Other Kind of Block / isolation required</Label>
-                  <Checkbox id="other_block_required" {...register('other_block_required')} />
+
+              {/* LOTO / Block Fields */}
+              <div className="p-4 border rounded-lg space-y-3">
+                <div className="flex justify-between">
+                   <Label>Other Block / Lock Box Details</Label>
+                   <div className="flex items-center gap-2">
+                      <Checkbox {...register('loto_applied')} />
+                      <span className="text-xs font-bold text-red-600">LOTO APPLIED</span>
+                   </div>
                 </div>
-                <Textarea
-                  id="other_block_describe"
-                  {...register('other_block_describe')}
-                  className="h-28"
-                  placeholder="Describe other block/isolation"
-                />
+                <div className="flex items-center gap-2 mb-2">
+                   <Checkbox id="other_block_required" {...register('other_block_required')} />
+                   <Label htmlFor="other_block_required">Other Block Required</Label>
+                </div>
+                <Input {...register('lock_box_number')} placeholder="Lock Box No / Tag No" />
+                <Textarea {...register('other_block_describe')} placeholder="Describe other block/isolation..." className="h-20 mt-2" />
               </div>
             </div>
           </section>
 
           <Separator />
 
-          {/* Signatures & Attendees */}
+          {/* 8. DECLARATIONS (Added for Completeness) */}
+          <section className="bg-gray-50 p-6 rounded-lg border border-gray-100">
+             <h4 className="font-bold text-gray-800 mb-2">Declarations</h4>
+             <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
+              <li>I certify that the equipment identified above has been isolated, locked, and tagged out (where applicable).</li>
+              <li>Voltage has been tested and verified as ZERO (Dead).</li>
+              <li>Temporary earthing has been applied where necessary for safety.</li>
+              <li>I agree to work within the conditions indicated on this permit.</li>
+            </ul>
+          </section>
+
+          {/* 9. AUTHORIZATION & SIGNATURES */}
           <section className="space-y-4">
-            <h3 className="font-semibold text-lg text-gray-700">8. Authorization / Signatures</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <h3 className="font-semibold text-lg text-gray-700">9. Authorization / Signatures</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-60">
               <div>
-                <Label htmlFor="authorizer_name">Name of person authorising for work</Label>
-                <Input id="authorizer_name" {...register('authorizer_name')} className="mt-1" />
+                <Label htmlFor="authorizer_name">Name of Authorizer (SSE-Office)</Label>
+                <Input id="authorizer_name" {...register('authorizer_name')} className="mt-1" disabled placeholder="Pending Authorization..." />
               </div>
               <div>
-                <Label htmlFor="authorizer_signature_date">Date (authoriser signature)</Label>
-                <Input type="date" id="authorizer_signature_date" {...register('authorizer_signature_date')} className="mt-1" />
+                <Label htmlFor="authorizer_signature_date">Date</Label>
+                <Input type="date" id="authorizer_signature_date" {...register('authorizer_signature_date')} className="mt-1" disabled />
               </div>
             </div>
 
-            <h3 className="font-semibold text-lg text-gray-700 mt-4">Attendees Details</h3>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[50px]">Sr. No</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Phone No</TableHead>
-                  <TableHead className="w-[50px]">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {attendeeFields.map((field, index) => (
-                  <TableRow key={field.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>
-                      <Input {...register(`attendees.${index}.name`)} />
-                    </TableCell>
-                    <TableCell>
-                      <Input {...register(`attendees.${index}.phone`)} />
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        onClick={() => removeAttendee(index)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => appendAttendee({ name: '', phone: '' })}
-              className="mt-2"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Row
+            <h3 className="font-semibold text-lg text-gray-700 mt-4">Attendees Details (Toolbox Talk)</h3>
+            <div className="border rounded-md">
+                <Table>
+                <TableHeader className="bg-gray-100">
+                    <TableRow>
+                    <TableHead className="w-[50px]">#</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Phone No</TableHead>
+                    <TableHead className="w-[50px]">Action</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {attendeeFields.map((field, index) => (
+                    <TableRow key={field.id}>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell><Input {...register(`attendees.${index}.name`)} className="border-0 bg-transparent" placeholder="Name"/></TableCell>
+                        <TableCell><Input {...register(`attendees.${index}.phone`)} className="border-0 bg-transparent" placeholder="Phone"/></TableCell>
+                        <TableCell>
+                        <Button type="button" variant="ghost" size="icon" onClick={() => removeAttendee(index)}>
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                        </TableCell>
+                    </TableRow>
+                    ))}
+                </TableBody>
+                </Table>
+            </div>
+            <Button type="button" variant="outline" onClick={() => appendAttendee({ name: '', phone: '' })} className="mt-2">
+              <Plus className="h-4 w-4 mr-2" /> Add Attendee
             </Button>
           </section>
 
+          <Separator />
+          
+          {/* 10. PERIMETER (Added for Completeness) */}
+          <section className="bg-gray-50 p-4 rounded border">
+             <h4 className="font-bold text-gray-700">Perimeter & Area Safety</h4>
+             <ul className="list-disc list-inside text-sm text-gray-600 mt-2">
+                <li>Warning signs/barricades placed around the live electrical work area.</li>
+                <li>Unauthorized personnel are restricted from entering the zone.</li>
+             </ul>
+          </section>
+
         </CardContent>
-        <CardFooter>
-          <Button type="submit" className="w-full md:w-auto h-12 text-lg" disabled={mutation.isPending}>
+        <CardFooter className="bg-gray-50 border-t p-6 flex justify-end gap-4">
+          <Button type="button" variant="outline" onClick={() => navigate('/dashboard')}>Cancel</Button>
+          <Button type="submit" className="w-full md:w-auto h-12 text-lg bg-blue-600 hover:bg-blue-700 text-white min-w-[250px]" disabled={mutation.isPending || !selectedMachineId}>
             {mutation.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Processing Permit...
-              </>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Processing Permit...</>
             ) : (
               'Create Permit & Trigger LOTO'
             )}
