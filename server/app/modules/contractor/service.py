@@ -1,310 +1,234 @@
+# FILE: server/app/modules/contractor/service.py
 from sqlmodel import Session, select
+from sqlalchemy.orm import selectinload
 from uuid import UUID
 from typing import List, Optional
 from datetime import date, datetime
 from fastapi import HTTPException, status
 
 from app.modules.contractor.models import (
-    Contractor, 
-    Worker, 
-    ContractorAudit, 
-    ContractorStatus
+    Contractor, Worker, ContractorAudit, ContractorStatus,
+    Contract, ContractChecklist, ContractObligation, GatePass, WorkerCertification,
+    ChecklistPhase, ContractStatus, GatePassState, ObligationType
 )
 from app.modules.contractor.schemas import (
-    ContractorCreate, 
-    ContractorUpdate, 
-    ContractorStatusUpdate,
-    WorkerCreate, 
-    WorkerUpdate,
-    WorkerValidationResult
+    ContractorCreate, ContractorUpdate, ContractorStatusUpdate,
+    ContractCreate, WorkerCreate, WorkerUpdate, WorkerValidationResult,
+    WorkerCertificationCreate
 )
-
 
 class ContractorService:
     
     @staticmethod
-    def validate_contractor_for_permit(db: Session, contractor_id: UUID) -> bool:
-        """
-        Safety Firewall: Validates if a contractor is eligible for work permits.
-        """
+    def validate_contractor_for_permit(db: Session, contractor_id: UUID, empanelment_required: str = None) -> bool:
+        """Safety Firewall: Validates Contractor Company Rules."""
         contractor = db.get(Contractor, contractor_id)
         if not contractor:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Contractor with ID {contractor_id} not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Contractor not found")
         
         if contractor.status in [ContractorStatus.BLACKLISTED, ContractorStatus.SUSPENDED]:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Contractor {contractor.company_name} is {contractor.status.value} and cannot work on permits"
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Contractor {contractor.company_name} is {contractor.status.value}")
         
         today = date.today()
         if contractor.empanelment_valid_upto < today:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Contractor {contractor.company_name} empanelment expired on {contractor.empanelment_valid_upto}"
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Empanelment expired on {contractor.empanelment_valid_upto}")
         
         if contractor.insurance_valid_upto and contractor.insurance_valid_upto < today:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Contractor {contractor.company_name} insurance expired on {contractor.insurance_valid_upto}"
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Insurance expired on {contractor.insurance_valid_upto}")
+            
+        if empanelment_required and contractor.empanelment_category != "GENERAL" and contractor.empanelment_category != empanelment_required:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Contractor not empanelled for {empanelment_required} works.")
         
         return True
-    
-    @staticmethod
-    def validate_worker_for_permit(db: Session, worker_id: UUID) -> bool:
-        """
-        Safety Firewall: Validates if a worker is eligible for work permits.
-        """
-        worker = db.get(Worker, worker_id)
-        if not worker:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Worker with ID {worker_id} not found"
-            )
-        
-        if worker.is_blacklisted:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Worker {worker.full_name} is blacklisted and cannot work on permits"
-            )
-        
-        today = date.today()
-        if worker.medical_valid_upto < today:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Worker {worker.full_name} medical fitness expired on {worker.medical_valid_upto}"
-            )
-        
-        if worker.safety_training_valid_upto < today:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Worker {worker.full_name} safety training expired on {worker.safety_training_valid_upto}"
-            )
-        
-        return True
-    
-    @staticmethod
-    def log_audit_event(
-        db: Session, 
-        contractor_id: UUID, 
-        action: str, 
-        old_value: Optional[str] = None,
-        new_value: Optional[str] = None,
-        changed_by: Optional[str] = None
-    ) -> ContractorAudit:
-        """
-        Helper function to log audit events for contractors.
-        """
-        audit = ContractorAudit(
-            contractor_id=contractor_id,
-            action=action,
-            old_value=old_value,
-            new_value=new_value,
-            changed_by=changed_by
-        )
-        db.add(audit)
-        db.commit()
-        db.refresh(audit)
-        return audit
     
     @staticmethod
     def create_contractor(db: Session, contractor_data: ContractorCreate) -> Contractor:
-        """
-        Creates a new contractor.
-        """
-        existing = db.execute(
-            select(Contractor).where(Contractor.vendor_code == contractor_data.vendor_code)
-        ).scalars().first()
-        if existing:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Contractor with vendor code {contractor_data.vendor_code} already exists"
-            )
+        # Check unique constraints
+        if db.execute(select(Contractor).where(Contractor.vendor_code == contractor_data.vendor_code)).scalars().first():
+            raise HTTPException(status_code=400, detail="Vendor code already exists")
+        if db.execute(select(Contractor).where(Contractor.company_name == contractor_data.company_name)).scalars().first():
+            raise HTTPException(status_code=400, detail="Company name already exists")
         
-        existing = db.execute(
-            select(Contractor).where(Contractor.company_name == contractor_data.company_name)
-        ).scalars().first()
-        if existing:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Contractor with company name {contractor_data.company_name} already exists"
-            )
-        
+        # Subcontractor verification
+        if contractor_data.parent_contractor_id:
+            parent = db.get(Contractor, contractor_data.parent_contractor_id)
+            if not parent:
+                raise HTTPException(status_code=404, detail="Parent contractor not found")
+
         contractor = Contractor.model_validate(contractor_data.model_dump())
         db.add(contractor)
         db.commit()
         db.refresh(contractor)
-        
-        ContractorService.log_audit_event(
-            db, contractor.id, "CONTRACTOR_CREATED", 
-            new_value=f"Created {contractor.company_name}"
-        )
-        
         return contractor
     
     @staticmethod
     def get_contractors(db: Session, status: Optional[ContractorStatus] = None) -> List[Contractor]:
-        """
-        Gets all contractors, optionally filtered by status.
-        """
-        query = select(Contractor)
+        query = select(Contractor).options(selectinload(Contractor.subcontractors))
         if status:
             query = query.where(Contractor.status == status)
-        # --- FIX: Changed db.exec to db.execute ---
         return db.execute(query.order_by(Contractor.company_name)).scalars().all()
     
     @staticmethod
     def get_contractor_by_id(db: Session, contractor_id: UUID) -> Contractor:
-        """
-        Gets a contractor by ID.
-        """
-        contractor = db.get(Contractor, contractor_id)
+        contractor = db.execute(
+            select(Contractor).options(selectinload(Contractor.subcontractors)).where(Contractor.id == contractor_id)
+        ).scalar_one_or_none()
         if not contractor:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Contractor with ID {contractor_id} not found"
-            )
+            raise HTTPException(status_code=404, detail="Contractor not found")
         return contractor
-    
+
+
+class ContractService:
     @staticmethod
-    def update_contractor(db: Session, contractor_id: UUID, contractor_data: ContractorUpdate) -> Contractor:
-        """
-        Updates a contractor.
-        """
-        contractor = ContractorService.get_contractor_by_id(db, contractor_id)
+    def create_contract(db: Session, data: ContractCreate) -> Contract:
+        contractor = db.get(Contractor, data.contractor_id)
+        if not contractor:
+            raise HTTPException(status_code=404, detail="Contractor not found")
         
-        changes = []
-        for field, value in contractor_data.model_dump(exclude_unset=True).items():
-            if value is not None and getattr(contractor, field) != value:
-                old_val = str(getattr(contractor, field))
-                setattr(contractor, field, value)
-                changes.append(f"{field}: {old_val} -> {value}")
+        contract = Contract.model_validate(data.model_dump())
+        db.add(contract)
+        db.flush()
         
-        if changes:
-            db.commit()
-            db.refresh(contractor)
+        # Auto-seed Standard Mobilization Checklist
+        default_mob_tasks =["Submit Insurance Details", "Worker ID Card List Provided", "Site Familiarization Completed", "Tools & Plant Inspected"]
+        for task in default_mob_tasks:
+            chk = ContractChecklist(contract_id=contract.id, phase=ChecklistPhase.MOBILIZATION, task_name=task)
+            db.add(chk)
             
-            ContractorService.log_audit_event(
-                db, contractor_id, "CONTRACTOR_UPDATED",
-                old_value="; ".join(changes),
-                new_value="Updated fields"
+        # Auto-seed Standard Obligations
+        if contract.end_date:
+            obl = ContractObligation(
+                contract_id=contract.id, title="Initial PF/ESI Submission",
+                type=ObligationType.PF_ESI, due_date=date.today()
             )
-        
-        return contractor
-    
-    @staticmethod
-    def update_contractor_status(
-        db: Session, 
-        contractor_id: UUID, 
-        status_update: ContractorStatusUpdate,
-        changed_by: str
-    ) -> Contractor:
-        """
-        Updates contractor status and logs the change.
-        """
-        contractor = ContractorService.get_contractor_by_id(db, contractor_id)
-        old_status = contractor.status.value
-        
-        contractor.status = status_update.status
+            db.add(obl)
+
         db.commit()
-        db.refresh(contractor)
+        db.refresh(contract)
+        return contract
         
-        ContractorService.log_audit_event(
-            db, contractor_id, "STATUS_CHANGED",
-            old_value=f"Status: {old_status}",
-            new_value=f"Status: {contractor.status.value}; Reason: {status_update.reason}",
-            changed_by=changed_by
-        )
+    @staticmethod
+    def get_contracts_by_contractor(db: Session, contractor_id: UUID) -> List[Contract]:
+        query = select(Contract).options(selectinload(Contract.checklists), selectinload(Contract.obligations)).where(Contract.contractor_id == contractor_id)
+        return db.execute(query).scalars().all()
         
-        return contractor
+    @staticmethod
+    def toggle_checklist_item(db: Session, checklist_id: UUID, user_id: UUID) -> ContractChecklist:
+        item = db.get(ContractChecklist, checklist_id)
+        if not item:
+            raise HTTPException(status_code=404, detail="Checklist item not found")
+            
+        item.is_completed = not item.is_completed
+        item.completed_at = datetime.utcnow() if item.is_completed else None
+        item.completed_by_id = user_id if item.is_completed else None
+        db.add(item)
+        db.flush()
+        
+        # Recalculate Contract Progress
+        contract = db.get(Contract, item.contract_id)
+        phase_items =[c for c in contract.checklists if c.phase == item.phase]
+        completed = sum(1 for c in phase_items if c.is_completed)
+        progress = (completed / len(phase_items)) * 100 if len(phase_items) > 0 else 0
+        
+        if item.phase == ChecklistPhase.MOBILIZATION:
+            contract.mobilization_progress = progress
+        else:
+            contract.demobilization_progress = progress
+            
+        db.add(contract)
+        db.commit()
+        db.refresh(item)
+        return item
 
 
 class WorkerService:
     
     @staticmethod
+    def validate_worker_for_permit(db: Session, worker_id: UUID) -> bool:
+        worker = db.get(Worker, worker_id)
+        if not worker:
+            raise HTTPException(status_code=404, detail="Worker not found")
+        if worker.is_blacklisted:
+            raise HTTPException(status_code=400, detail=f"Worker {worker.full_name} is blacklisted.")
+        
+        today = date.today()
+        if worker.medical_valid_upto < today:
+            raise HTTPException(status_code=400, detail=f"{worker.full_name} medical expired.")
+        if worker.safety_training_valid_upto < today:
+            raise HTTPException(status_code=400, detail=f"{worker.full_name} safety training expired.")
+            
+        return True
+
+    @staticmethod
     def create_worker(db: Session, worker_data: WorkerCreate) -> Worker:
-        """
-        Creates a new worker.
-        """
-        contractor = db.get(Contractor, worker_data.contractor_id)
-        if not contractor:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Contractor with ID {worker_data.contractor_id} not found"
-            )
-        
-        existing = db.execute(
-            select(Worker).where(Worker.id_proof_number == worker_data.id_proof_number)
-        ).scalars().first()
-        if existing:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Worker with ID proof number {worker_data.id_proof_number} already exists"
-            )
-        
+        if db.execute(select(Worker).where(Worker.id_proof_number == worker_data.id_proof_number)).scalars().first():
+            raise HTTPException(status_code=400, detail="Worker ID proof already exists")
+            
         worker = Worker.model_validate(worker_data.model_dump())
         db.add(worker)
         db.commit()
         db.refresh(worker)
-        
         return worker
-    
+        
     @staticmethod
     def get_workers_by_contractor(db: Session, contractor_id: UUID) -> List[Worker]:
-        """
-        Gets all workers for a specific contractor.
-        """
-        # --- FIX: Changed db.exec to db.execute ---
-        return db.execute(
-            select(Worker).where(Worker.contractor_id == contractor_id)
-            .order_by(Worker.full_name)
-        ).scalars().all()
-    
+        return db.execute(select(Worker).options(selectinload(Worker.certifications)).where(Worker.contractor_id == contractor_id)).scalars().all()
+
     @staticmethod
-    def get_worker_by_id(db: Session, worker_id: UUID) -> Worker:
-        """
-        Gets a worker by ID.
-        """
+    def process_gate_scan(db: Session, worker_id: UUID, direction: str, scanned_by: UUID) -> GatePass:
+        """The Enterprise Gate Pass Logic"""
         worker = db.get(Worker, worker_id)
         if not worker:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Worker with ID {worker_id} not found"
-            )
-        return worker
-    
-    @staticmethod
-    def update_worker(db: Session, worker_id: UUID, worker_data: WorkerUpdate) -> Worker:
-        """
-        Updates a worker.
-        """
-        worker = WorkerService.get_worker_by_id(db, worker_id)
-        
-        for field, value in worker_data.model_dump(exclude_unset=True).items():
-            if value is not None:
-                setattr(worker, field, value)
-        
-        db.commit()
-        db.refresh(worker)
-        
-        return worker
-    
-    @staticmethod
-    def validate_worker_for_permit_with_result(db: Session, worker_id: UUID) -> WorkerValidationResult:
-        """
-        Validates worker and returns result object (for frontend).
-        """
-        try:
-            ContractorService.validate_worker_for_permit(db, worker_id)
-            return WorkerValidationResult(is_eligible=True)
-        except HTTPException as e:
-            return WorkerValidationResult(is_eligible=False, reason=e.detail)
-
+            raise HTTPException(status_code=404, detail="Worker not found")
+            
+        if direction.upper() == "IN":
+            if worker.gate_pass_state == GatePassState.INSIDE:
+                raise HTTPException(status_code=400, detail="Worker is already INSIDE the workshop.")
+                
+            # SAFETY FIREWALL CHECK
+            today = date.today()
+            deny_reason = None
+            if worker.is_blacklisted:
+                deny_reason = "WORKER IS BLACKLISTED"
+            elif worker.medical_valid_upto < today:
+                deny_reason = f"Medical expired on {worker.medical_valid_upto}"
+            elif worker.safety_training_valid_upto < today:
+                deny_reason = f"Safety training expired on {worker.safety_training_valid_upto}"
+                
+            if deny_reason:
+                # Log the denied attempt
+                gp = GatePass(worker_id=worker.id, status="DENIED", denial_reason=deny_reason, scanned_by_id=scanned_by)
+                db.add(gp)
+                db.commit()
+                raise HTTPException(status_code=403, detail=f"ACCESS DENIED: {deny_reason}")
+                
+            # Allow Entry
+            gp = GatePass(worker_id=worker.id, status="APPROVED", scanned_by_id=scanned_by)
+            worker.gate_pass_state = GatePassState.INSIDE
+            db.add(gp)
+            db.add(worker)
+            db.commit()
+            db.refresh(gp)
+            return gp
+            
+        elif direction.upper() == "OUT":
+            if worker.gate_pass_state == GatePassState.OUTSIDE:
+                raise HTTPException(status_code=400, detail="Worker is already OUTSIDE.")
+            
+            # Find the open gate pass
+            active_gp = db.execute(select(GatePass).where(GatePass.worker_id == worker.id, GatePass.exit_time == None, GatePass.status == "APPROVED")).scalars().first()
+            if active_gp:
+                active_gp.exit_time = datetime.utcnow()
+                db.add(active_gp)
+                
+            worker.gate_pass_state = GatePassState.OUTSIDE
+            db.add(worker)
+            db.commit()
+            return active_gp or GatePass(worker_id=worker.id, status="MANUAL_OUT")
+            
+        else:
+            raise HTTPException(status_code=400, detail="Direction must be IN or OUT")
 
 contractor_service = ContractorService()
+contract_service = ContractService()
 worker_service = WorkerService()

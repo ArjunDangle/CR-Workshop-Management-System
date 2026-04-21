@@ -8,7 +8,7 @@ from sqlalchemy import Column, Date, Time
 
 if TYPE_CHECKING:
     from app.modules.machine.machine_models import Machine, MaintenancePlan
-    from app.modules.contractor.models import Contractor, Worker
+    from app.modules.contractor.models import Contractor, Worker, Contract # <- Added Contract
     from app.modules.incident.models import Incident
 
 
@@ -72,7 +72,6 @@ class User(UserBase, table=True):
         sa_relationship_kwargs={"primaryjoin": "User.id==Permit.inspector_id"}
     )
     
-    # Incident Relationship Fixed
     reported_incidents: List["Incident"] = Relationship(
         back_populates="reported_by",
         sa_relationship_kwargs={"primaryjoin": "User.id==Incident.reported_by_id"}
@@ -179,7 +178,10 @@ class PermitBase(SQLModel):
     machine_id: Optional[UUID] = Field(default=None, foreign_key="machine.id", index=True)
     maintenance_plan_id: Optional[UUID] = Field(default=None, foreign_key="maintenanceplan.id")
     is_critical: bool = Field(default=False)
+    
+    # --- UPDATE: Added Contract linkage ---
     contractor_id: Optional[UUID] = Field(default=None, foreign_key="contractor.id", index=True)
+    contract_id: Optional[UUID] = Field(default=None, foreign_key="contract.id", index=True)
 
     handback_declaration: Optional[str] = Field(default=None, max_length=1500)
     handback_time: Optional[datetime.datetime] = Field(default=None)
@@ -222,9 +224,13 @@ class Permit(PermitBase, table=True):
     contractor: Optional["Contractor"] = Relationship(
         sa_relationship_kwargs={"primaryjoin": "Permit.contractor_id==Contractor.id", "lazy": "selectin"}
     )
+    # --- UPDATE: Contract Relationship ---
+    contract: Optional["Contract"] = Relationship(
+        sa_relationship_kwargs={"primaryjoin": "Permit.contract_id==Contract.id", "lazy": "selectin"}
+    )
+
     worker_links: List["PermitWorkerLink"] = Relationship(back_populates="permit")
     
-    # Incident Relationship Fixed
     incidents: List["Incident"] = Relationship(
         back_populates="permit",
         sa_relationship_kwargs={"primaryjoin": "Permit.id==Incident.permit_id"}

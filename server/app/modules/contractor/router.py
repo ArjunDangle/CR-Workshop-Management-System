@@ -1,161 +1,81 @@
+# FILE: server/app/modules/contractor/router.py
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlmodel import Session
 from uuid import UUID
 from typing import List
 
 from app.core.database import get_db
+from app.modules.auth.auth_dependencies import get_current_active_user
+from app.models import User
 from app.modules.contractor.models import ContractorStatus
 from app.modules.contractor.schemas import (
-    ContractorCreate,
-    ContractorRead,
-    ContractorUpdate,
-    ContractorStatusUpdate,
-    WorkerCreate,
-    WorkerRead,
-    WorkerUpdate,
-    WorkerValidationResult
+    ContractorCreate, ContractorRead, ContractorTreeRead, ContractorUpdate, ContractorStatusUpdate,
+    ContractCreate, ContractRead,
+    WorkerCreate, WorkerRead, WorkerUpdate, WorkerValidationResult,
+    GatePassScan, GatePassRead
 )
-from app.modules.contractor.service import (
-    contractor_service,
-    worker_service
-)
-
+from app.modules.contractor.service import contractor_service, worker_service, contract_service
 
 router = APIRouter(prefix="/contractors", tags=["contractors"])
 
-
-# Contractor Endpoints
+# --- CONTRACTOR ENDPOINTS ---
 @router.post("/", response_model=ContractorRead, status_code=status.HTTP_201_CREATED)
-def create_contractor(
-    contractor_data: ContractorCreate,
-    db: Session = Depends(get_db)
-):
-    """Register a new contractor/vendor."""
+def create_contractor(contractor_data: ContractorCreate, db: Session = Depends(get_db)):
     return contractor_service.create_contractor(db, contractor_data)
 
-
-@router.get("/", response_model=List[ContractorRead])
-def get_contractors(
-    status: ContractorStatus = Query(None, description="Filter by contractor status"),
-    db: Session = Depends(get_db)
-):
-    """List all contractors, optionally filtered by status."""
+@router.get("/", response_model=List[ContractorTreeRead])
+def get_contractors(status: ContractorStatus = Query(None), db: Session = Depends(get_db)):
+    # Tree Read automatically nests subcontractors
     return contractor_service.get_contractors(db, status)
 
-
-@router.get("/{contractor_id}", response_model=ContractorRead)
-def get_contractor(
-    contractor_id: UUID,
-    db: Session = Depends(get_db)
-):
-    """Get contractor details by ID."""
+@router.get("/{contractor_id}", response_model=ContractorTreeRead)
+def get_contractor(contractor_id: UUID, db: Session = Depends(get_db)):
     return contractor_service.get_contractor_by_id(db, contractor_id)
 
+# --- CONTRACT ENDPOINTS (Jobs/Tenders) ---
+@router.post("/{contractor_id}/contracts", response_model=ContractRead, status_code=status.HTTP_201_CREATED)
+def create_contract(contractor_id: UUID, data: ContractCreate, db: Session = Depends(get_db)):
+    data.contractor_id = contractor_id
+    return contract_service.create_contract(db, data)
 
-@router.patch("/{contractor_id}", response_model=ContractorRead)
-def update_contractor(
-    contractor_id: UUID,
-    contractor_data: ContractorUpdate,
-    db: Session = Depends(get_db)
-):
-    """Update contractor details."""
-    return contractor_service.update_contractor(db, contractor_id, contractor_data)
+@router.get("/{contractor_id}/contracts", response_model=List[ContractRead])
+def get_contracts(contractor_id: UUID, db: Session = Depends(get_db)):
+    return contract_service.get_contracts_by_contractor(db, contractor_id)
 
+@router.patch("/checklists/{checklist_id}/toggle")
+def toggle_contract_checklist(checklist_id: UUID, db: Session = Depends(get_db), current_user: User = Depends(get_current_active_user)):
+    return contract_service.toggle_checklist_item(db, checklist_id, current_user.id)
 
-@router.patch("/{contractor_id}/status", response_model=ContractorRead)
-def update_contractor_status(
-    contractor_id: UUID,
-    status_update: ContractorStatusUpdate,
-    db: Session = Depends(get_db)
-):
-    """Update contractor status with audit trail."""
-    # TODO: Get current user from auth context for audit trail
-    changed_by = "system"  # This should come from authentication
-    return contractor_service.update_contractor_status(
-        db, contractor_id, status_update, changed_by
-    )
-
-
-# Worker Endpoints
-@router.post("/{contractor_id}/workers", response_model=WorkerRead, status_code=status.HTTP_201_CREATED)
-def create_worker(
-    contractor_id: UUID,
-    worker_data: WorkerCreate,
-    db: Session = Depends(get_db)
-):
-    """Add a worker to a specific contractor."""
-    # Override contractor_id from path to ensure consistency
-    worker_data.contractor_id = contractor_id
-    return worker_service.create_worker(db, worker_data)
-
-
-# FILE: server/app/modules/contractor/router.py
-
-@router.get("/{contractor_id}/workers", response_model=List[WorkerRead])  # FIX 1: Use WorkerRead directly
-def get_contractor_workers(
-    contractor_id: UUID,
-    db: Session = Depends(get_db),
-    # current_user dependency is missing from imports in the file you shared, 
-    # make sure 'get_current_active_user' and 'User' are imported if you use them.
-    # If not needed for this specific public endpoint, you can remove the dependency.
-):
-    """
-    Get all workers for a specific contractor.
-    """
-    # 1. Fetch Data
+# --- WORKER ENDPOINTS ---
+@router.get("/{contractor_id}/workers", response_model=List[WorkerRead])
+def get_contractor_workers(contractor_id: UUID, db: Session = Depends(get_db)):
     contractor = contractor_service.get_contractor_by_id(db, contractor_id)
     workers = worker_service.get_workers_by_contractor(db, contractor_id)
-
-    # 2. Process Data
-    results = []
+    results =[]
     for worker in workers:
-        # FIX 2: Use WorkerRead directly (remove worker_schemas.)
         worker_data = WorkerRead.model_validate(worker)
-        
-        # Attach the contractor name manually
         worker_data.contractor_name = contractor.company_name
-        
         results.append(worker_data)
-
     return results
-   
 
-
-# Worker-specific endpoints (standalone)
 worker_router = APIRouter(prefix="/workers", tags=["workers"])
 
-
-@worker_router.get("/{worker_id}", response_model=WorkerRead)
-def get_worker(
-    worker_id: UUID,
-    db: Session = Depends(get_db)
+@worker_router.post("/{worker_id}/gate-scan", response_model=GatePassRead)
+def scan_worker_gate_pass(
+    worker_id: UUID, 
+    scan_data: GatePassScan, 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_active_user)
 ):
-    """Get worker details by ID."""
-    worker = worker_service.get_worker_by_id(db, worker_id)
-    # Add contractor_name for frontend convenience
-    contractor = contractor_service.get_contractor_by_id(db, worker.contractor_id)
-    worker.contractor_name = contractor.company_name
-    return worker
-
-
-@worker_router.patch("/{worker_id}", response_model=WorkerRead)
-def update_worker(
-    worker_id: UUID,
-    worker_data: WorkerUpdate,
-    db: Session = Depends(get_db)
-):
-    """Update worker details."""
-    return worker_service.update_worker(db, worker_id, worker_data)
-
+    """The RPF Security Gate Scan Endpoint"""
+    return worker_service.process_gate_scan(db, worker_id, scan_data.direction, current_user.id)
 
 @worker_router.get("/{worker_id}/validate", response_model=WorkerValidationResult)
-def validate_worker_for_permit(
-    worker_id: UUID,
-    db: Session = Depends(get_db)
-):
-    """Validate if a worker is eligible for work permits (Frontend Helper)."""
-    return worker_service.validate_worker_for_permit_with_result(db, worker_id)
+def validate_worker_for_permit(worker_id: UUID, db: Session = Depends(get_db)):
+    try:
+        worker_service.validate_worker_for_permit(db, worker_id)
+        return WorkerValidationResult(is_eligible=True)
+    except HTTPException as e:
+        return WorkerValidationResult(is_eligible=False, reason=e.detail)
 
-
-# Include both routers
 router.include_router(worker_router)

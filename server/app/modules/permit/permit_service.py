@@ -14,6 +14,7 @@ from app.modules.machine.machine_models import MaintenanceTask
 from app.modules.permit import permit_repo, permit_schemas
 from app.modules.machine import machine_service
 from app.modules.contractor.service import contractor_service
+from app.modules.contractor.models import Contract, ContractStatus
 
 def _get_permit_type_for_user(user: User) -> str:
     if user.role.name == "SSE-Maintenance - MW":
@@ -73,18 +74,38 @@ def check_permit_conflicts(db: Session, permit_id: UUID) -> permit_schemas.Permi
 def create_permit(db: Session, permit_data: permit_schemas.PermitCreate, permittee: User) -> Permit:
     permit_type = _get_permit_type_for_user(permittee)
 
-    if permit_data.contractor_id:
-        contractor_service.validate_contractor_for_permit(db, permit_data.contractor_id)
+    # --- THE SAFETY FIREWALL UPDATES ---
     
+    # 1. Validate Contractor Company
+    if permit_data.contractor_id:
+        # Pass the permit type to verify Empanelment rules (e.g., Electrical permit needs Electrical Contractor)
+        contractor_service.validate_contractor_for_permit(db, permit_data.contractor_id, empanelment_required=permit_type.upper())
+    
+    # 2. Validate Specific Contract (The Job/Tender)
+    if hasattr(permit_data, 'contract_id') and permit_data.contract_id:
+        contract = db.get(Contract, permit_data.contract_id)
+        if not contract:
+            raise HTTPException(status_code=404, detail="Assigned Contract not found.")
+        
+        if contract.status != ContractStatus.ACTIVE:
+            raise HTTPException(status_code=400, detail=f"Cannot raise permit: Contract is currently {contract.status.value}.")
+            
+        if contract.mobilization_progress < 100.0:
+            raise HTTPException(status_code=400, detail=f"Cannot raise permit: Mobilization checklist is only {contract.mobilization_progress}%. Complete all safety mobilization checks first.")
+
+    # 3. Validate Individual Workers
     for worker_id in permit_data.worker_ids:
         contractor_service.validate_worker_for_permit(db, worker_id)
     
+    # -------------------------------------
+
     is_critical = False
     if permit_data.maintenance_plan_id:
         statement = select(MaintenanceTask).where(MaintenanceTask.plan_id == permit_data.maintenance_plan_id, MaintenanceTask.is_critical == True)
         if db.execute(statement).first():
             is_critical = True
 
+    # Rest of create_permit logic remains identical...
     new_permit = Permit.model_validate(
         permit_data.model_dump(exclude={"ppes", "attendees", "worker_ids"}),
         update={
