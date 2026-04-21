@@ -124,20 +124,17 @@ def get_permit_by_id(db: Session, permit_id: UUID) -> Permit:
 
 def get_permits_for_user(db: Session, user: User) -> List[Permit]:
     role_name = user.role.name
+    
+    # 1. Maintenance Workers only see their own permits
     if role_name.startswith("SSE-Maintenance"):
         return permit_repo.get_permits_by_permittee_id(db=db, user_id=user.id)
     
-    elif role_name == "SSE-Office":
-        pending_permits = permit_repo.get_permits_by_status(db=db, status="Pending Authorization")
-        extended_permits =[p for p in permit_repo.get_permits_by_status(db=db, status="Active") if p.extension_requested]
-        return pending_permits + extended_permits
+    # 2. Safety Officers & SSE-Office are administrators. 
+    # They receive the full list so the frontend dashboard can filter them into Active/Pending/History.
+    elif role_name in["SSE-Office", "Safety Officer"]:
+        return permit_repo.get_all_permits(db=db)
     
-    elif role_name == "Safety Officer":
-        pending = permit_repo.get_permits_by_status(db=db, status="Pending Approval")
-        closing = permit_repo.get_permits_by_status(db=db, status="Pending Closure")
-        return pending + closing
-    
-    return[]
+    return
 
 def authorize_permit(db: Session, permit_id: UUID, authorizer: User) -> Permit:
     if authorizer.role.name != "SSE-Office":

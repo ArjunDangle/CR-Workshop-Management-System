@@ -80,40 +80,48 @@ export const PermitListWidget: React.FC<PermitListWidgetProps> = ({ title, query
         <Alert variant="destructive"><AlertCircle className="h-4 w-4" /><AlertTitle>Error Loading Permits</AlertTitle><AlertDescription>{error.message}</AlertDescription></Alert>
     );
     if (!data || data.length === 0) return (
-        <div className="flex items-center justify-center h-24 text-muted-foreground"><FileText className="h-5 w-5 mr-2" /><p>{noPermitsMessage}</p></div>
+        <div className="flex flex-col items-center justify-center h-32 text-muted-foreground"><FileText className="h-8 w-8 mb-2 opacity-20" /><p>{noPermitsMessage}</p></div>
     );
 
     return (
-      <Table>
-        <TableHeader>
-          <TableRow><TableHead>Permit #</TableHead><TableHead>Status</TableHead><TableHead>Description</TableHead><TableHead>Created</TableHead><TableHead className="text-right">Action</TableHead></TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((permit) => {
-            const isOverdue = checkIsOverdue(permit);
-            return (
-                <TableRow key={permit.id}>
-                <TableCell className="font-medium">{permit.permit_no || permit.id.substring(0, 8)}</TableCell>
-                <TableCell><PermitStatusBadge status={permit.status} isOverdue={isOverdue} /></TableCell>
-                <TableCell>{permit.work_description}</TableCell>
-                <TableCell>{format(new Date(permit.created_at), 'dd-MMM-yyyy')}</TableCell>
-                <TableCell className="text-right">
-                    <Button asChild variant="ghost" size="sm">
-                    <Link to={`/permits/${permit.id}`}>View <ArrowRight className="h-4 w-4 ml-2" /></Link>
-                    </Button>
-                </TableCell>
-                </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+      <div className="overflow-x-auto">
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="whitespace-nowrap w-[150px]">Permit #</TableHead>
+              <TableHead className="whitespace-nowrap w-[150px]">Status</TableHead>
+              <TableHead className="min-w-[250px]">Description</TableHead>
+              <TableHead className="whitespace-nowrap w-[120px]">Created</TableHead>
+              <TableHead className="text-right whitespace-nowrap w-[100px]">Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((permit) => {
+              const isOverdue = checkIsOverdue(permit);
+              return (
+                  <TableRow key={permit.id} className="hover:bg-gray-50/50">
+                  <TableCell className="font-bold text-gray-700 whitespace-nowrap">{permit.permit_no || permit.id.substring(0, 8)}</TableCell>
+                  <TableCell className="whitespace-nowrap"><PermitStatusBadge status={permit.status} isOverdue={isOverdue} /></TableCell>
+                  <TableCell className="text-gray-600 max-w-[300px] truncate">{permit.work_description}</TableCell>
+                  <TableCell className="whitespace-nowrap text-gray-500 text-sm">{format(new Date(permit.created_at), 'dd-MMM-yyyy')}</TableCell>
+                  <TableCell className="text-right whitespace-nowrap">
+                      <Button asChild variant="ghost" size="sm" className="font-semibold text-blue-600 hover:text-blue-800">
+                      <Link to={`/permits/${permit.id}`}>View <ArrowRight className="h-4 w-4 ml-1" /></Link>
+                      </Button>
+                  </TableCell>
+                  </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
     );
   };
 
   return (
     <Card className={className}>
-      <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
-      <CardContent>{renderContent()}</CardContent>
+      <CardHeader className="bg-gray-50/50 border-b pb-4"><CardTitle className="text-lg">{title}</CardTitle></CardHeader>
+      <CardContent className="p-0">{renderContent()}</CardContent>
     </Card>
   );
 };

@@ -5,12 +5,12 @@ from datetime import datetime, date, timedelta, timezone
 from sqlmodel import Session, select
 from fastapi import HTTPException, status
 
-from .models import Incident, CAPA, IncidentWitness, IncidentSeverity, IncidentStatus, CAPAStatus, ReviewStatus
+from .models import Incident, CAPA, IncidentWitness, IncidentVictim, Investigation, IncidentSeverity, IncidentStatus, CAPAStatus, ReviewStatus, InvestigationStatus
 from .schemas import IncidentCreate, CAPACreate, IncidentWitnessCreate, IncidentReviewUpdate
 from app.modules.machine.machine_models import Machine
+from app.modules.contractor.models import Worker
 import app.modules.machine.machine_service as machine_service
 import app.modules.permit.permit_service as permit_service
-from app.modules.contractor.service import contractor_service
 
 class IncidentService:
     def __init__(self, db: Session):
@@ -26,19 +26,57 @@ class IncidentService:
     def create_incident(self, incident_data: IncidentCreate) -> Incident:
         try:
             new_code = self._generate_incident_code()
-            incident_dict = incident_data.model_dump()
+            
+            # Exclude nested lists from main Incident creation
+            incident_dict = incident_data.model_dump(exclude={"victim_ids", "witnesses", "investigation", "capas"})
             incident_dict["incident_code"] = new_code
             
-            # --- NEW: Calculate SLAs based on severity ---
-            # Major/Fatal must be investigated within 24h. Minor within 72h.
-            hours_to_investigate = 24 if incident_data.severity in[IncidentSeverity.MAJOR, IncidentSeverity.FATAL, IncidentSeverity.CRITICAL] else 72
+            hours_to_investigate = 24 if incident_data.severity in [IncidentSeverity.MAJOR, IncidentSeverity.FATAL, IncidentSeverity.CRITICAL] else 72
             incident_dict["investigation_due_at"] = datetime.now(timezone.utc) + timedelta(hours=hours_to_investigate)
+            
+            # Adjust Initial Status if RCA/CAPA is provided
+            if incident_data.investigation:
+                incident_dict["status"] = IncidentStatus.CAPA_PENDING if incident_data.capas else IncidentStatus.INVESTIGATING
             
             incident = Incident.model_validate(incident_dict)
             self.db.add(incident)
             self.db.flush()
 
-            if incident.severity in[IncidentSeverity.MAJOR, IncidentSeverity.FATAL, IncidentSeverity.CRITICAL]:
+            # 1. Process Victims
+            if incident_data.victim_ids:
+                for v_id in incident_data.victim_ids:
+                    worker = self.db.get(Worker, v_id)
+                    victim = IncidentVictim(
+                        incident_id=incident.id,
+                        worker_id=v_id,
+                        full_name=worker.full_name if worker else "Unknown",
+                        injury_details="Pending medical assessment"
+                    )
+                    self.db.add(victim)
+
+            # 2. Process Witnesses
+            if incident_data.witnesses:
+                for w_data in incident_data.witnesses:
+                    witness = IncidentWitness.model_validate(w_data, update={"incident_id": incident.id})
+                    self.db.add(witness)
+
+            # 3. Process Investigation (4M RCA)
+            if incident_data.investigation and incident_data.investigation.conclusion:
+                inv_data = incident_data.investigation.model_dump()
+                inv_data["incident_id"] = incident.id
+                inv_data["investigated_by_id"] = incident.reported_by_id
+                inv_data["status"] = InvestigationStatus.COMPLETED
+                investigation = Investigation(**inv_data)
+                self.db.add(investigation)
+
+            # 4. Process CAPAs
+            if incident_data.capas:
+                for c_data in incident_data.capas:
+                    capa = CAPA.model_validate(c_data, update={"incident_id": incident.id})
+                    self.db.add(capa)
+
+            # Enforce Kill Switch
+            if incident.severity in [IncidentSeverity.MAJOR, IncidentSeverity.FATAL, IncidentSeverity.CRITICAL]:
                 self._enforce_kill_switch(incident)
 
             self.db.commit()
@@ -70,7 +108,6 @@ class IncidentService:
         self.db.refresh(incident)
         return incident
 
-    # --- NEW: Link the permit that was generated to fix this fault ---
     def link_resolution_permit(self, incident_id: UUID, permit_id: UUID) -> Incident:
         incident = self.get_incident_by_id(incident_id)
         if not incident:
@@ -81,7 +118,6 @@ class IncidentService:
         self.db.refresh(incident)
         return incident
 
-    # --- NEW: Chain of Custody Review ---
     def review_incident(self, incident_id: UUID, reviewer_id: UUID, review_data: IncidentReviewUpdate) -> Incident:
         incident = self.get_incident_by_id(incident_id)
         if not incident:
@@ -95,7 +131,6 @@ class IncidentService:
         self.db.refresh(incident)
         return incident
 
-    # --- NEW: Add Witness Statement ---
     def add_witness(self, incident_id: UUID, witness_data: IncidentWitnessCreate) -> IncidentWitness:
         incident = self.get_incident_by_id(incident_id)
         if not incident:

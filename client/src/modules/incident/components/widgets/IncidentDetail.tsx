@@ -18,15 +18,24 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+
 import {
   getIncidentById,
   getCAPAsByIncidentId,
   updateCAPAStatus,
+  submitInvestigation,
+  addWitness,
   Incident,
   CAPA,
   CAPAStatus,
-  IncidentSeverity
+  IncidentSeverity,
+  RootCauseCategory
 } from '../../api';
 
 import { useAuthStore } from '@/modules/auth/authStore';
@@ -34,7 +43,7 @@ import { useAuthStore } from '@/modules/auth/authStore';
 // --- Helper Components ---
 
 const SLATimer = ({ dueAt, resolvedAt }: { dueAt?: string | null, resolvedAt?: string | null }) => {
-  const[timeLeft, setTimeLeft] = useState<string>('');
+  const [timeLeft, setTimeLeft] = useState<string>('');
   const [isOverdue, setIsOverdue] = useState(false);
 
   useEffect(() => {
@@ -56,7 +65,7 @@ const SLATimer = ({ dueAt, resolvedAt }: { dueAt?: string | null, resolvedAt?: s
     };
     
     calculateTime();
-    const timer = setInterval(calculateTime, 60000); // Update every minute
+    const timer = setInterval(calculateTime, 60000); 
     return () => clearInterval(timer);
   }, [dueAt, resolvedAt]);
 
@@ -95,8 +104,16 @@ const IncidentDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const { user } = useAuthStore();
-  const [activeTab, setActiveTab] = useState('timeline');
+  const[activeTab, setActiveTab] = useState('timeline');
+
+  // --- Modal States ---
+  const [isRcaOpen, setIsRcaOpen] = useState(false);
+  const [rcaData, setRcaData] = useState({ category: '', analysis: '', conclusion: '' });
+
+  const [isWitnessOpen, setIsWitnessOpen] = useState(false);
+  const[witnessData, setWitnessData] = useState({ name: '', statement: '' });
 
   // --- Data Queries ---
   const { data: incident, isLoading: incidentLoading } = useQuery({
@@ -105,13 +122,13 @@ const IncidentDetail: React.FC = () => {
     enabled: !!id,
   });
 
-  const { data: capas =[], isLoading: capasLoading } = useQuery({
-    queryKey: ['incident-capas', id],
+  const { data: capas = [], isLoading: capasLoading } = useQuery({
+    queryKey:['incident-capas', id],
     queryFn: () => getCAPAsByIncidentId(id!),
     enabled: !!id,
   });
 
-  // --- Mutations (Preserved from original) ---
+  // --- Mutations ---
   const capaStatusMutation = useMutation({
     mutationFn: ({ capaId, status }: { capaId: string; status: CAPAStatus }) =>
       updateCAPAStatus(capaId, status),
@@ -121,15 +138,39 @@ const IncidentDetail: React.FC = () => {
     },
   });
 
+  const rcaMutation = useMutation({
+    mutationFn: () => submitInvestigation(id!, {
+      root_cause_category: rcaData.category as RootCauseCategory || null,
+      root_cause_analysis: rcaData.analysis,
+      conclusion: rcaData.conclusion
+    }),
+    onSuccess: () => {
+      toast({ title: 'Success', description: '4M RCA Report submitted successfully.' });
+      setIsRcaOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['incident', id] });
+    },
+    onError: (err: any) => toast({ title: 'Error', description: err.message, variant: 'destructive' })
+  });
+
+  const witnessMutation = useMutation({
+    mutationFn: () => addWitness(id!, {
+      witness_name: witnessData.name,
+      statement: witnessData.statement
+    }),
+    onSuccess: () => {
+      toast({ title: 'Success', description: 'Witness statement recorded.' });
+      setIsWitnessOpen(false);
+      setWitnessData({ name: '', statement: '' });
+      queryClient.invalidateQueries({ queryKey: ['incident', id] });
+    },
+    onError: (err: any) => toast({ title: 'Error', description: err.message, variant: 'destructive' })
+  });
+
   const handleCAPAToggle = (capa: any) => {
-    const newStatus =
-      capa.status === CAPAStatus.COMPLETED
-        ? CAPAStatus.IN_PROGRESS
-        : CAPAStatus.COMPLETED;
+    const newStatus = capa.status === CAPAStatus.COMPLETED ? CAPAStatus.IN_PROGRESS : CAPAStatus.COMPLETED;
     capaStatusMutation.mutate({ capaId: capa.id, status: newStatus });
   };
 
-  // --- New Fault-to-Fix Workflow Action ---
   const handleDraftRepairPermit = () => {
     if (!incident) return;
     const queryParams = new URLSearchParams({
@@ -165,7 +206,6 @@ const IncidentDetail: React.FC = () => {
   const isMaintenanceUser = user?.role?.name?.startsWith('SSE-Maintenance');
   const isSafetyOfficer = user?.role?.name === 'Safety Officer';
 
-  // Dynamic Header Styling based on Severity
   const getHeaderStyle = (severity: string) => {
       switch(severity) {
           case 'FATAL': return "bg-black text-white";
@@ -246,7 +286,7 @@ const IncidentDetail: React.FC = () => {
               </Card>
           )}
 
-          {/* Details Card (Preserved ALL Original Fields) */}
+          {/* Details Card */}
           <Card>
             <CardHeader><CardTitle className="text-lg">Incident Details</CardTitle></CardHeader>
             <CardContent className="space-y-4">
@@ -267,19 +307,6 @@ const IncidentDetail: React.FC = () => {
                     <p className="font-medium">{incident.reported_by?.full_name || (incident as any).reported_by || 'System'}</p>
                   </div>
                 </div>
-                {/* Fallback for old contact_number field if it exists */}
-                {(incident as any).contact_number && (
-                  <>
-                    <Separator />
-                    <div className="flex items-start gap-3">
-                      <Phone className="h-5 w-5 text-gray-400 mt-0.5" />
-                      <div>
-                        <p className="text-sm text-gray-600">Contact</p>
-                        <p className="font-medium">{(incident as any).contact_number}</p>
-                      </div>
-                    </div>
-                  </>
-                )}
                 {incident.machine_id && (
                   <>
                     <Separator />
@@ -298,43 +325,6 @@ const IncidentDetail: React.FC = () => {
                     </div>
                   </>
                 )}
-                {incident.contractor_id && (
-                  <>
-                    <Separator />
-                    <div className="flex items-start gap-3">
-                      <Building className="h-5 w-5 text-gray-400 mt-0.5" />
-                      <div><p className="text-sm text-gray-600">Contractor Involved</p><p className="font-medium">{incident.contractor?.company_name || incident.contractor_id}</p></div>
-                    </div>
-                  </>
-                )}
-            </CardContent>
-          </Card>
-
-          {/* Stakeholder Matrix (Chain of Custody) */}
-          <Card>
-            <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Users className="w-5 h-5"/> Chain of Custody</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-                <div className="bg-gray-50 p-3 rounded-lg border">
-                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Reported By</p>
-                    <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-medium">{incident.reported_by?.full_name || (incident as any).reported_by || 'System'}</span>
-                    </div>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg border">
-                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Investigation Authority</p>
-                    <div className="flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-green-600" />
-                        <span className="text-sm font-medium">{incident.investigation?.investigated_by_id ? 'Safety Officer Assigned' : 'Pending Assignment'}</span>
-                    </div>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg border">
-                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">Final Review / Sign-off</p>
-                    <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-purple-600" />
-                        <span className="text-sm font-medium">{incident.reviewed_by_id ? 'Reviewed & Closed' : 'Pending Review'}</span>
-                    </div>
-                </div>
             </CardContent>
           </Card>
         </div>
@@ -358,7 +348,9 @@ const IncidentDetail: React.FC = () => {
                 <TabsContent value="timeline" className="m-0 space-y-8">
                     <div>
                         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Event Description</h3>
-                        <p className="text-base text-gray-800 leading-relaxed bg-white p-5 rounded-xl border shadow-sm border-gray-100">{incident.description}</p>
+                        <p className="text-base text-gray-800 leading-relaxed bg-white p-5 rounded-xl border shadow-sm border-gray-100 whitespace-pre-wrap">
+                          {incident.description}
+                        </p>
                     </div>
 
                     <div>
@@ -392,16 +384,6 @@ const IncidentDetail: React.FC = () => {
                                 />
                             )}
 
-                            {incident.resolution_permit_id && (
-                                <TimelineItem 
-                                    time={incident.reported_at} // Ideally from permit object
-                                    title="Resolution Permit Drafted" 
-                                    desc="SSE-Maintenance initiated the repair workflow." 
-                                    icon={Wrench} 
-                                    colorClass="border-purple-500 text-purple-600" 
-                                />
-                            )}
-
                             {incident.status === 'CLOSED' && (
                                 <TimelineItem 
                                     time={incident.resolved_at || (incident as any).updated_at} 
@@ -412,26 +394,13 @@ const IncidentDetail: React.FC = () => {
                                     isLast={true}
                                 />
                             )}
-                            
-                            {incident.status !== 'CLOSED' && (
-                                <div className="flex gap-4 opacity-50">
-                                    <div className="flex flex-col items-center">
-                                        <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
-                                            <Clock className="w-4 h-4 text-gray-400" />
-                                        </div>
-                                    </div>
-                                    <div className="flex-1 pb-6 pt-1">
-                                        <p className="font-semibold text-gray-500">Awaiting Final Resolution</p>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </TabsContent>
 
                 {/* TAB 2: INVESTIGATION / 4M RCA */}
                 <TabsContent value="investigation" className="m-0">
-                    {!incident.investigation && incident.status === 'OPEN' ? (
+                    {!incident.investigation ? (
                         <div className="text-center py-16 px-4">
                             <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-dashed border-gray-200">
                                 <Edit3 className="h-8 w-8 text-gray-400" />
@@ -439,7 +408,9 @@ const IncidentDetail: React.FC = () => {
                             <h3 className="text-xl font-bold text-gray-900 mb-2">Investigation Pending</h3>
                             <p className="text-gray-500 max-w-md mx-auto mb-6">The formal Root Cause Analysis (RCA) has not been completed for this incident yet.</p>
                             {isSafetyOfficer && (
-                                <Button className="bg-blue-600 hover:bg-blue-700 shadow-md">Start 4M RCA Report</Button>
+                                <Button onClick={() => setIsRcaOpen(true)} className="bg-blue-600 hover:bg-blue-700 shadow-md">
+                                  Start 4M RCA Report
+                                </Button>
                             )}
                         </div>
                     ) : (
@@ -454,33 +425,33 @@ const IncidentDetail: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Card className="bg-gray-50 shadow-none border-gray-200">
                                     <CardHeader className="py-3 px-4 border-b bg-gray-100/50"><CardTitle className="text-sm">👨‍🔧 MAN (Human Factor)</CardTitle></CardHeader>
-                                    <CardContent className="p-4 text-sm text-gray-700">{incident.investigation?.root_cause_category === 'MAN' ? incident.investigation?.root_cause_analysis : 'No human error detected.'}</CardContent>
+                                    <CardContent className="p-4 text-sm text-gray-700">{incident.investigation.root_cause_category === 'MAN' ? incident.investigation.root_cause_analysis : 'No human error detected.'}</CardContent>
                                 </Card>
                                 <Card className="bg-gray-50 shadow-none border-gray-200">
                                     <CardHeader className="py-3 px-4 border-b bg-gray-100/50"><CardTitle className="text-sm">⚙️ MACHINE (Equipment)</CardTitle></CardHeader>
-                                    <CardContent className="p-4 text-sm text-gray-700">{incident.investigation?.root_cause_category === 'MACHINE' ? incident.investigation?.root_cause_analysis : 'No machine fault isolated here.'}</CardContent>
+                                    <CardContent className="p-4 text-sm text-gray-700">{incident.investigation.root_cause_category === 'MACHINE' ? incident.investigation.root_cause_analysis : 'No machine fault isolated here.'}</CardContent>
                                 </Card>
                                 <Card className="bg-gray-50 shadow-none border-gray-200">
                                     <CardHeader className="py-3 px-4 border-b bg-gray-100/50"><CardTitle className="text-sm">📋 METHOD (Process)</CardTitle></CardHeader>
-                                    <CardContent className="p-4 text-sm text-gray-700">{incident.investigation?.root_cause_category === 'METHOD' ? incident.investigation?.root_cause_analysis : 'SOP followed.'}</CardContent>
+                                    <CardContent className="p-4 text-sm text-gray-700">{incident.investigation.root_cause_category === 'METHOD' ? incident.investigation.root_cause_analysis : 'SOP followed.'}</CardContent>
                                 </Card>
                                 <Card className="bg-gray-50 shadow-none border-gray-200">
                                     <CardHeader className="py-3 px-4 border-b bg-gray-100/50"><CardTitle className="text-sm">🧱 MATERIAL (Inputs)</CardTitle></CardHeader>
-                                    <CardContent className="p-4 text-sm text-gray-700">{incident.investigation?.root_cause_category === 'MATERIAL' ? incident.investigation?.root_cause_analysis : 'Material standard.'}</CardContent>
+                                    <CardContent className="p-4 text-sm text-gray-700">{incident.investigation.root_cause_category === 'MATERIAL' ? incident.investigation.root_cause_analysis : 'Material standard.'}</CardContent>
                                 </Card>
                             </div>
 
                             <div className="mt-6">
                                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Final Conclusion</h3>
-                                <p className="p-4 bg-white border rounded-lg text-sm text-gray-800 leading-relaxed shadow-sm">
-                                    {incident.investigation?.conclusion || "Investigation findings finalized. Awaiting CAPA execution."}
+                                <p className="p-4 bg-white border rounded-lg text-sm text-gray-800 leading-relaxed shadow-sm whitespace-pre-wrap">
+                                    {incident.investigation.conclusion}
                                 </p>
                             </div>
                         </div>
                     )}
                 </TabsContent>
 
-                {/* TAB 3: CAPA TRACKER (Preserved Original Functionality) */}
+                {/* TAB 3: CAPA TRACKER */}
                 <TabsContent value="capa" className="space-y-4">
                   {capasLoading ? (
                     <div className="space-y-3">
@@ -502,48 +473,18 @@ const IncidentDetail: React.FC = () => {
                           new Date(capa.deadline || capa.due_date) < new Date();
 
                         return (
-                          <Card
-                            key={capa.id}
-                            className={cn(
-                              'transition-all shadow-sm border-gray-200',
-                              isCompleted && 'opacity-75 bg-gray-50'
-                            )}
-                          >
+                          <Card key={capa.id} className={cn('transition-all shadow-sm border-gray-200', isCompleted && 'opacity-75 bg-gray-50')}>
                             <CardContent className="p-4">
                               <div className="flex items-start gap-3">
-                                <Checkbox
-                                  checked={isCompleted}
-                                  onCheckedChange={() => handleCAPAToggle(capa)}
-                                  disabled={capaStatusMutation.isPending}
-                                  className="mt-1"
-                                />
+                                <Checkbox checked={isCompleted} onCheckedChange={() => handleCAPAToggle(capa)} disabled={capaStatusMutation.isPending} className="mt-1" />
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
-                                    <h4 className={cn('font-bold', isCompleted && 'line-through text-gray-500')}>
-                                      {capa.title || 'CAPA Action'}
-                                    </h4>
-                                    <Badge variant={isCompleted ? 'default' : isOverdue ? 'destructive' : 'secondary'} className="text-[10px]">
-                                      {capa.status}
-                                    </Badge>
+                                    <h4 className={cn('font-bold', isCompleted && 'line-through text-gray-500')}>{capa.title || 'CAPA Action'}</h4>
+                                    <Badge variant={isCompleted ? 'default' : isOverdue ? 'destructive' : 'secondary'} className="text-[10px]">{capa.status}</Badge>
                                   </div>
-                                  <p className={cn('text-sm text-gray-600 mb-2', isCompleted && 'line-through')}>
-                                    {capa.description || capa.action_description}
-                                  </p>
+                                  <p className={cn('text-sm text-gray-600 mb-2', isCompleted && 'line-through')}>{capa.description || capa.action_description}</p>
                                   <div className="flex items-center gap-4 text-xs text-gray-500 font-medium">
-                                    <div className="flex items-center gap-1">
-                                      <User className="h-3 w-3" />
-                                      <span>{capa.assigned_to || 'Facilities Team'}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                      <Clock className="h-3 w-3" />
-                                      <span>Due: {format(new Date(capa.deadline || capa.due_date), 'MMM dd, yyyy')}</span>
-                                    </div>
-                                    {(capa.completed_at || capa.completed_date) && (
-                                      <div className="flex items-center gap-1 text-green-600">
-                                        <CheckCircle2 className="h-3 w-3" />
-                                        <span>Completed: {format(new Date(capa.completed_at || capa.completed_date), 'MMM dd, yyyy')}</span>
-                                      </div>
-                                    )}
+                                    <div className="flex items-center gap-1"><Clock className="h-3 w-3" /><span>Due: {format(new Date(capa.deadline || capa.due_date), 'MMM dd, yyyy')}</span></div>
                                   </div>
                                 </div>
                               </div>
@@ -563,7 +504,7 @@ const IncidentDetail: React.FC = () => {
                             <p className="text-sm text-gray-500">Official logs from personnel present at the scene.</p>
                         </div>
                         {isSafetyOfficer && (
-                            <Button variant="outline" size="sm"><PlusCircle className="w-4 h-4 mr-2"/> Add Statement</Button>
+                            <Button onClick={() => setIsWitnessOpen(true)} variant="outline" size="sm"><PlusCircle className="w-4 h-4 mr-2"/> Add Statement</Button>
                         )}
                     </div>
 
@@ -586,7 +527,7 @@ const IncidentDetail: React.FC = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <p className="text-sm text-gray-700 italic bg-gray-50 p-4 rounded-lg border border-gray-100 mt-2 shadow-inner leading-relaxed">"{w.statement}"</p>
+                                    <p className="text-sm text-gray-700 italic bg-gray-50 p-4 rounded-lg border border-gray-100 mt-2 shadow-inner leading-relaxed whitespace-pre-wrap">"{w.statement}"</p>
                                 </div>
                             ))}
                         </div>
@@ -598,6 +539,95 @@ const IncidentDetail: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* --- DIALOGS FOR DEAD BUTTONS --- */}
+      
+      {/* 4M RCA Dialog */}
+      <Dialog open={isRcaOpen} onOpenChange={setIsRcaOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Submit 4M Root Cause Analysis</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <div>
+              <Label>Primary Root Cause Category</Label>
+              <select 
+                className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm mt-1"
+                value={rcaData.category}
+                onChange={(e) => setRcaData({...rcaData, category: e.target.value})}
+              >
+                <option value="">-- Select Category --</option>
+                {Object.values(RootCauseCategory).map((cat) => (<option key={cat} value={cat}>{cat}</option>))}
+              </select>
+            </div>
+            <div>
+              <Label>Root Cause Notes</Label>
+              <Textarea 
+                placeholder="Explain the failure in detail..." 
+                value={rcaData.analysis}
+                onChange={(e) => setRcaData({...rcaData, analysis: e.target.value})}
+                rows={3} 
+              />
+            </div>
+            <div>
+              <Label>Final Conclusion (Required) *</Label>
+              <Textarea 
+                placeholder="Official conclusion for the incident dossier..." 
+                value={rcaData.conclusion}
+                onChange={(e) => setRcaData({...rcaData, conclusion: e.target.value})}
+                rows={3} 
+              />
+            </div>
+          </div>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setIsRcaOpen(false)}>Cancel</Button>
+            <Button 
+              onClick={() => rcaMutation.mutate()} 
+              disabled={rcaMutation.isPending || !rcaData.conclusion.trim()}
+            >
+              {rcaMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2"/> : null} Submit RCA
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Witness Statement Dialog */}
+      <Dialog open={isWitnessOpen} onOpenChange={setIsWitnessOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Record Witness Statement</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <div>
+              <Label>Witness Name *</Label>
+              <Input 
+                placeholder="Full Name" 
+                value={witnessData.name}
+                onChange={(e) => setWitnessData({...witnessData, name: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label>Statement *</Label>
+              <Textarea 
+                placeholder="Exact words of the witness..." 
+                value={witnessData.statement}
+                onChange={(e) => setWitnessData({...witnessData, statement: e.target.value})}
+                rows={4} 
+              />
+            </div>
+          </div>
+          <DialogFooter className="mt-4">
+            <Button variant="outline" onClick={() => setIsWitnessOpen(false)}>Cancel</Button>
+            <Button 
+              onClick={() => witnessMutation.mutate()} 
+              disabled={witnessMutation.isPending || !witnessData.name.trim() || !witnessData.statement.trim()}
+            >
+              {witnessMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2"/> : null} Save Statement
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };

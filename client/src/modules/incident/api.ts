@@ -20,6 +20,14 @@ export enum IncidentCategory {
   UNSAFE_CONDITION = 'UNSAFE_CONDITION',
 }
 
+export enum RootCauseCategory {
+  MAN = 'MAN',
+  MACHINE = 'MACHINE',
+  METHOD = 'METHOD',
+  MATERIAL = 'MATERIAL',
+  ENVIRONMENT = 'ENVIRONMENT',
+}
+
 export enum IncidentStatus {
   OPEN = 'OPEN',
   INVESTIGATION_PENDING = 'INVESTIGATION_PENDING',
@@ -60,7 +68,7 @@ export interface Investigation {
   investigated_by_id?: string | null;
   started_at: string;
   completed_at?: string | null;
-  root_cause_category?: string | null;
+  root_cause_category?: RootCauseCategory | null;
   root_cause_analysis?: string | null;
   witness_statements?: string | null;
   conclusion?: string | null;
@@ -113,17 +121,17 @@ export interface CAPA {
   remarks?: string | null;
 }
 
-export interface IncidentCreate {
-  title: string;
-  description: string;
-  severity: IncidentSeverity;
-  category: IncidentCategory;
-  occurred_at: string;       
-  location_details: string;  
-  machine_id?: string | null;
-  permit_id?: string | null;
-  contractor_id?: string | null;
-  victim_ids?: string[];
+export interface IncidentWitnessCreate {
+  witness_name: string;
+  statement: string;
+  worker_id?: string | null;
+  user_id?: string | null;
+}
+
+export interface InvestigationCreate {
+  root_cause_category?: RootCauseCategory | null;
+  root_cause_analysis?: string | null;
+  conclusion: string;
 }
 
 export interface CAPACreate {
@@ -134,17 +142,21 @@ export interface CAPACreate {
   remarks?: string | null;
 }
 
-export interface IncidentWitnessCreate {
-  witness_name: string;
-  statement: string;
-  worker_id?: string | null;
-  user_id?: string | null;
-}
-
-export interface InvestigationCreate {
-  root_cause_category?: string;
-  root_cause_analysis?: string;
-  conclusion: string;
+export interface IncidentCreate {
+  title: string;
+  description: string;
+  severity: IncidentSeverity;
+  category: IncidentCategory;
+  occurred_at: string;       
+  location_details: string;  
+  machine_id?: string | null;
+  permit_id?: string | null;
+  contractor_id?: string | null;
+  
+  victim_ids?: string[];
+  witnesses?: IncidentWitnessCreate[];
+  investigation?: InvestigationCreate | null;
+  capas?: CAPACreate[];
 }
 
 export interface IncidentReviewUpdate {

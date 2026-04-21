@@ -10,10 +10,30 @@ from .models import (
     IncidentStatus,
     CAPAType,
     CAPAStatus,
-    ReviewStatus # NEW
+    ReviewStatus,
+    RootCauseCategory
 )
 
 # --- Base Schemas ---
+
+class CAPACreate(BaseModel):
+    action_description: str
+    assigned_to_id: Optional[UUID] = None
+    type: CAPAType
+    deadline: date
+    remarks: Optional[str] = None
+
+class IncidentWitnessCreate(BaseModel):
+    witness_name: str
+    statement: str
+    worker_id: Optional[UUID] = None
+    user_id: Optional[UUID] = None
+
+class InvestigationCreate(BaseModel):
+    root_cause_category: Optional[RootCauseCategory] = None
+    root_cause_analysis: Optional[str] = None
+    witness_statements: Optional[str] = None
+    conclusion: str
 
 class IncidentCreate(BaseModel):
     title: str
@@ -27,20 +47,14 @@ class IncidentCreate(BaseModel):
     permit_id: Optional[UUID] = None
     contractor_id: Optional[UUID] = None
     reported_by_id: Optional[UUID] = None
+    
+    # --- NEW: Nested Entities for Single-Transaction Reporting ---
+    victim_ids: Optional[List[UUID]] = []
+    witnesses: Optional[List[IncidentWitnessCreate]] =[]
+    investigation: Optional[InvestigationCreate] = None
+    capas: Optional[List[CAPACreate]] =[]
 
-class CAPACreate(BaseModel):
-    action_description: str
-    assigned_to_id: Optional[UUID] = None
-    type: CAPAType
-    deadline: date
-    remarks: Optional[str] = None
-
-# --- NEW: Witness & Review Schemas ---
-class IncidentWitnessCreate(BaseModel):
-    witness_name: str
-    statement: str
-    worker_id: Optional[UUID] = None
-    user_id: Optional[UUID] = None
+# --- Read Schemas (for API responses) ---
 
 class IncidentWitnessRead(BaseModel):
     id: UUID
@@ -54,8 +68,6 @@ class IncidentWitnessRead(BaseModel):
 class IncidentReviewUpdate(BaseModel):
     review_status: ReviewStatus
     review_remarks: str
-
-# --- Read Schemas (for API responses) ---
 
 class CAPARead(BaseModel):
     id: UUID
@@ -82,7 +94,6 @@ class IncidentRead(BaseModel):
     reported_at: datetime
     is_work_stopped: bool
     
-    # NEW FIELDS
     investigation_due_at: Optional[datetime]
     resolved_at: Optional[datetime]
     review_status: ReviewStatus
@@ -96,7 +107,7 @@ class IncidentRead(BaseModel):
     reported_by_id: Optional[UUID]
     
     capa_items: List[CAPARead] = []
-    witnesses: List[IncidentWitnessRead] =[] # NEW
+    witnesses: List[IncidentWitnessRead] =[]
     
     model_config = {"from_attributes": True}
 
